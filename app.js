@@ -1756,7 +1756,7 @@
       const current = c === state.country;
       return `<button type="button" class="country${current ? ' active' : ''}" data-country-btn="${c}" ${current ? 'aria-current="true"' : ''}>${p.flag} ${safe(countryName(p))}</button>`;
     }).join('');
-    $('megaBtn').textContent = `${t('allCountries')} · ${Object.keys(PROFILES).length} ⌄`;
+    $('megaBtn').textContent = `${t('allCountries')} · ${Object.keys(PROFILES).length}`;
     $('megaBtn').setAttribute('title', `${Object.keys(PROFILES).length} ${t('countryCount')}`);
   }
   function renderMega() {
