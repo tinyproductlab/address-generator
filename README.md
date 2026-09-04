@@ -8,4 +8,4 @@
 - 支付字段仅来自 Provider 官方公开 Sandbox 测试卡，绝不随机生成卡号
 - 无构建、无后端、无第三方 API、无 Math.random
 
-上线地址：address.tinylabpro.com（Cloudflare Pages Git 集成）
+上线地址：addressgen.tinylabpro.com（Cloudflare Pages Git 集成）

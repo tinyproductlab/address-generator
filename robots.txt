@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://address.tinylabpro.com/sitemap.xml
+Sitemap: https://addressgen.tinylabpro.com/sitemap.xml

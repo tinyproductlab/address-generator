@@ -23,7 +23,7 @@
 ### 0.1 产品名称
 - 中文品牌：**小产品实验室 · 全球地址生成器**
 - 产品副标题：**全球测试身份生成器 / Global Test Identity Generator**
-- 建议主域名：`address.tinylabpro.com`
+- 主域名：`addressgen.tinylabpro.com`
 
 ### 0.2 核心体验
 1. 用户打开任意国家页，**无需点击“生成”就已经看到一整套测试身份资料**。
