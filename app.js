@@ -37,7 +37,7 @@
       copied: '已复制', copiedAll: '已复制全部字段', savedOk: '已保存到本地浏览器', cleared: '已清空本地数据', batchDone: '已生成', cvcNote: '任意测试值',
       expand: '展开', collapse: '收起',
       fBrandTitle: '产品', fProduct1: '全球地址生成器', fProduct2: '批量生成', fProduct3: '数据来源', fHelpTitle: '帮助与政策', fHelp1: '隐私政策', fHelp2: '使用条款', fHelp3: '关于与反馈',
-      fContact: '联系我们', fWechat: '微信公众号', fEmail: '反馈邮箱', fMore: '更多产品，关注微信公众号', fLocalNote: '生成数据只保存在本机浏览器，不上传服务器。', fQrNote: '正式上线替换二维码图片', fCopyright: '合成测试数据 · 浏览器本地生成 · Sandbox Payment Only',
+      fContact: '联系我们', fWechat: '微信公众号', fMore: '更多产品，关注微信公众号', fLocalNote: '生成数据只保存在本机浏览器，不上传服务器。', fQrNote: '正式上线替换二维码图片', fCopyright: '合成测试数据 · 浏览器本地生成 · Sandbox Payment Only',
       countryCount: '个已支持国家 / 地区'
     },
     en: {
@@ -61,7 +61,7 @@
       copied: 'Copied', copiedAll: 'All fields copied', savedOk: 'Saved to this browser', cleared: 'Local data cleared', batchDone: 'Generated', cvcNote: 'any test value',
       expand: 'Show', collapse: 'Hide',
       fBrandTitle: 'Product', fProduct1: 'Global address generator', fProduct2: 'Batch generation', fProduct3: 'Data sources', fHelpTitle: 'Help & policy', fHelp1: 'Privacy policy', fHelp2: 'Terms of use', fHelp3: 'About & feedback',
-      fContact: 'Contact', fWechat: 'WeChat Official Account', fEmail: 'Feedback email', fMore: 'More products — follow us on WeChat', fLocalNote: 'Generated data stays in your browser. Nothing is uploaded.', fQrNote: 'Replace QR image at launch', fCopyright: 'Synthetic test data · Generated locally · Sandbox Payment Only',
+      fContact: 'Contact', fWechat: 'WeChat Official Account', fMore: 'More products — follow us on WeChat', fLocalNote: 'Generated data stays in your browser. Nothing is uploaded.', fQrNote: 'Replace QR image at launch', fCopyright: 'Synthetic test data · Generated locally · Sandbox Payment Only',
       countryCount: 'supported countries / regions'
     }
   };
