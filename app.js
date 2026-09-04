@@ -9,7 +9,7 @@
     name: '小产品实验室 · 全球地址生成器',
     wechat: '小产品实验室',
     wechatQr: 'assets/wechat-official-account-qr.png',
-    feedbackEmail: '【待填写反馈邮箱】'
+    feedbackEmail: 'userfeedback@zohomail.com'
   };
 
   // -----------------------------
