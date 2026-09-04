@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 语法检查
+        run: |
+          node --check app.js
+          node --check i18n.js
+          for f in data/card-brands/*.json; do node -e "JSON.parse(require('fs').readFileSync('$f','utf8'))" || exit 1; done
+
+      - name: 单元测试（卡组织规则 / Luhn-invalid / 身高体重 / 邮箱 / Seed / 16 语言）
+        run: node --test tests/*.test.mjs
+
+      - name: 生成页与 sitemap 是否与模板一致
+        run: node scripts/build-pages.mjs --check
+
+      - name: 上线前检查（占位反馈邮箱、缺失二维码等直接失败）
+        run: node scripts/check-release.mjs

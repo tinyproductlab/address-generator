@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>数据来源 - 小产品实验室</title>
-<meta name="description" content="小产品实验室 · 全球地址生成器的数据来源：公开地名数据、地址格式规则与支付 Provider 官方 Sandbox 测试资料。">
+<meta name="description" content="小产品实验室 · 全球地址生成器的数据来源：公开地名数据与中心坐标、地址格式规则、卡组织公开编号规则与地图瓦片许可。">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://addressgen.tinylabpro.com/sources">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
@@ -16,34 +16,60 @@
 <a class="backlink" href="./">← 返回生成器</a>
 <h1>数据来源</h1>
 <p>本页说明生成器使用的数据类别、来源与许可。</p>
+
 <h2>数据类别</h2>
 <table class="batch-table" style="min-width:0">
-<thead><tr><th>类别</th><th>来源</th><th>用途</th><th>许可</th></tr></thead>
+<thead><tr><th>类别</th><th>来源</th><th>用途</th><th>许可 / 性质</th></tr></thead>
 <tbody>
 <tr><td>国家 / 行政区 / 城市名与中心坐标</td><td>公开地名数据（参考 GeoNames 等）</td><td>真实地名与区域地图中心点</td><td>CC BY 4.0</td></tr>
 <tr><td>地址格式规则</td><td>各国通行书写格式（参考 libaddressinput metadata）</td><td>地址字段顺序与格式</td><td>Apache 2.0</td></tr>
-<tr><td>人名 / 电话 / 公司</td><td>本站自建合成规则库</td><td>合成测试身份</td><td>—</td></tr>
-<tr><td>支付测试资料</td><td>Stripe / Adyen / Braintree 官方 Sandbox 测试卡目录</td><td>Sandbox 支付字段（多 Provider 轮换）</td><td>官方公开文档</td></tr>
+<tr><td>人名 / 电话 / 公司 / 职业</td><td>本站自建随机规则库</td><td>与国家语言匹配的随机人物资料</td><td>合成数据</td></tr>
+<tr><td>邮箱域名池</td><td>主流邮箱服务商公开域名</td><td>邮箱字段外观（本地部分随机，不验证账号）</td><td>仅使用域名形式</td></tr>
+<tr><td>卡组织编号规则</td><td>各卡组织公开资料（见下）</td><td>银行卡号外观结构（前缀 / 长度 / 分组 / 安全码位数）</td><td>官方公开资料</td></tr>
 <tr><td>地图</td><td>Leaflet（前端库）+ OpenStreetMap 瓦片</td><td>区域位置概览（仅城市 / 行政区 / 国家中心）</td><td>BSD-2 / ODbL</td></tr>
 </tbody>
 </table>
+
+<h2>卡组织规则来源（Card Brand Rule Registry）</h2>
+<p>规则文件与核验记录保存在仓库的 <code>data/card-brands/</code> 目录，<code>source-manifest.json</code> 记录来源 URL、核验日期与规则版本。规则版本：<b>2026.09.04</b>。</p>
+<table class="batch-table" style="min-width:0">
+<thead><tr><th>卡组织</th><th>公开编号结构</th><th>长度</th><th>核验来源</th></tr></thead>
+<tbody>
+<tr><td>Visa</td><td>以 4 开头</td><td>16 / 19</td><td><a href="https://usa.visa.com/" target="_blank" rel="noopener">usa.visa.com</a></td></tr>
+<tr><td>Mastercard</td><td>51–55、2221–2720（2-series）</td><td>16</td><td><a href="https://www.mastercard.com/" target="_blank" rel="noopener">mastercard.com</a></td></tr>
+<tr><td>American Express</td><td>34 / 37 开头，安全码 4 位</td><td>15</td><td><a href="https://www.americanexpress.com/" target="_blank" rel="noopener">americanexpress.com</a></td></tr>
+<tr><td>UnionPay</td><td>以 62 开头</td><td>16 / 19</td><td><a href="https://www.unionpayintl.com/" target="_blank" rel="noopener">unionpayintl.com</a></td></tr>
+<tr><td>JCB</td><td>3528–3589</td><td>16</td><td><a href="https://www.discoverglobalnetwork.com/" target="_blank" rel="noopener">discoverglobalnetwork.com</a></td></tr>
+<tr><td>Discover</td><td>6011、644–649、65、622126–622925</td><td>16</td><td><a href="https://www.discoverglobalnetwork.com/" target="_blank" rel="noopener">discoverglobalnetwork.com</a></td></tr>
+</tbody>
+</table>
+<p>规则只描述“号码长什么样”，<b>不包含任何真实发卡行 BIN 数据</b>。生成器在最后一位主动选择与正确校验位不同的数字，所有输出都无法通过 Luhn 校验；这一点由单元测试逐卡组织抽样验证。不同国家通过 <code>cardBrandWeights</code> 控制卡组织出现权重（例如中国以 UnionPay 为主、日本包含 JCB、美国包含 Discover）。</p>
+
 <h2>数据版本</h2>
-<p>数据库版本：<b>2026.09.04.2</b><br>最近更新：2026-09-04（部署数据自动更新流水线后，本页由 manifest 驱动，不手工写死）<br>状态：已通过自动校验</p>
+<p>数据库版本：<b>2026.09.05.1</b><br>最近更新：2026-09-05<br>状态：已通过自动校验（Schema、卡组织规则、Luhn-invalid 抽样、身高体重联动、邮箱域名池）</p>
+
 <h2>国家覆盖级别（Coverage Level）</h2>
 <p>国家选择器覆盖 ISO 3166-1 全部 249 个国家 / 地区。每个国家按数据完备程度分为三级：</p>
 <ul>
-<li><b>localized-full</b>（22 个热门国家）：本地化地址、行政区 / 城市、人名、电话、邮编、货币 / 时区完整，并按国家匹配官方 Sandbox 支付资料；</li>
-<li><b>localized-address</b>：地址与人物资料完整本地化，支付使用 Generic Sandbox；</li>
-<li><b>generic-safe</b>（其余国家 / 地区）：真实国家 / 首都 / 主要城市数据 + 通用安全生成规则；无邮编规则时邮编字段不显示，不伪造行政层级或邮编。</li>
+<li><b>localized-full</b>（22 个国家 / 地区）：本地化地址、行政区 / 城市、人名、电话、邮编、货币 / 时区完整，并配置本国卡组织权重；</li>
+<li><b>localized-address</b>：地址与人物资料完整本地化，卡组织使用通用权重；</li>
+<li><b>generic-safe</b>（其余国家 / 地区）：真实国家 / 首都 / 主要城市数据 + 通用安全生成规则；无邮编规则时不显示邮编字段，不伪造行政层级或邮编。</li>
 </ul>
+
+<h2>界面语言</h2>
+<p>界面支持 16 种语言（简体中文、繁體中文、English、日本語、한국어、Deutsch、Français、Español、Português、Italiano、Русский、العربية、हिन्दी、Bahasa Indonesia、ไทย、Tiếng Việt）。界面语言与“资料本地化”分开管理：无论界面用哪种语言，本地地址与本地姓名始终按所选国家的本地语言输出。</p>
+
 <h2>地图说明</h2>
-<p>地图仅展示<b>城市 / 行政区 / 国家中心坐标</b>（精度标注为 city-center / region-center / country-center）。生成的合成街道与门牌<b>不做地理编码</b>，也不会把姓名、电话、邮箱、支付资料发送给地图服务。地图瓦片 © OpenStreetMap contributors。</p>
+<p>地图仅展示<b>城市 / 行政区 / 国家中心坐标</b>（精度标注为城市中心 / 区域中心 / 国家中心）。生成的合成街道与门牌<b>不做地理编码</b>，也不会把姓名、电话、邮箱、银行卡资料发送给地图服务。地图瓦片 © OpenStreetMap contributors，瓦片服务可在 <code>MAP_CONFIG</code> 中替换。</p>
+
 <h2>数据边界</h2>
 <ul>
 <li>国家、行政区、城市为公开地名数据；</li>
-<li>街道、门牌、姓名、电话、邮箱、公司等为合成测试数据；</li>
-<li>邮编与地区规则关联，无法可靠映射时生成格式合规的测试值；</li>
-<li>支付卡号仅来自 Provider 官方公开 Sandbox 测试卡，绝不随机生成；</li>
+<li>街道、门牌、姓名、电话、邮箱、公司、账号等为随机合成数据；</li>
+<li>邮编优先与地区关联，无法可靠映射时按该国格式规则生成，不声称可真实投递；</li>
+<li>邮箱使用主流服务商域名形式，但不验证账号存在性、不发信；</li>
+<li>银行卡只按公开编号结构生成外观数据，全部 Luhn-invalid；</li>
+<li>不生成身份证、护照、社保号、银行账户、IBAN 等敏感字段；</li>
 <li>“格式合规”不代表地址真实存在或可投递。</li>
 </ul>
 </main>

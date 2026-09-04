@@ -1,0 +1,12 @@
+{
+  "id": "mastercard",
+  "name": "Mastercard",
+  "ruleVersion": "2026.09.04",
+  "cvvLength": 3,
+  "iinRanges": [
+    { "rangeFrom": "51", "rangeTo": "55", "length": 16 },
+    { "rangeFrom": "2221", "rangeTo": "2720", "length": 16 }
+  ],
+  "grouping": { "16": [4, 4, 4, 4] },
+  "notes": "Mastercard 覆盖 51–55 以及 2-series（222100–272099）账号区间。仅生成外观型 PAN，末位主动破坏 Luhn 校验。"
+}

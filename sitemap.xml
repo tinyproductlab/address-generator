@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://addressgen.tinylabpro.com/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
-  <url><loc>https://addressgen.tinylabpro.com/jp-address/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://addressgen.tinylabpro.com/us-address/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://addressgen.tinylabpro.com/privacy</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://addressgen.tinylabpro.com/terms</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://addressgen.tinylabpro.com/sources</loc><changefreq>monthly</changefreq><priority>0.4</priority></url>
-  <url><loc>https://addressgen.tinylabpro.com/about</loc><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/</loc><lastmod>2026-09-04</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/jp-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/us-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/uk-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/de-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/ca-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/au-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/cn-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/kr-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/sg-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/fr-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/it-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/es-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/nl-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/br-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/tw-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/hk-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/my-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/ru-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/th-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/ph-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/ar-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/tr-address-generator/</loc><lastmod>2026-09-04</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/sources.html</loc><lastmod>2026-09-04</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/privacy.html</loc><lastmod>2026-09-04</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/terms.html</loc><lastmod>2026-09-04</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://addressgen.tinylabpro.com/about.html</loc><lastmod>2026-09-04</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
 </urlset>

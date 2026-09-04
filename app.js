@@ -1,11 +1,13 @@
-/* 小产品实验室 · 全球地址 / 测试身份生成器 — V6 最终上线版
- * 纯静态、浏览器本地生成、无 Math.random（全程 SeededRandom）、无网络请求。
- * 支付字段仅来自 Provider 官方公开 Sandbox 测试卡白名单。 */
+/* 小产品实验室 · 全球地址与人物资料生成器 — V9 最终上线版
+ * 纯静态、浏览器本地生成、无 Math.random（全程 SeededRandom）、除地图瓦片外无网络请求。
+ * 银行卡只按卡组织公开编号结构生成"外观型"卡号，末位主动破坏 Luhn 校验，
+ * 规则来源见 data/card-brands/source-manifest.json。 */
 (() => {
   'use strict';
 
-  const DATA_VERSION = '2026.09.04.2';
+  const DATA_VERSION = '2026.09.05.1';
   const SITE = {
+    origin: 'https://addressgen.tinylabpro.com',
     name: '小产品实验室 · 全球地址生成器',
     wechat: '小产品实验室',
     wechatQr: 'assets/wechat-official-account-qr.png',
@@ -13,114 +15,229 @@
   };
 
   // -----------------------------
-  // i18n
+  // i18n：16 种界面语言（语言包见 i18n.js）
+  // 界面语言只影响 UI 文案与档案枚举描述；地址与本地姓名始终按所选国家的本地语言输出。
   // -----------------------------
-  const I18N = {
-    zh: {
-      allCountries: '全部国家', searchCountryPh: '搜索国家：日本 / Japan / JP / JPN', recentUsed: '最近使用', close: '关闭',
-      regenerate: '↻ 重新生成全部', copyAll: '复制全部', save: '保存', exportJson: '导出 JSON',
-      pageSub: '选择国家或城市后，人物、地址、联系方式、Sandbox 支付测试资料与账号资料同步生成。',
-      notice: '生成内容为合成测试数据。城市 / 行政区为公开地名；支付资料仅为 Sandbox / Test Only，不可用于真实交易。',
-      cityTitle: '城市 / 地区', randomAll: '全国随机', searchCityPh: '搜索当前国家城市 / 地区', cityUnit: '个入口',
-      cardBasic: '基本资料', cardAddress: '地址与联系方式', cardPayment: 'Sandbox 支付测试资料', cardWork: '工作资料', cardAccount: '账号与技术资料', cardExtra: '其他人物档案', cardMap: '区域地图', mapTag: '区域位置 · 非精确住宅定位',
-      tagSynthetic: '合成测试', tagRealPlusSyn: '真实地名 + 合成资料', tagTestOnly: 'Test Only', tagSyntheticWide: '合成测试',
-      fNameLocal: '本地姓名', fNameRoman: '英文 / 罗马字', fGender: '性别', fDob: '出生日期', fAge: '年龄', fTitle: '称谓',
-      fAddrLocal: '本地完整地址', fAddrIntl: '国际英文地址', fStreet: '街道', fHouse: '门牌', fDistrict: '区县 / District', fCity: '城市 / City', fRegion: '州 / 省 / Region', fPostal: '邮编', fCountry: '国家 / Country', fPhone: '电话', fEmail: '测试邮箱',
-      fProvider: '支付 Provider', fBrand: '卡组织', fCardNumber: '测试卡号', fExpiry: '有效期', fCvc: '测试 CVC', fHolder: '持卡人', fBilling: '账单地址', fScenario: '测试场景',
-      fJob: '职业', fCompany: '公司', fIndustry: '行业', fEmployment: '就业状态', fSalary: '年收入（测试值）', fCurrency: '货币', fEducation: '教育程度',
-      fUsername: '用户名', fPassword: '强密码（测试值）', fUuid: 'UUID v4', fWebsite: '个人主页', fOs: '操作系统', fUa: 'User-Agent', fLocale: 'Locale', fTimezone: '时区', fLanguage: '语言代码', fScreen: '屏幕分辨率', fDevice: '设备类别',
-      fHeight: '身高', fWeight: '体重', fBlood: '血型', fHair: '发色', fSecQ: '安全问题', fSecA: '安全答案（合成）', fInterests: '兴趣标签', fBio: '个人简介', fAvatar: '头像首字母',
-      fCompanySize: '公司规模', fIssuingCountry: '发卡国家', fAvs: 'AVS 测试',
-      genderM: '男', genderF: '女', titleM: '先生', titleF: '女士',
-      emp1: '受雇', emp2: '自由职业', emp3: '合同工',
-      batchTitle: '批量生成', batchCount: '数量', batchCustomPh: '自定义 1–500', batchSeed: 'Seed（可复现）', batchSeedPh: '例如 checkout-japan-001', batchFields: '字段', batchCase: '命名', caseCamel: 'camelCase', caseSnake: 'snake_case',
-      batchRun: '生成批量数据', batchCopy: '复制全部', exportCsv: 'CSV', exportJsonB: 'JSON', exportJsonl: 'JSONL', exportTxt: 'TXT', batchEmpty: '尚未生成批量数据。选择数量后点击“生成批量数据”。', batchRows: '条',
-      savedTitle: '已保存', recentTitle: '最近生成', clearData: '清空本地数据', emptySaved: '暂无保存记录。点击顶部“保存”收藏当前身份。', emptyRecent: '暂无最近生成记录。', del: '删除',
-      copied: '已复制', copiedAll: '已复制全部字段', savedOk: '已保存到本地浏览器', cleared: '已清空本地数据', batchDone: '已生成', cvcNote: '任意测试值',
-      expand: '展开', collapse: '收起',
-      fBrandTitle: '产品', fProduct1: '全球地址生成器', fProduct2: '批量生成', fProduct3: '数据来源', fHelpTitle: '帮助与政策', fHelp1: '隐私政策', fHelp2: '使用条款', fHelp3: '关于与反馈',
-      fContact: '联系我们', fWechat: '微信公众号', fMore: '更多产品，关注微信公众号', fLocalNote: '生成数据只保存在本机浏览器，不上传服务器。', fQrNote: '正式上线替换二维码图片', fCopyright: '合成测试数据 · 浏览器本地生成 · Sandbox Payment Only',
-      countryCount: '个已支持国家 / 地区'
-    },
-    en: {
-      allCountries: 'All countries', searchCountryPh: 'Search: Japan / JP / JPN', recentUsed: 'Recent', close: 'Close',
-      regenerate: '↻ Regenerate all', copyAll: 'Copy all', save: 'Save', exportJson: 'Export JSON',
-      pageSub: 'Pick a country or city — identity, address, contact, sandbox payment and account data update together.',
-      notice: 'All output is synthetic test data. Cities / regions use public place names; payment data is Sandbox / Test Only and cannot be used for real transactions.',
-      cityTitle: 'Cities / Regions', randomAll: 'Nationwide random', searchCityPh: 'Search cities in this country', cityUnit: 'entries',
-      cardBasic: 'Basic profile', cardAddress: 'Address & contact', cardPayment: 'Sandbox payment (test)', cardWork: 'Work', cardAccount: 'Account & technical', cardExtra: 'Other profile fields', cardMap: 'Region map', mapTag: 'Region only · not a precise address',
-      tagSynthetic: 'Synthetic', tagRealPlusSyn: 'Real places + synthetic', tagTestOnly: 'Test Only', tagSyntheticWide: 'Synthetic',
-      fNameLocal: 'Name (local)', fNameRoman: 'Name (romanized)', fGender: 'Gender', fDob: 'Date of birth', fAge: 'Age', fTitle: 'Title',
-      fAddrLocal: 'Local address', fAddrIntl: 'International address', fStreet: 'Street', fHouse: 'House no.', fDistrict: 'District', fCity: 'City', fRegion: 'State / Region', fPostal: 'Postal code', fCountry: 'Country', fPhone: 'Phone', fEmail: 'Test email',
-      fProvider: 'Provider', fBrand: 'Card brand', fCardNumber: 'Test card number', fExpiry: 'Expiry', fCvc: 'Test CVC', fHolder: 'Card holder', fBilling: 'Billing address', fScenario: 'Test scenario',
-      fJob: 'Occupation', fCompany: 'Company', fIndustry: 'Industry', fEmployment: 'Employment', fSalary: 'Annual income (test)', fCurrency: 'Currency', fEducation: 'Education',
-      fUsername: 'Username', fPassword: 'Strong password (test)', fUuid: 'UUID v4', fWebsite: 'Website', fOs: 'OS', fUa: 'User-Agent', fLocale: 'Locale', fTimezone: 'Timezone', fLanguage: 'Language', fScreen: 'Screen', fDevice: 'Device',
-      fHeight: 'Height', fWeight: 'Weight', fBlood: 'Blood type', fHair: 'Hair color', fSecQ: 'Security question', fSecA: 'Security answer (synthetic)', fInterests: 'Interests', fBio: 'Bio', fAvatar: 'Avatar initial',
-      fCompanySize: 'Company size', fIssuingCountry: 'Issuing country', fAvs: 'AVS test',
-      genderM: 'Male', genderF: 'Female', titleM: 'Mr.', titleF: 'Ms.',
-      emp1: 'Employed', emp2: 'Self-employed', emp3: 'Contract',
-      batchTitle: 'Batch generation', batchCount: 'Count', batchCustomPh: 'Custom 1–500', batchSeed: 'Seed (reproducible)', batchSeedPh: 'e.g. checkout-japan-001', batchFields: 'Fields', batchCase: 'Naming', caseCamel: 'camelCase', caseSnake: 'snake_case',
-      batchRun: 'Generate batch', batchCopy: 'Copy all', exportCsv: 'CSV', exportJsonB: 'JSON', exportJsonl: 'JSONL', exportTxt: 'TXT', batchEmpty: 'No batch yet. Choose a count and press “Generate batch”.', batchRows: 'rows',
-      savedTitle: 'Saved', recentTitle: 'Recent', clearData: 'Clear local data', emptySaved: 'Nothing saved yet. Press “Save” to keep the current identity.', emptyRecent: 'No recent identities.', del: 'Delete',
-      copied: 'Copied', copiedAll: 'All fields copied', savedOk: 'Saved to this browser', cleared: 'Local data cleared', batchDone: 'Generated', cvcNote: 'any test value',
-      expand: 'Show', collapse: 'Hide',
-      fBrandTitle: 'Product', fProduct1: 'Global address generator', fProduct2: 'Batch generation', fProduct3: 'Data sources', fHelpTitle: 'Help & policy', fHelp1: 'Privacy policy', fHelp2: 'Terms of use', fHelp3: 'About & feedback',
-      fContact: 'Contact', fWechat: 'WeChat Official Account', fMore: 'More products — follow us on WeChat', fLocalNote: 'Generated data stays in your browser. Nothing is uploaded.', fQrNote: 'Replace QR image at launch', fCopyright: 'Synthetic test data · Generated locally · Sandbox Payment Only',
-      countryCount: 'supported countries / regions'
-    }
+  const BUNDLE = (typeof globalThis !== 'undefined' && globalThis.ADDRGEN_I18N)
+    || { locales: [{ code: 'en', label: 'English' }], rtl: [], table: { en: {} }, fallback: 'en' };
+  const I18N = BUNDLE.table;
+  const LOCALES = BUNDLE.locales;
+  const RTL_LOCALES = BUNDLE.rtl || [];
+  const DEFAULT_LOCALE = 'zh-CN';
+
+  function normalizeLocale(value) {
+    if (!value) return '';
+    const raw = String(value).replace(/_/g, '-');
+    const lower = raw.toLowerCase();
+    const exact = LOCALES.find((l) => l.code.toLowerCase() === lower);
+    if (exact) return exact.code;
+    if (lower.startsWith('zh')) return /hant|tw|hk|mo/.test(lower) ? 'zh-TW' : 'zh-CN';
+    const base = lower.split('-')[0];
+    const byBase = LOCALES.find((l) => l.code.toLowerCase() === base);
+    return byBase ? byBase.code : '';
+  }
+  function detectLocale() {
+    try {
+      const fromUrl = normalizeLocale(new URLSearchParams(location.search).get('lang'));
+      if (fromUrl) return fromUrl;
+    } catch { /* ignore */ }
+    let stored = '';
+    try { stored = localStorage.getItem('tlb-lang') || ''; } catch { /* ignore */ }
+    if (stored === 'zh') stored = 'zh-CN';
+    const fromStore = normalizeLocale(stored);
+    if (fromStore) return fromStore;
+    const navLangs = (typeof navigator !== 'undefined' && (navigator.languages || (navigator.language ? [navigator.language] : []))) || [];
+    for (let i = 0; i < navLangs.length; i += 1) { const hit = normalizeLocale(navLangs[i]); if (hit) return hit; }
+    return DEFAULT_LOCALE;
+  }
+  let lang = DEFAULT_LOCALE;
+  try { lang = detectLocale(); } catch { lang = DEFAULT_LOCALE; }
+  const isZh = () => lang === 'zh-CN' || lang === 'zh-TW';
+  const t = (k) => {
+    const table = I18N[lang] || {};
+    if (table[k] !== undefined) return table[k];
+    const fb = I18N[BUNDLE.fallback] || {};
+    return fb[k] !== undefined ? fb[k] : k;
   };
-  let lang = 'zh';
-  try { lang = localStorage.getItem('tlb-lang') === 'en' ? 'en' : 'zh'; } catch { /* ignore */ }
-  const t = (k) => (I18N[lang] && I18N[lang][k]) || I18N.zh[k] || k;
+  const tpl = (k, vars) => String(t(k)).replace(/\{(\w+)\}/g, (m, name) => (vars && vars[name] !== undefined ? vars[name] : m));
+
+  // 国家/地区名称本地化：zh-CN 使用内置中文名，其余语言用 Intl.DisplayNames 覆盖全部 249 个地区
+  const displayNames = {};
+  function localizedRegion(code) {
+    if (lang === 'zh-CN') return '';
+    if (!(lang in displayNames)) {
+      try { displayNames[lang] = new Intl.DisplayNames([lang], { type: 'region' }); } catch { displayNames[lang] = null; }
+    }
+    const dn = displayNames[lang];
+    if (!dn) return '';
+    try { const v = dn.of(code); return v && v !== code ? v : ''; } catch { return ''; }
+  }
+  function countryName(p) {
+    if (lang === 'zh-CN') return p.nameZh;
+    return localizedRegion(p.code) || (isZh() ? p.nameZh : p.nameEn);
+  }
 
   // -----------------------------
-  // Sandbox Payment Registry（仅 Provider 官方公开测试卡；多 Provider / 品牌 / 场景轮换；绝不随机生成卡号）
+  // Card Brand Rule Registry
+  // 只按卡组织公开的账号编号结构（前缀区间 / 长度 / 安全码位数 / 显示分组）生成"外观型"卡号。
+  // 不接入任何真实 BIN / IIN 发行人数据库；末位主动选择与正确 Luhn 校验位不同的数字，
+  // 因此所有输出都无法通过常规银行卡号校验。规则与来源见 data/card-brands/*.json。
   // -----------------------------
-  const PAY_PROVIDERS = [
-    {
-      id: 'stripe', name: 'Stripe', catalog: 'Stripe Testing 官方测试目录', url: 'https://docs.stripe.com/testing',
-      cards: [
-        { brand: 'Visa', number: '4242424242424242', scenario: 'Success（成功扣款）' },
-        { brand: 'Visa', number: '4000000000000002', scenario: 'Declined（拒付）' },
-        { brand: 'Visa', number: '4000002760003184', scenario: '3D Secure 验证（Authentication Required）' },
-        { brand: 'Visa', number: '4000000000009995', scenario: 'Insufficient Funds（余额不足）' },
-        { brand: 'Mastercard', number: '5555555555554444', scenario: 'Success（成功扣款）' },
-        { brand: 'Amex', number: '378282246310005', scenario: 'Success（成功扣款）' },
-        { brand: 'JCB', number: '3566002020360505', scenario: 'Success（成功扣款）', country: 'JP' },
-        { brand: 'UnionPay', number: '6200000000000005', scenario: 'Success（成功扣款）', country: 'CN' },
-        { brand: 'Discover', number: '6011111111111117', scenario: 'Success（成功扣款）' },
-        { brand: 'Diners Club', number: '30569309025904', scenario: 'Success（成功扣款）' }
-      ]
+  const CARD_BRANDS = {
+    visa: {
+      id: 'visa', name: 'Visa', cvvLength: 3,
+      iinRanges: [{ prefix: '4', length: 16, weight: 9 }, { prefix: '4', length: 19, weight: 1 }],
+      grouping: { 16: [4, 4, 4, 4], 19: [4, 4, 4, 4, 3] }
     },
-    {
-      id: 'adyen', name: 'Adyen', catalog: 'Adyen Test Cards 官方测试目录', url: 'https://www.adyen.com/',
-      cards: [
-        { brand: 'Visa', number: '4111111145551142', scenario: '3D Secure 2 认证（Authentication Required）' },
-        { brand: 'Mastercard', number: '5577000055770004', scenario: '3D Secure 认证（Authentication Required）' },
-        { brand: 'Visa', number: '4166666666666666', scenario: 'Success（成功扣款）' }
-      ]
+    mastercard: {
+      id: 'mastercard', name: 'Mastercard', cvvLength: 3,
+      iinRanges: [{ rangeFrom: '51', rangeTo: '55', length: 16 }, { rangeFrom: '2221', rangeTo: '2720', length: 16 }],
+      grouping: { 16: [4, 4, 4, 4] }
     },
-    {
-      id: 'braintree', name: 'Braintree', catalog: 'Braintree Sandbox Testing 官方测试目录', url: 'https://developer.paypal.com/braintree/docs/reference/general/testing/',
-      cards: [
-        { brand: 'Visa', number: '4111111111111111', scenario: 'Success（成功扣款）' },
-        { brand: 'Visa', number: '4000111111111115', scenario: 'Declined（拒付）' },
-        { brand: 'Mastercard', number: '5105105105105100', scenario: 'Success（成功扣款）' },
-        { brand: 'Amex', number: '371449635398431', scenario: 'Success（成功扣款）' }
-      ]
+    amex: {
+      id: 'amex', name: 'American Express', cvvLength: 4,
+      iinRanges: [{ prefix: '34', length: 15 }, { prefix: '37', length: 15 }],
+      grouping: { 15: [4, 6, 5] }
+    },
+    unionpay: {
+      id: 'unionpay', name: 'UnionPay', cvvLength: 3,
+      iinRanges: [{ prefix: '62', length: 16, weight: 8 }, { prefix: '62', length: 19, weight: 2 }],
+      grouping: { 16: [4, 4, 4, 4], 19: [6, 13] }
+    },
+    jcb: {
+      id: 'jcb', name: 'JCB', cvvLength: 3,
+      iinRanges: [{ rangeFrom: '3528', rangeTo: '3589', length: 16 }],
+      grouping: { 16: [4, 4, 4, 4] }
+    },
+    discover: {
+      id: 'discover', name: 'Discover', cvvLength: 3,
+      iinRanges: [
+        { prefix: '6011', length: 16 },
+        { rangeFrom: '644', rangeTo: '649', length: 16 },
+        { prefix: '65', length: 16 },
+        { rangeFrom: '622126', rangeTo: '622925', length: 16 }
+      ],
+      grouping: { 16: [4, 4, 4, 4] }
     }
-  ];
-  function groupCardNumber(num, brand) {
-    if (brand === 'Amex' || brand === 'Diners Club') return num.replace(/^(\d{4})(\d{6})(\d+)$/, '$1 $2 $3');
-    return num.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+  };
+  // §18 降级：规则集异常时至少保留 Visa / Mastercard 最小规则，且仍必须 Luhn-invalid。
+  const CARD_BRANDS_MINIMAL = { visa: CARD_BRANDS.visa, mastercard: CARD_BRANDS.mastercard };
+  const CARD_WEIGHTS_DEFAULT = { visa: 5, mastercard: 4, amex: 1 };
+  const CARD_WEIGHTS = {
+    CN: { unionpay: 6, visa: 2, mastercard: 2, jcb: 1 },
+    JP: { jcb: 4, visa: 4, mastercard: 3, amex: 2 },
+    US: { visa: 5, mastercard: 4, amex: 2, discover: 2 },
+    CA: { visa: 5, mastercard: 4, amex: 2 },
+    KR: { visa: 4, mastercard: 3, jcb: 1, unionpay: 1, amex: 1 },
+    TW: { visa: 4, mastercard: 3, jcb: 2, unionpay: 1 },
+    HK: { visa: 4, mastercard: 3, unionpay: 2, amex: 1 },
+    SG: { visa: 5, mastercard: 4, amex: 2, unionpay: 1 },
+    MY: { visa: 5, mastercard: 4, unionpay: 1, amex: 1 },
+    TH: { visa: 5, mastercard: 4, jcb: 2, unionpay: 1 },
+    PH: { visa: 5, mastercard: 4, jcb: 1, amex: 1 },
+    AU: { visa: 5, mastercard: 4, amex: 2 },
+    GB: { visa: 5, mastercard: 4, amex: 1 },
+    RU: { visa: 4, mastercard: 4 },
+    BR: { visa: 5, mastercard: 4, amex: 1 },
+    AR: { visa: 5, mastercard: 4, amex: 1 },
+    TR: { visa: 5, mastercard: 4 }
+  };
+
+  // 主流邮箱服务商域名池：只随机生成本地部分，不做 MX / SMTP / 存在性验证，也不发信。
+  const EMAIL_WEIGHTS = {
+    _default: { 'gmail.com': 6, 'outlook.com': 4, 'hotmail.com': 3, 'yahoo.com': 3, 'icloud.com': 3, 'protonmail.com': 2, 'zohomail.com': 1 },
+    CN: { 'qq.com': 5, '163.com': 4, 'foxmail.com': 3, '126.com': 2, 'gmail.com': 2, 'outlook.com': 2, 'icloud.com': 1 },
+    HK: { 'gmail.com': 5, 'yahoo.com': 3, 'outlook.com': 3, 'icloud.com': 2, 'qq.com': 2, 'hotmail.com': 2 },
+    TW: { 'gmail.com': 6, 'yahoo.com': 3, 'hotmail.com': 2, 'outlook.com': 2, 'icloud.com': 2 },
+    JP: { 'gmail.com': 5, 'yahoo.com': 3, 'icloud.com': 3, 'outlook.com': 2, 'hotmail.com': 2 },
+    KR: { 'gmail.com': 5, 'outlook.com': 3, 'icloud.com': 2, 'hotmail.com': 2, 'yahoo.com': 1 }
+  };
+  const EMAIL_DOMAINS = Object.keys(EMAIL_WEIGHTS).reduce((all, key) => {
+    Object.keys(EMAIL_WEIGHTS[key]).forEach((d) => { if (!all.includes(d)) all.push(d); });
+    return all;
+  }, []);
+
+  function luhnCheckDigit(body) {
+    let sum = 0;
+    let double = true;
+    for (let i = body.length - 1; i >= 0; i -= 1) {
+      let d = Number(body[i]);
+      if (double) { d *= 2; if (d > 9) d -= 9; }
+      sum += d;
+      double = !double;
+    }
+    return (10 - (sum % 10)) % 10;
   }
-  function pickSandboxCard(rng, profile) {
-    const provider = rng.pick(PAY_PROVIDERS);
-    const localCards = provider.cards.filter((c) => c.country === profile.code);
-    let card;
-    if (localCards.length && rng.bool()) card = rng.pick(localCards);
-    else card = rng.pick(provider.cards.filter((c) => !c.country || c.country === profile.code));
-    return { provider, card };
+  function luhnValid(pan) {
+    const digits = String(pan).replace(/\D/g, '');
+    if (digits.length < 2) return false;
+    return luhnCheckDigit(digits.slice(0, -1)) === Number(digits.slice(-1));
+  }
+  // 避免出现 4242…、5555…、连续递增等一眼假的模板
+  function looksTemplated(digits) {
+    if (/(\d)\1{3,}/.test(digits)) return true;
+    if (new Set(digits).size <= 2) return true;
+    for (let i = 0; i + 3 < digits.length; i += 1) {
+      const step = Number(digits[i + 1]) - Number(digits[i]);
+      if (step !== 1 && step !== -1) continue;
+      if (Number(digits[i + 2]) - Number(digits[i + 1]) === step && Number(digits[i + 3]) - Number(digits[i + 2]) === step) return true;
+    }
+    return false;
+  }
+  function groupPan(pan, brand) {
+    const pattern = (brand.grouping && brand.grouping[pan.length]) || null;
+    if (!pattern) return pan.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+    const out = [];
+    let at = 0;
+    pattern.forEach((size) => { out.push(pan.slice(at, at + size)); at += size; });
+    if (at < pan.length) out.push(pan.slice(at));
+    return out.filter(Boolean).join(' ');
+  }
+  function brandFor(rng, profile) {
+    const weights = profile.cardBrandWeights || CARD_WEIGHTS_DEFAULT;
+    const available = {};
+    Object.keys(weights).forEach((id) => { if (CARD_BRANDS[id]) available[id] = weights[id]; });
+    const pool = Object.keys(available).length ? available : { visa: 5, mastercard: 4 };
+    return CARD_BRANDS[rng.weighted(pool)] || CARD_BRANDS_MINIMAL.visa;
+  }
+  function generatePan(rng, brand) {
+    const weights = {};
+    brand.iinRanges.forEach((r, i) => { weights[i] = r.weight === undefined ? 1 : r.weight; });
+    const range = brand.iinRanges[Number(rng.weighted(weights))];
+    const bodyLength = range.length - 1;
+    let body = '';
+    for (let attempt = 0; attempt < 16; attempt += 1) {
+      const prefix = range.prefix !== undefined
+        ? range.prefix
+        : String(rng.int(Number(range.rangeFrom), Number(range.rangeTo)));
+      let mid = '';
+      for (let i = prefix.length; i < bodyLength; i += 1) mid += String(rng.int(0, 9));
+      body = prefix + mid;
+      if (!looksTemplated(mid)) break;
+    }
+    // 故意破坏 Luhn：末位取一个与正确校验位不同的数字
+    const correct = luhnCheckDigit(body);
+    const last = (correct + rng.int(1, 9)) % 10;
+    return body + String(last);
+  }
+  function generateCard(rng, profile, holder, billing) {
+    const brand = brandFor(rng, profile);
+    const pan = generatePan(rng, brand);
+    const months = rng.int(12, 60);
+    const base = new Date();
+    const exp = new Date(base.getFullYear(), base.getMonth() + months, 1);
+    return {
+      brand: brand.name,
+      brandId: brand.id,
+      productKey: rng.weighted({ prod1: 5, prod2: 4, prod3: 1 }),
+      number: groupPan(pan, brand),
+      numberRaw: pan,
+      expiry: `${String(exp.getMonth() + 1).padStart(2, '0')}/${String(exp.getFullYear()).slice(2)}`,
+      cvv: rng.digits(brand.cvvLength),
+      holder,
+      currency: profile.currency,
+      billing
+    };
   }
 
   // -----------------------------
@@ -141,10 +258,10 @@
       ],
       streets: ['神南', '代々木', '梅田', '心斎橋', '五条', '表参道'],
       house: (r) => `${r.int(1, 8)}丁目${r.int(1, 30)}-${r.int(1, 20)}`,
-      postal: (r) => `${r.pick(['150', '160', '530', '600', '060', '812', '220'])}-${r.digits(4)}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['150', '160', '530', '600', '060', '810', '220'])}-${r.digits(4)}`,
       phone: (r) => `090-${r.digits(4)}-${r.digits(4)}`,
-      localFormat: (p) => [`〒${p.postal}`, `${p.admin}${p.city}${p.street}${p.house}`],
-      intlFormat: (p) => [`${p.house}, ${p.street}, ${p.city}, ${p.admin}, ${p.postal}, Japan`],
+      localFormat: (p) => [`〒${p.postal}`, `${p.admin}${p.city}${p.district}${p.street}${p.house}`],
+      intlFormat: (p) => [`${p.house}, ${p.street}, ${[p.district, p.city].filter(Boolean).join(', ')}, ${p.admin}, ${p.postal}, Japan`],
       last: [['山田', 'Yamada'], ['佐藤', 'Sato'], ['鈴木', 'Suzuki'], ['高橋', 'Takahashi'], ['田中', 'Tanaka'], ['伊藤', 'Ito'], ['渡辺', 'Watanabe']],
       male: [['太郎', 'Taro'], ['翔', 'Sho'], ['蓮', 'Ren'], ['大輔', 'Daisuke'], ['健太', 'Kenta'], ['悠真', 'Yuma']],
       female: [['美咲', 'Misaki'], ['葵', 'Aoi'], ['結菜', 'Yuna'], ['陽菜', 'Hina'], ['さくら', 'Sakura'], ['凛', 'Rin']],
@@ -165,7 +282,7 @@
       ],
       streets: ['Oakwood Ave', 'Market St', 'Sunset Blvd', 'Maple Drive', 'Harbor Road', 'Cedar Lane'],
       house: (r) => String(r.int(100, 9899)),
-      postal: (r) => r.digits(5),
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(2) : r.digits(5)}`,
       phone: (r) => `+1 (${r.pick(['415', '212', '312', '305', '206'])}) 555-${r.digits(4)}`,
       localFormat: (p) => [`${p.house} ${p.street}`, `${p.city}, ${p.adminCode} ${p.postal}`, 'United States'],
       intlFormat: (p) => [`${p.house} ${p.street}, ${p.city}, ${p.adminCode} ${p.postal}, United States`],
@@ -186,7 +303,7 @@
       ],
       streets: ['King Street', 'Queen Street', 'High Street', 'Church Road', 'Station Road', 'Victoria Road'],
       house: (r) => String(r.int(1, 220)),
-      postal: (r) => `${r.pick(['SW1A', 'E1', 'N1', 'M1', 'B3', 'EH1', 'CF1'])} ${r.pick(['0AA', '1BB', '2AA', '4BX'])}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['SW1A', 'E1', 'N1', 'M1', 'B3', 'EH1', 'CF10'])} ${r.int(0, 9)}${r.pick(['AA', 'AB', 'BB', 'BX', 'JQ', 'NF'])}`,
       phone: (r) => `+44 20 ${r.digits(4)} ${r.digits(4)}`,
       localFormat: (p) => [`${p.house} ${p.street}`, `${p.city} ${p.postal}`, 'United Kingdom'],
       intlFormat: (p) => [`${p.house} ${p.street}, ${p.city} ${p.postal}, United Kingdom`],
@@ -209,7 +326,7 @@
       ],
       streets: ['Schillerstraße', 'Goetheallee', 'Bahnhofstraße', 'Gartenweg', 'Bergstraße'],
       house: (r) => `${r.int(1, 180)}${r.bool() ? 'a' : ''}`,
-      postal: (r) => r.digits(5),
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(3) : r.digits(5)}`,
       phone: (r) => `+49 ${r.pick(['30', '89', '40', '69', '221'])} ${r.digits(7)}`,
       localFormat: (p) => [`${p.street} ${p.house}`, `${p.postal} ${p.city}`, 'Deutschland'],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.postal} ${p.city}, Germany`],
@@ -231,7 +348,7 @@
       ],
       streets: ['King St W', 'Queen St W', 'Yonge Street', 'Granville Street', 'Bank Street'],
       house: (r) => String(r.int(10, 9900)),
-      postal: (r) => `${r.pick(['M5V', 'K1A', 'V6B', 'H2Z', 'T2P'])} ${r.pick(['1A1', '2B2', '3C3', '4X4'])}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['M5V', 'K1A', 'V6B', 'H2Z', 'T2P'])} ${r.int(0, 9)}${r.pick(['A', 'B', 'C', 'E', 'J', 'K'])}${r.int(0, 9)}`,
       phone: (r) => `+1 (${r.pick(['416', '613', '604', '514', '403'])}) 555-${r.digits(4)}`,
       localFormat: (p) => [`${p.house} ${p.street}`, `${p.city}, ${p.adminCode} ${p.postal}`, 'Canada'],
       intlFormat: (p) => [`${p.house} ${p.street}, ${p.city}, ${p.adminCode} ${p.postal}, Canada`],
@@ -253,7 +370,7 @@
       ],
       streets: ['George Street', 'Collins Street', 'Queen Street', 'Bourke Street', 'Elizabeth Street'],
       house: (r) => String(r.int(1, 250)),
-      postal: (r) => String(r.int(200, 7999)),
+      postal: (r, admin, pre) => (pre ? `${pre}${r.digits(2)}` : String(r.int(2000, 7999))),
       phone: (r) => `+61 2 ${r.digits(4)} ${r.digits(4)}`,
       localFormat: (p) => [`${p.house} ${p.street}`, `${p.city} ${p.adminCode} ${p.postal}`, 'Australia'],
       intlFormat: (p) => [`${p.house} ${p.street}, ${p.city} ${p.adminCode} ${p.postal}, Australia`],
@@ -276,7 +393,7 @@
       ],
       streets: ['建国门外大街', '中关村大街', '南京西路', '深南大道', '文三路', '中山路'],
       house: (r) => `${r.int(1, 300)}号`,
-      postal: (r) => r.digits(6),
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(3) : r.digits(6)}`,
       phone: (r) => `${r.pick(['138', '186', '150', '176', '189'])}-${r.digits(4)}-${r.digits(4)}`,
       localFormat: (p) => [`${p.admin}${p.city}${p.district}${p.street}${p.house}`, `邮编 ${p.postal}`],
       intlFormat: (p) => [`${p.house}, ${p.street}, ${p.district}, ${p.city}, ${p.admin}, ${p.postal}, China`],
@@ -300,7 +417,7 @@
       ],
       streets: ['와우산로', '테헤란로', '종로', '송도과학로'],
       house: (r) => `${r.int(1, 40)}길 ${r.int(1, 60)}`,
-      postal: (r) => r.digits(5),
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(3) : r.digits(5)}`,
       phone: (r) => `010-${r.digits(4)}-${r.digits(4)}`,
       localFormat: (p) => [`${p.admin} ${p.city} ${p.district}`, `${p.street} ${p.house}`, `(${p.postal})`],
       intlFormat: (p) => [`${p.house}, ${p.street}, ${p.district}, ${p.city}, ${p.admin}, ${p.postal}, Republic of Korea`],
@@ -322,7 +439,7 @@
       ],
       streets: ['River Valley Road', 'Orchard Road', 'Marina Boulevard', 'Tampines Central', 'Jurong East Street'],
       house: (r) => `${r.pick(['Blk ', ''])}${r.int(1, 88)}`,
-      postal: (r) => r.digits(6),
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(4) : r.digits(6)}`,
       phone: (r) => `+65 ${r.digits(4)} ${r.digits(4)}`,
       localFormat: (p) => [`${p.house} ${p.street}`, `Singapore ${p.postal}`],
       intlFormat: (p) => [`${p.house} ${p.street}, Singapore ${p.postal}`],
@@ -344,7 +461,7 @@
       ],
       streets: ['Rue de la Paix', 'Avenue Victor Hugo', 'Boulevard Saint-Germain', 'Rue du Faubourg', 'Rue des Fleurs'],
       house: (r) => `${r.int(1, 120)}`,
-      postal: (r) => `${r.pick(['75', '69', '13', '31', '06'])}${r.digits(3)}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['75', '69', '13', '31', '06'])}${r.digits(3)}`,
       phone: (r) => `+33 ${r.pick(['6', '7'])} ${r.digits(2)} ${r.digits(2)} ${r.digits(2)} ${r.digits(2)}`,
       localFormat: (p) => [`${p.house} ${p.street}`, `${p.postal} ${p.city}`, 'France'],
       intlFormat: (p) => [`${p.house} ${p.street}, ${p.postal} ${p.city}, France`],
@@ -366,7 +483,7 @@
       ],
       streets: ['Via Roma', 'Corso Vittorio Emanuele II', 'Via Dante', 'Via Milano', 'Via Garibaldi'],
       house: (r) => String(r.int(1, 140)),
-      postal: (r) => r.digits(5),
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(2) : r.digits(5)}`,
       phone: (r) => `+39 3${r.digits(2)} ${r.digits(7)}`,
       localFormat: (p) => [`Via ${p.street.replace(/^Via |^Corso |^Via /, '')} ${p.house}`, `${p.postal} ${p.city} (${p.adminCode || p.admin})`, 'Italia'],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.postal} ${p.city}, Italy`],
@@ -386,8 +503,8 @@
         { name: 'Andalucía', cities: ['Sevilla', 'Málaga'], districts: ['Triana', 'Centro Histórico'] }
       ],
       streets: ['Calle Mayor', 'Paseo de Gracia', 'Avenida de la Constitución', 'Calle de Alcalá', 'Calle de las Flores'],
-      house: (r) => `${r.int(1, 120)}${r.bool() ? 'º ' + r.pick(['A', 'B', 'C']) : ''}`,
-      postal: (r) => r.digits(5),
+      house: (r) => `${r.int(1, 120)}${r.bool() ? `, ${r.int(1, 8)}º ${r.pick(['A', 'B', 'C', 'D'])}` : ''}`,
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(2) : r.digits(5)}`,
       phone: (r) => `+34 6${r.digits(2)} ${r.digits(3)} ${r.digits(3)}`,
       localFormat: (p) => [`${p.street}, ${p.house}`, `${p.postal} ${p.city}`, 'España'],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.postal} ${p.city}, Spain`],
@@ -408,7 +525,7 @@
       ],
       streets: ['Keizersgracht', 'Kalverstraat', 'Damrak', 'Lange Voorhout', 'Oude Gracht'],
       house: (r) => `${r.int(1, 320)}${r.bool() ? '-' + r.int(1, 3) : ''}`,
-      postal: (r) => `${r.digits(4)} ${r.pick(['AA', 'AB', 'BC', 'CD', 'XY'])}`,
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(2) : r.digits(4)} ${r.pick(['AA', 'AB', 'BC', 'CD', 'XY'])}`,
       phone: (r) => `+31 6 ${r.digits(4)} ${r.digits(4)}`,
       localFormat: (p) => [`${p.street} ${p.house}`, `${p.postal} ${p.city}`, 'Nederland'],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.postal} ${p.city}, Netherlands`],
@@ -429,7 +546,7 @@
       ],
       streets: ['Rua das Flores', 'Avenida Paulista', 'Rua Augusta', 'Avenida Atlântica', 'Rua da Consolação'],
       house: (r) => `${r.int(10, 1999)}${r.bool() ? ' - Apto ' + r.int(10, 902) : ''}`,
-      postal: (r) => `${r.digits(5)}-${r.digits(3)}`,
+      postal: (r, admin, pre) => `${pre ? pre + r.digits(2) : r.digits(5)}-${r.digits(3)}`,
       phone: (r) => `+55 ${r.pick(['11', '21', '31'])} 9${r.digits(4)}-${r.digits(4)}`,
       localFormat: (p) => [`${p.street}, ${p.house}`, `${p.district}, ${p.city} - ${p.adminCode}, ${p.postal}`, 'Brasil'],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.city}, ${p.adminCode} ${p.postal}, Brazil`],
@@ -451,7 +568,7 @@
       ],
       streets: ['忠孝東路', '復興南路', '仁愛路', '民生東路', '敦化南路'],
       house: (r) => `${r.int(1, 300)}號${r.bool() ? r.int(1, 12) + '樓' : ''}`,
-      postal: (r) => `${r.pick(['106', '110', '104', '111', '220', '802', '407'])}${r.digits(2)}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['106', '110', '104', '111', '220', '806', '407'])}${r.digits(2)}`,
       phone: (r) => `09${r.digits(2)}-${r.digits(3)}-${r.digits(3)}`,
       localFormat: (p) => [`${p.postal}`, `${p.admin}${p.city}${p.street}${p.house}`],
       intlFormat: (p) => [`${p.house}, ${p.street}, ${p.city}, ${p.admin} ${p.postal}, Taiwan`],
@@ -493,11 +610,11 @@
         { name: 'Johor', cities: ['Johor Bahru'], districts: ['Sentosa', 'Taman Molek'] }
       ],
       streets: ['Jalan Bukit Bintang', 'Jalan Ampang', 'Lebuh Pantai', 'Jalan Sultan Ismail'],
-      house: (r) => `${r.int(1, 88)}, Jalan ${r.int(1, 30)}/${r.int(1, 22)}`,
-      postal: (r) => `${r.pick(['50', '40', '10', '80'])}${r.digits(3)}`,
+      house: (r) => `${r.int(1, 88)}${r.bool() ? '-' + r.int(1, 12) : ''}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['50', '40', '10', '80'])}${r.digits(3)}`,
       phone: (r) => `+60 ${r.pick(['12', '13', '19', '16'])}-${r.digits(3)} ${r.digits(4)}`,
-      localFormat: (p) => [`${p.house}`, `${p.postal} ${p.city}`, `${p.admin}`, 'Malaysia'],
-      intlFormat: (p) => [`${p.house}, ${p.postal} ${p.city}, ${p.admin}, Malaysia`],
+      localFormat: (p) => [`No. ${p.house}, ${p.street}`, `${p.postal} ${p.city}`, `${p.admin}`, 'Malaysia'],
+      intlFormat: (p) => [`No. ${p.house}, ${p.street}, ${p.postal} ${p.city}, ${p.admin}, Malaysia`],
       last: ['bin Abdullah', 'Tan', 'Lim', 'Lee', 'bin Hassan', 'Wong'],
       male: ['Ahmad', 'Wei Jian', 'Daniel', 'Hafiz', 'Kah Hoe'],
       female: ['Nurul', 'Mei Ling', 'Siti', 'Xin Yi', 'Priya'],
@@ -513,9 +630,9 @@
         { name: 'Санкт-Петербург', cities: ['Санкт-Петербург'], districts: ['Невский район', 'Центральный район'] },
         { name: 'Московская область', cities: ['Химки', 'Балашиха'], districts: ['мкр. Сходня', 'мкр. Изумрудный'] }
       ],
-      streets: ['ул. Тверская', 'Ленинский проспект', 'ул. Арбат', 'Невский проспект'],
+      streets: ['ул. Тверская', 'Ленинский проспект', 'ул. Арбат', 'Садовая улица'],
       house: (r) => `${r.int(1, 90)}${r.bool() ? ', кв. ' + r.int(1, 220) : ''}`,
-      postal: (r) => `${r.pick(['10', '11', '12', '19'])}${r.digits(4)}`,
+      postal: (r, admin, pre) => { const head = pre || r.pick(['10', '19']); return `${head}${r.digits(6 - head.length)}`; },
       phone: (r) => `+7 (${r.pick(['903', '916', '925', '812'])}) ${r.digits(3)}-${r.digits(2)}-${r.digits(2)}`,
       localFormat: (p) => [`${p.street}, д. ${p.house}`, `${p.city}, ${p.admin}`, `${p.postal}`],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.city}, ${p.postal}, Russia`],
@@ -537,7 +654,7 @@
       ],
       streets: ['Sukhumvit Rd', 'Silom Rd', 'Ratchadamri Rd', 'Nimmanhaemin Rd'],
       house: (r) => `${r.int(1, 199)}/${r.int(1, 30)}`,
-      postal: (r) => `${r.pick(['10', '20', '83', '20'])}${r.digits(3)}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['10', '20', '50', '83'])}${r.digits(3)}`,
       phone: (r) => `+66 ${r.pick(['81', '85', '89', '92'])}-${r.digits(3)}-${r.digits(4)}`,
       localFormat: (p) => [`${p.house} ${p.street}`, `${p.district}, ${p.city} ${p.postal}`],
       intlFormat: (p) => [`${p.house} ${p.street}, ${p.district}, ${p.city} ${p.postal}, Thailand`],
@@ -558,7 +675,7 @@
       ],
       streets: ['Rizal Street', 'Bonifacio Drive', 'Mabini Street', 'Delaware Street'],
       house: (r) => `${r.int(1, 250)}`,
-      postal: (r) => `${r.pick(['12', '16', '10', '80'])}${r.digits(2)}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['12', '16', '11', '60'])}${r.digits(2)}`,
       phone: (r) => `+63 9${r.digits(2)} ${r.digits(3)} ${r.digits(4)}`,
       localFormat: (p) => [`${p.house} ${p.street}, ${p.district}`, `${p.city}, ${p.admin} ${p.postal}`],
       intlFormat: (p) => [`${p.house} ${p.street}, ${p.district}, ${p.city}, ${p.admin} ${p.postal}, Philippines`],
@@ -579,7 +696,7 @@
       ],
       streets: ['Av. Santa Fe', 'Calle Corrientes', 'Av. de Mayo', 'Calle Defensa'],
       house: (r) => `${r.int(100, 5900)}`,
-      postal: (r) => `${r.pick(['C', 'B', 'S'])}${r.digits(4)}${r.pick(['A', 'B', 'C'])}${r.pick(['A', 'B', 'C'])}`,
+      postal: (r, admin, pre) => `${pre || r.pick(['C1', 'X5', 'S2'])}${r.digits(3)}${r.pick(['A', 'B', 'C', 'D'])}${r.pick(['A', 'B', 'C', 'D'])}${r.pick(['A', 'B', 'C'])}`,
       phone: (r) => `+54 11 ${r.digits(4)}-${r.digits(4)}`,
       localFormat: (p) => [`${p.street} ${p.house}`, `${p.postal} ${p.city}`, 'Argentina'],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.postal} ${p.city}, Argentina`],
@@ -600,7 +717,7 @@
       ],
       streets: ['Bağdat Caddesi', 'İstiklal Caddesi', 'Atatürk Bulvarı', 'Sahil Yolu'],
       house: (r) => `No:${r.int(1, 180)}${r.bool() ? '/' + r.int(1, 20) : ''}`,
-      postal: (r, admin) => `${(admin && admin.zp) || '34'}${r.digits(3)}`,
+      postal: (r, admin, pre) => `${pre || (admin && admin.zp) || '34'}${r.digits(3)}`,
       phone: (r) => `+90 5${r.digits(2)} ${r.digits(3)} ${r.digits(2)} ${r.digits(2)}`,
       localFormat: (p) => [`${p.street} ${p.house}`, `${p.district}, ${p.city} ${p.postal}`, 'Türkiye'],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.district}, ${p.city} ${p.postal}, Türkiye`],
@@ -611,6 +728,268 @@
       companies: ['Örnek A.Ş.', 'Boğaz Yazılım', 'Test Sistemleri Ltd.', 'Anadolu Dijital']
     }
   };
+  // -----------------------------
+  // 城市级数据：街道/街区名与区县按城市绑定，避免出现"东京都里的梅田"这类跨城市错配。
+  // 缺失的城市回退到国家级街道池；没有可靠区县时不显示区县字段（不伪造行政层级）。
+  // -----------------------------
+  const CITY_DATA = {
+    JP: {
+      '新宿区': { streets: ['西新宿', '歌舞伎町', '新宿', '北新宿'] },
+      '渋谷区': { streets: ['神南', '道玄坂', '恵比寿', '代々木'] },
+      '千代田区': { streets: ['丸の内', '大手町', '神田神保町', '永田町'] },
+      '世田谷区': { streets: ['北沢', '三軒茶屋', '駒沢', '用賀'] },
+      '八王子市': { streets: ['旭町', '横山町', '子安町', '明神町'] },
+      '大阪市': { streets: ['梅田', '心斎橋', '難波', '本町'], districts: ['北区', '中央区', '浪速区'] },
+      '堺市': { streets: ['戎島町', '北瓦町', '中之町'], districts: ['堺区', '中区'] },
+      '豊中市': { streets: ['蛍池中町', '岡町', '新千里東町'] },
+      '京都市': { streets: ['五条', '四条', '河原町', '烏丸'], districts: ['中京区', '下京区', '上京区'] },
+      '宇治市': { streets: ['宇治蓮華', '小倉町', '大久保町'] },
+      '札幌市': { streets: ['大通西', '北一条西', '南三条西'], districts: ['中央区', '豊平区', '北区'] },
+      '函館市': { streets: ['本町', '末広町', '湯川町'] },
+      '旭川市': { streets: ['一条通', '五条通', '緑町'] },
+      '福岡市': { streets: ['天神', '博多駅前', '大濠公園'], districts: ['博多区', '中央区'] },
+      '北九州市': { streets: ['魚町', '浅野', '黒崎'], districts: ['小倉北区', '八幡東区'] },
+      '横浜市': { streets: ['関内', 'みなとみらい', '元町', '新横浜'], districts: ['中区', '西区', '港北区'] },
+      '川崎市': { streets: ['駅前本町', '溝口', '小杉町'], districts: ['川崎区', '高津区'] }
+    },
+    US: {
+      'Los Angeles': { districts: ['Los Angeles County'] },
+      'San Francisco': { districts: ['San Francisco County'] },
+      'San Diego': { districts: ['San Diego County'] },
+      'Sacramento': { districts: ['Sacramento County'] },
+      'New York': { districts: ['New York County'] },
+      'Buffalo': { districts: ['Erie County'] },
+      'Albany': { districts: ['Albany County'] },
+      'Austin': { districts: ['Travis County'] },
+      'Dallas': { districts: ['Dallas County'] },
+      'Houston': { districts: ['Harris County'] },
+      'Miami': { districts: ['Miami-Dade County'] },
+      'Orlando': { districts: ['Orange County'] },
+      'Tampa': { districts: ['Hillsborough County'] },
+      'Seattle': { districts: ['King County'] },
+      'Tacoma': { districts: ['Pierce County'] },
+      'Chicago': { districts: ['Cook County'] },
+      'Springfield': { districts: ['Sangamon County'] }
+    },
+    GB: {
+      London: { districts: ['Westminster', 'Camden', 'Islington'] },
+      Manchester: { districts: ['Northern Quarter', 'Ancoats'] },
+      Birmingham: { districts: ['Digbeth', 'Jewellery Quarter'] },
+      Leeds: { districts: ['Headingley', 'City Centre'] },
+      Edinburgh: { districts: ['Old Town', 'New Town'] },
+      Glasgow: { districts: ['West End', 'Merchant City'] },
+      Cardiff: { districts: ['Cathays', 'City Centre'] },
+      Swansea: { districts: ['Marina', 'Uplands'] }
+    },
+    DE: {
+      Berlin: { districts: ['Mitte', 'Kreuzberg', 'Charlottenburg'] },
+      'München': { districts: ['Schwabing', 'Maxvorstadt', 'Altstadt'] },
+      'Nürnberg': { districts: ['Altstadt', 'Gostenhof'] },
+      Augsburg: { districts: ['Innenstadt', 'Lechhausen'] },
+      Hamburg: { districts: ['Altona', 'Eimsbüttel', 'Harburg'] },
+      Frankfurt: { districts: ['Innenstadt', 'Nordend', 'Sachsenhausen'] },
+      Wiesbaden: { districts: ['Innenstadt', 'Biebrich'] },
+      'Köln': { districts: ['Ehrenfeld', 'Lindenthal'] },
+      'Düsseldorf': { districts: ['Bilk', 'Pempelfort'] }
+    },
+    CA: {
+      Toronto: { streets: ['Yonge Street', 'King St W', 'Queen St W'], districts: ['Downtown Toronto', 'Scarborough'] },
+      Ottawa: { streets: ['Bank Street', 'Elgin Street', 'Rideau Street'], districts: ['Centretown', 'Kanata'] },
+      Vancouver: { streets: ['Granville Street', 'Robson Street', 'West Broadway'], districts: ['Downtown Vancouver', 'Fairview'] },
+      Victoria: { streets: ['Douglas Street', 'Government Street'], districts: ['Oak Bay', 'James Bay'] },
+      Montreal: { streets: ['Rue Sainte-Catherine', 'Boulevard Saint-Laurent'], districts: ['Le Plateau', 'Ville-Marie'] },
+      'Quebec City': { streets: ['Rue Saint-Jean', 'Grande Allée'], districts: ['Vieux-Québec', 'Sainte-Foy'] },
+      Calgary: { streets: ['17 Avenue SW', 'Stephen Avenue'], districts: ['Beltline', 'Kensington'] },
+      Edmonton: { streets: ['Jasper Avenue', 'Whyte Avenue'], districts: ['Downtown Edmonton', 'Oliver'] }
+    },
+    AU: {
+      Sydney: { streets: ['George Street', 'Elizabeth Street', 'Crown Street'], districts: ['CBD', 'Surry Hills'] },
+      Newcastle: { streets: ['Hunter Street', 'Beaumont Street'], districts: ['Newcastle CBD', 'Hamilton'] },
+      Melbourne: { streets: ['Collins Street', 'Bourke Street', 'Lygon Street'], districts: ['Carlton', 'Fitzroy'] },
+      Geelong: { streets: ['Moorabool Street', 'Pakington Street'], districts: ['Geelong West', 'Newtown'] },
+      Brisbane: { streets: ['Queen Street', 'Adelaide Street', 'Grey Street'], districts: ['Fortitude Valley', 'South Bank'] },
+      'Gold Coast': { streets: ['Surfers Paradise Boulevard', 'Gold Coast Highway'], districts: ['Surfers Paradise', 'Broadbeach'] },
+      Perth: { streets: ['St Georges Terrace', 'Hay Street', 'South Terrace'], districts: ['Perth CBD', 'Fremantle'] }
+    },
+    CN: {
+      '朝阳区': { streets: ['建国路', '朝阳门外大街', '望京东路'] },
+      '海淀区': { streets: ['中关村大街', '知春路', '学院路'] },
+      '东城区': { streets: ['王府井大街', '东单北大街', '朝阳门内大街'] },
+      '西城区': { streets: ['金融大街', '西直门外大街', '复兴门内大街'] },
+      '浦东新区': { streets: ['世纪大道', '张杨路', '陆家嘴环路'] },
+      '徐汇区': { streets: ['淮海中路', '漕溪北路', '衡山路'] },
+      '静安区': { streets: ['南京西路', '延安中路', '常德路'] },
+      '黄浦区': { streets: ['南京东路', '西藏中路', '中山东一路'] },
+      '深圳市': { streets: ['科技南十二路', '深南大道', '华强北路'], districts: ['南山区', '福田区', '罗湖区'] },
+      '广州市': { streets: ['天河路', '中山大道', '珠江新城'], districts: ['天河区', '越秀区', '海珠区'] },
+      '珠海市': { streets: ['情侣中路', '九洲大道'], districts: ['香洲区', '金湾区'] },
+      '佛山市': { streets: ['季华五路', '魁奇路'], districts: ['禅城区', '南海区'] },
+      '杭州市': { streets: ['文三路', '延安路', '江南大道'], districts: ['西湖区', '上城区', '滨江区'] },
+      '宁波市': { streets: ['中山东路', '百丈路'], districts: ['海曙区', '鄞州区'] },
+      '南京市': { streets: ['中山东路', '珠江路'], districts: ['玄武区', '鼓楼区'] },
+      '苏州市': { streets: ['干将东路', '星海街'], districts: ['姑苏区', '工业园区'] }
+    },
+    KR: {
+      '마포구': { streets: ['양화로', '월드컵북로', '독막로'], districts: ['서교동', '합정동', '공덕동'] },
+      '강남구': { streets: ['테헤란로', '봉은사로', '도산대로'], districts: ['역삼동', '삼성동', '청담동'] },
+      '종로구': { streets: ['종로', '사직로', '율곡로'], districts: ['사직동', '삼청동', '견지동'] },
+      '성동구': { streets: ['왕십리로', '성수이로'], districts: ['성수동', '왕십리동'] },
+      '해운대구': { streets: ['해운대해변로', '센텀중앙로'], districts: ['우동', '중동'] },
+      '중구': { streets: ['중앙대로', '광복로'], districts: ['광복동', '남포동'] },
+      '연수구': { streets: ['송도과학로', '컨벤시아대로'], districts: ['송도동', '연수동'] },
+      '부평구': { streets: ['부평대로', '경인로'], districts: ['부평동', '십정동'] }
+    },
+    TW: {
+      '大安區': { streets: ['復興南路', '信義路四段', '敦化南路'] },
+      '信義區': { streets: ['松高路', '信義路五段', '基隆路'] },
+      '中山區': { streets: ['南京東路', '民生東路', '中山北路'] },
+      '士林區': { streets: ['中正路', '文林路'] },
+      '板橋區': { streets: ['文化路', '縣民大道'] },
+      '新莊區': { streets: ['中正路', '思源路'] },
+      '中和區': { streets: ['中山路', '景平路'] },
+      '前鎮區': { streets: ['三多三路', '中山二路'] },
+      '鼓山區': { streets: ['明誠三路', '裕誠路'] },
+      '左營區': { streets: ['博愛二路', '民族一路'] },
+      '西屯區': { streets: ['台灣大道', '市政路'] },
+      '南屯區': { streets: ['五權西路', '黎明路'] }
+    },
+    HK: {
+      '中環': { streets: ['皇后大道中', '德輔道中', '雲咸街'] },
+      '銅鑼灣': { streets: ['軒尼詩道', '怡和街', '禮頓道'] },
+      '灣仔': { streets: ['莊士敦道', '皇后大道東', '告士打道'] },
+      '旺角': { streets: ['彌敦道', '亞皆老街', '西洋菜南街'] },
+      '尖沙咀': { streets: ['彌敦道', '廣東道', '梳士巴利道'] },
+      '觀塘': { streets: ['觀塘道', '鴻圖道', '偉業街'] },
+      '荃灣': { streets: ['青山公路', '大河道', '沙咀道'] },
+      '沙田': { streets: ['沙田正街', '大涌橋路', '沙田鄉事會路'] },
+      '元朗': { streets: ['青山公路', '元朗大馬路', '教育路'] }
+    },
+    BR: {
+      'São Paulo': { streets: ['Avenida Paulista', 'Rua Augusta', 'Rua da Consolação'], districts: ['Jardins', 'Pinheiros', 'Vila Madalena'] },
+      Campinas: { streets: ['Avenida Norte-Sul', 'Rua Barão de Jaguara'], districts: ['Cambuí', 'Centro'] },
+      Santos: { streets: ['Avenida Ana Costa', 'Avenida Presidente Wilson'], districts: ['Gonzaga', 'Boqueirão'] },
+      'Rio de Janeiro': { streets: ['Avenida Atlântica', 'Rua Visconde de Pirajá', 'Avenida Rio Branco'], districts: ['Copacabana', 'Ipanema', 'Centro'] },
+      'Niterói': { streets: ['Rua Moreira César', 'Avenida Amaral Peixoto'], districts: ['Icaraí', 'Centro'] },
+      'Belo Horizonte': { streets: ['Avenida Afonso Pena', 'Rua Pernambuco'], districts: ['Savassi', 'Centro'] }
+    },
+    TH: {
+      Bangkok: { streets: ['Sukhumvit Rd', 'Silom Rd', 'Ratchadamri Rd'], districts: ['Sukhumvit', 'Silom', 'Thonglor'] },
+      'Chiang Mai': { streets: ['Nimmanhaemin Rd', 'Huay Kaew Rd'], districts: ['Nimmanhaemin', 'Old City'] },
+      Phuket: { streets: ['Thaweewong Rd', 'Kata Rd'], districts: ['Patong', 'Kata'] },
+      Pattaya: { streets: ['Pattaya Beach Rd', 'Thappraya Rd'], districts: ['Beach Road', 'Jomtien'] }
+    },
+    PH: {
+      Makati: { streets: ['Ayala Avenue', 'Makati Avenue'], districts: ['San Antonio Village', 'Poblacion'] },
+      'Quezon City': { streets: ['Katipunan Avenue', 'Timog Avenue'], districts: ['Diliman', 'Cubao'] },
+      Taguig: { streets: ['32nd Street', 'McKinley Parkway'], districts: ['Bonifacio Global City', 'Bagumbayan'] },
+      'Cebu City': { streets: ['Osmeña Boulevard', 'Salinas Drive'], districts: ['Lahug', 'Capitol Site'] },
+      'Davao City': { streets: ['J.P. Laurel Avenue', 'Quimpo Boulevard'], districts: ['Matina', 'Bajada'] }
+    },
+    TR: {
+      'İstanbul': { streets: ['Bağdat Caddesi', 'İstiklal Caddesi', 'Barbaros Bulvarı'], districts: ['Kadıköy', 'Beşiktaş', 'Şişli'] },
+      Ankara: { streets: ['Atatürk Bulvarı', 'Tunalı Hilmi Caddesi'], districts: ['Çankaya', 'Kızılay'] },
+      'İzmir': { streets: ['Kordon Boyu', 'Gazi Bulvarı'], districts: ['Konak', 'Bornova'] }
+    },
+    AR: {
+      'Buenos Aires': { streets: ['Av. Santa Fe', 'Calle Corrientes', 'Av. de Mayo'], districts: ['Palermo', 'Recoleta', 'Belgrano'] },
+      'Córdoba': { streets: ['Av. Colón', 'Calle San Martín'], districts: ['Nueva Córdoba', 'Centro'] },
+      Rosario: { streets: ['Calle Córdoba', 'Bv. Oroño'], districts: ['Centro', 'Pichincha'] }
+    },
+    FR: {
+      Paris: { districts: ['1er arrondissement', 'Quartier Latin', 'Montmartre'] },
+      Versailles: { districts: ['Notre-Dame', 'Saint-Louis'] },
+      'Boulogne-Billancourt': { districts: ['Centre-ville', 'Les Princes'] },
+      Marseille: { districts: ['Vieux-Port', 'Le Panier'] },
+      Nice: { districts: ['Nice Étoile', 'Vieux-Nice'] },
+      Cannes: { districts: ['Cannes Centre', 'La Croisette'] },
+      Lyon: { districts: ['Presqu’île', 'Croix-Rousse'] },
+      Grenoble: { districts: ['Centre-ville', 'Île Verte'] },
+      Annecy: { districts: ['Vieille Ville', 'Bonlieu'] },
+      Toulouse: { districts: ['Capitole', 'Saint-Cyprien'] },
+      Montpellier: { districts: ['Écusson', 'Antigone'] }
+    },
+    IT: {
+      Milano: { streets: ['Corso Buenos Aires', 'Via Dante', 'Corso Como'], districts: ['Brera', 'Navigli'] },
+      Bergamo: { streets: ['Via XX Settembre', 'Via Colleoni'], districts: ['Città Alta', 'Centro'] },
+      Roma: { streets: ['Via del Corso', 'Via Nazionale', 'Via Cola di Rienzo'], districts: ['Trastevere', 'Monti', 'Prati'] },
+      Venezia: { streets: ['Strada Nova', 'Calle Larga XXII Marzo'], districts: ['San Marco', 'Cannaregio'] },
+      Verona: { streets: ['Via Mazzini', 'Corso Porta Borsari'], districts: ['Veronetta', 'Centro Storico'] },
+      Napoli: { streets: ['Via Toledo', 'Via dei Mille', 'Via Scarlatti'], districts: ['Chiaia', 'Vomero'] }
+    },
+    ES: {
+      Madrid: { streets: ['Calle de Alcalá', 'Calle Mayor', 'Gran Vía'], districts: ['Sol', 'Salamanca', 'Lavapiés'] },
+      'Alcalá de Henares': { streets: ['Calle Mayor', 'Vía Complutense'], districts: ['Centro', 'El Val'] },
+      Barcelona: { streets: ['Paseo de Gracia', 'Carrer de Balmes', 'La Rambla'], districts: ['Eixample', 'Gràcia', 'Barri Gòtic'] },
+      Girona: { streets: ['Carrer Nou', 'Rambla de la Llibertat'], districts: ['Barri Vell', 'Eixample'] },
+      Sevilla: { streets: ['Avenida de la Constitución', 'Calle Betis'], districts: ['Triana', 'Centro Histórico'] },
+      'Málaga': { streets: ['Calle Larios', 'Paseo de Reding'], districts: ['Centro Histórico', 'La Malagueta'] }
+    },
+    NL: {
+      Amsterdam: { streets: ['Keizersgracht', 'Kalverstraat', 'Damrak'], districts: ['Centrum', 'De Pijp'] },
+      Haarlem: { streets: ['Grote Houtstraat', 'Zijlstraat'], districts: ['Centrum', 'Haarlem-Noord'] },
+      Rotterdam: { streets: ['Coolsingel', 'Witte de Withstraat'], districts: ['Centrum', 'Kop van Zuid'] },
+      'Den Haag': { streets: ['Lange Voorhout', 'Spuistraat'], districts: ['Centrum', 'Scheveningen'] },
+      Utrecht: { streets: ['Oude Gracht', 'Vredenburg'], districts: ['Binnenstad', 'Lombok'] },
+      Amersfoort: { streets: ['Langestraat', 'Utrechtseweg'], districts: ['Binnenstad', 'Vathorst'] }
+    },
+    MY: {
+      'Kuala Lumpur': { streets: ['Jalan Bukit Bintang', 'Jalan Ampang', 'Jalan Sultan Ismail'], districts: ['KLCC', 'Bukit Bintang', 'Bangsar'] },
+      'Shah Alam': { streets: ['Persiaran Kayangan', 'Jalan Plumbum'], districts: ['Section 7', 'Section 13'] },
+      'Petaling Jaya': { streets: ['Jalan Templer', 'Jalan SS2/24'], districts: ['Damansara', 'SS2'] },
+      'Subang Jaya': { streets: ['Jalan SS15/4', 'Persiaran Tujuan'], districts: ['SS15', 'USJ'] },
+      'George Town': { streets: ['Lebuh Pantai', 'Jalan Penang'], districts: ['Georgetown Heritage', 'Pulau Tikus'] },
+      Butterworth: { streets: ['Jalan Bagan Luar', 'Jalan Raja Uda'], districts: ['Seberang Jaya', 'Bagan'] },
+      'Johor Bahru': { streets: ['Jalan Wong Ah Fook', 'Jalan Molek 1/1'], districts: ['Taman Molek', 'Bukit Indah'] }
+    },
+    SG: {
+      'Downtown Core': { streets: ['Marina Boulevard', 'Robinson Road'], districts: ['Raffles Place', 'Marina Bay'] },
+      'River Valley': { streets: ['River Valley Road', 'Kim Yam Road'], districts: ['River Valley'] },
+      Orchard: { streets: ['Orchard Road', 'Scotts Road'], districts: ['Orchard Road'] },
+      Tampines: { streets: ['Tampines Central 1', 'Tampines Street 21'], districts: ['Tampines Central'] },
+      Bedok: { streets: ['Bedok North Avenue 4', 'Bedok Reservoir Road'], districts: ['Bedok North'] },
+      'Jurong East': { streets: ['Jurong East Street 13', 'Jurong Gateway Road'], districts: ['Jurong Gateway'] },
+      Clementi: { streets: ['Clementi Avenue 3', 'Commonwealth Avenue West'], districts: ['Clementi Central'] },
+      Woodlands: { streets: ['Woodlands Avenue 6', 'Woodlands Drive 16'], districts: ['Woodlands Central'] },
+      Yishun: { streets: ['Yishun Ring Road', 'Yishun Avenue 2'], districts: ['Yishun Central'] }
+    },
+    RU: {
+      'Москва': { streets: ['ул. Тверская', 'ул. Арбат', 'Ленинский проспект'], districts: ['Арбат', 'Сокольники', 'Хамовники'] },
+      'Санкт-Петербург': { streets: ['Невский проспект', 'ул. Рубинштейна', 'Садовая улица'], districts: ['Центральный район', 'Невский район'] },
+      'Химки': { streets: ['ул. Молодёжная', 'Юбилейный проспект'], districts: ['мкр. Сходня'] },
+      'Балашиха': { streets: ['Советская ул.', 'проспект Ленина'], districts: ['мкр. Изумрудный'] }
+    }
+  };
+
+  // 邮编前缀：优先按城市，其次按一级行政区；没有可靠映射时留空，由各国 postal 规则只按格式生成。
+  const POSTAL_PREFIX = {
+    JP: { '新宿区': '160', '渋谷区': '150', '千代田区': '100', '世田谷区': '154', '八王子市': '192', '大阪市': '530', '堺市': '590', '豊中市': '560', '京都市': '600', '宇治市': '611', '札幌市': '060', '函館市': '040', '旭川市': '070', '福岡市': '810', '北九州市': '802', '横浜市': '220', '川崎市': '210' },
+    US: { 'Los Angeles': '900', 'San Francisco': '941', 'San Diego': '921', Sacramento: '958', 'New York': '100', Buffalo: '142', Albany: '122', Austin: '787', Dallas: '752', Houston: '770', Miami: '331', Orlando: '328', Tampa: '336', Seattle: '981', Tacoma: '984', Chicago: '606', Springfield: '627' },
+    GB: { London: 'SW1A', Manchester: 'M1', Birmingham: 'B3', Leeds: 'LS1', Edinburgh: 'EH1', Glasgow: 'G1', Cardiff: 'CF10', Swansea: 'SA1' },
+    DE: { Berlin: '10', 'München': '80', 'Nürnberg': '90', Augsburg: '86', Hamburg: '20', Frankfurt: '60', Wiesbaden: '65', 'Köln': '50', 'Düsseldorf': '40' },
+    CA: { Toronto: 'M5V', Ottawa: 'K1A', Vancouver: 'V6B', Victoria: 'V8W', Montreal: 'H2Z', 'Quebec City': 'G1R', Calgary: 'T2P', Edmonton: 'T5J' },
+    AU: { Sydney: '20', Newcastle: '23', Melbourne: '30', Geelong: '32', Brisbane: '40', 'Gold Coast': '42', Perth: '60' },
+    CN: { '朝阳区': '100', '海淀区': '100', '东城区': '100', '西城区': '100', '浦东新区': '200', '徐汇区': '200', '静安区': '200', '黄浦区': '200', '深圳市': '518', '广州市': '510', '珠海市': '519', '佛山市': '528', '杭州市': '310', '宁波市': '315', '南京市': '210', '苏州市': '215' },
+    KR: { '마포구': '04', '강남구': '06', '종로구': '03', '성동구': '04', '해운대구': '48', '중구': '48', '연수구': '21', '부평구': '21' },
+    SG: { 'Downtown Core': '04', 'River Valley': '23', Orchard: '23', Tampines: '52', Bedok: '46', 'Jurong East': '60', Clementi: '12', Woodlands: '73', Yishun: '76' },
+    FR: { Paris: '75', Versailles: '78', 'Boulogne-Billancourt': '92', Marseille: '13', Nice: '06', Cannes: '06', Lyon: '69', Grenoble: '38', Annecy: '74', Toulouse: '31', Montpellier: '34' },
+    IT: { Milano: '201', Bergamo: '241', Roma: '001', Venezia: '301', Verona: '371', Napoli: '801' },
+    ES: { Madrid: '280', 'Alcalá de Henares': '288', Barcelona: '080', Girona: '170', Sevilla: '410', 'Málaga': '290' },
+    NL: { Amsterdam: '10', Haarlem: '20', Rotterdam: '30', 'Den Haag': '25', Utrecht: '35', Amersfoort: '38' },
+    BR: { 'São Paulo': '010', Campinas: '130', Santos: '110', 'Rio de Janeiro': '200', 'Niterói': '240', 'Belo Horizonte': '300' },
+    TW: { '大安區': '106', '信義區': '110', '中山區': '104', '士林區': '111', '板橋區': '220', '新莊區': '242', '中和區': '235', '前鎮區': '806', '鼓山區': '804', '左營區': '813', '西屯區': '407', '南屯區': '408' },
+    MY: { 'Kuala Lumpur': '50', 'Shah Alam': '40', 'Petaling Jaya': '46', 'Subang Jaya': '47', 'George Town': '10', Butterworth: '13', 'Johor Bahru': '80' },
+    RU: { 'Москва': '10', 'Санкт-Петербург': '19', 'Химки': '141', 'Балашиха': '143' },
+    TH: { Bangkok: '10', 'Chiang Mai': '50', Phuket: '83', Pattaya: '20' },
+    PH: { Makati: '12', 'Quezon City': '11', Taguig: '16', 'Cebu City': '60', 'Davao City': '80' },
+    AR: { 'Buenos Aires': 'C1', 'Córdoba': 'X5', Rosario: 'S2' },
+    TR: { 'İstanbul': '34', Ankara: '06', 'İzmir': '35' }
+  };
+  function postalPrefix(code, city, admin) {
+    const map = POSTAL_PREFIX[code];
+    if (!map) return '';
+    return map[city] || map[admin] || '';
+  }
+
   const QUICK = ['US', 'JP', 'GB', 'DE', 'CA', 'AU', 'CN', 'KR', 'SG', 'FR'];
   const CONTINENTS = ['亚洲', '欧洲', '北美洲', '南美洲', '大洋洲', '非洲', '其他地区'];
 
@@ -854,14 +1233,14 @@
     'VU|瓦努阿图|Vanuatu|大洋洲|VUV|bi|Pacific/Efate|678|Port Vila|-17.73|168.32|',
     'WF|瓦利斯和富图纳|Wallis and Futuna|大洋洲|XPF|fr-WF|Pacific/Wallis|681|Mata-Utu|-13.28|-176.18|',
     'WS|萨摩亚|Samoa|大洋洲|WST|en-WS|Pacific/Apia|685|Apia|-13.83|-171.77|',
-    'AQ|南极洲|Antarctica|其他地区|USD|en-AQ|Antarctica/McMurdo|672||0|0|',
-    'BV|布韦岛|Bouvet Island|其他地区|NOK|nb-BV|Atlantic/Bouvet|47||-54.42|3.38|',
-    'HM|赫德岛和麦克唐纳群岛|Heard & McDonald Islands|其他地区|AUD|en-HM|Indian/Kerguelen|672||-53.11|72.51|',
+    'AQ|南极洲|Antarctica|其他地区|USD|en-AQ|Antarctica/McMurdo|672|McMurdo Station|-77.85|166.67|Amundsen-Scott South Pole Station;Rothera Research Station;Palmer Station;Casey Station',
+    'BV|布韦岛|Bouvet Island|其他地区|NOK|nb-BV|Atlantic/Bouvet|47|Bouvetøya|-54.42|3.38|',
+    'HM|赫德岛和麦克唐纳群岛|Heard & McDonald Islands|其他地区|AUD|en-HM|Indian/Kerguelen|672|Heard Island|-53.11|72.51|McDonald Islands',
     'IO|英属印度洋领地|British Indian Ocean Territory|其他地区|USD|en-IO|Indian/Chagos|246|Diego Garcia|-7.31|72.41|',
     'CC|科科斯（基林）群岛|Cocos (Keeling) Islands|其他地区|AUD|en-CC|Indian/Cocos|61|West Island|-12.16|96.83|',
     'CX|圣诞岛|Christmas Island|其他地区|AUD|en-CX|Indian/Christmas|61|Flying Fish Cove|-10.42|105.68|',
     'TF|法属南部领地|French Southern Territories|其他地区|EUR|fr-TF|Indian/Kerguelen|262|Port-aux-Français|-49.35|70.22|',
-    'UM|美国本土外小岛屿|U.S. Outlying Islands|其他地区|USD|en-UM|Pacific/Midway|1||0|0|',
+    'UM|美国本土外小岛屿|U.S. Outlying Islands|其他地区|USD|en-UM|Pacific/Midway|1|Midway Atoll|28.21|-177.38|Wake Island;Johnston Atoll;Palmyra Atoll;Baker Island;Howland Island;Jarvis Island',
     'AS|美属萨摩亚|American Samoa|大洋洲|USD|en-AS|Pacific/Pago_Pago|1-684|Pago Pago|-14.28|-170.70|',
     'BW|博茨瓦纳|Botswana|非洲|BWP|en-BW|Africa/Gaborone|267|Gaborone|-24.63|25.92|Francistown',
     'CD|刚果（金）|DR Congo|非洲|CDF|fr-CD|Africa/Kinshasa|243|Kinshasa|-4.32|15.31|Lubumbashi',
@@ -917,9 +1296,15 @@
     if (!p.coverage) p.coverage = 'localized-full';
     if (!p.cc) p.cc = CC[p.code] || null;
     if (p.hasMap === undefined) p.hasMap = !!p.cc;
+    if (!p.cardBrandWeights) p.cardBrandWeights = CARD_WEIGHTS[p.code] || CARD_WEIGHTS_DEFAULT;
+    if (!p.emailDomainWeights) p.emailDomainWeights = EMAIL_WEIGHTS[p.code] || EMAIL_WEIGHTS._default;
   });
   const profileBySlug = {};
-  Object.values(PROFILES).forEach((p) => { profileBySlug[p.slug] = p; });
+  Object.values(PROFILES).forEach((p) => {
+    p.pageSlug = `${p.slug}-generator`;
+    profileBySlug[p.pageSlug] = p;
+    profileBySlug[p.slug] = p; // 兼容旧链接
+  });
 
   // -----------------------------
   // Seeded engine（无 Math.random）
@@ -940,14 +1325,44 @@
     int(min, max) { return Math.floor(this.next() * (max - min + 1)) + min; }
     pick(items) { return items[this.int(0, items.length - 1)]; }
     bool() { return this.next() >= 0.5; }
-    digits(length) { return String(this.int(0, 10 ** length - 1)).padStart(length, '0'); }
+    digits(length) { let out = ''; for (let i = 0; i < length; i += 1) out += String(this.int(0, 9)); return out; }
+    hex(length) { const chars = '0123456789abcdef'; let out = ''; for (let i = 0; i < length; i += 1) out += chars[this.int(0, 15)]; return out; }
+    base36(length) { const chars = 'abcdefghijklmnopqrstuvwxyz0123456789'; let out = ''; for (let i = 0; i < length; i += 1) out += chars[this.int(0, chars.length - 1)]; return out; }
+    weighted(map) {
+      const keys = Object.keys(map).filter((k) => Number(map[k]) > 0);
+      if (!keys.length) return undefined;
+      const total = keys.reduce((sum, k) => sum + Number(map[k]), 0);
+      let ticket = this.next() * total;
+      for (let i = 0; i < keys.length; i += 1) {
+        ticket -= Number(map[keys[i]]);
+        if (ticket <= 0) return keys[i];
+      }
+      return keys[keys.length - 1];
+    }
+    // 截断正态（Box–Muller），用于身高等需要集中趋势的字段
+    normal(mean, sd, min, max) {
+      for (let i = 0; i < 16; i += 1) {
+        let u = this.next(); const v = this.next();
+        if (u <= 0) u = 1e-9;
+        const x = mean + sd * Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+        if (x >= min && x <= max) return x;
+      }
+      return Math.min(max, Math.max(min, mean));
+    }
+    triangular(min, mode, max) {
+      const u = this.next();
+      const f = (mode - min) / (max - min);
+      return u < f
+        ? min + Math.sqrt(u * (max - min) * (mode - min))
+        : max - Math.sqrt((1 - u) * (max - min) * (max - mode));
+    }
   }
 
   // -----------------------------
   // State + storage
   // -----------------------------
   const state = {
-    country: 'JP', filter: { admin: null, city: null }, refresh: 0,
+    country: 'JP', filter: { admin: null, city: null }, refresh: 0, seed: '',
     identity: null, batch: [], batchCount: 10, batchSeed: '', batchCase: 'camel',
     saved: [], recent: [], recentCountries: []
   };
@@ -955,7 +1370,7 @@
   const safe = (v) => String(v ?? '').replace(/[&<>'"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
   const LS = {
     get(k, fallback) { try { return JSON.parse(localStorage.getItem(k)) ?? fallback; } catch { return fallback; } },
-    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* ignore */ } }
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch { return false; } }
   };
   function loadStore() {
     state.saved = LS.get('tlb-saved', []);
@@ -972,6 +1387,57 @@
   function fallbackCopy(text, done) {
     const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select();
     try { document.execCommand('copy'); done(); } catch { toast('Copy failed'); } finally { ta.remove(); }
+  }
+
+  // -----------------------------
+  // 人物规则：邮箱域名池、身高体重联动、个人主页
+  // -----------------------------
+  function asciiSlug(value) {
+    return String(value || '')
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '');
+  }
+  function emailLocalPart(rng, first, last, birthYear) {
+    const f = asciiSlug(first) || 'user';
+    const l = asciiSlug(last) || 'profile';
+    const base = rng.weighted({ dot: 4, joined: 3, initial: 2, reversed: 2, underscore: 1 });
+    let localPart;
+    if (base === 'dot') localPart = `${f}.${l}`;
+    else if (base === 'joined') localPart = `${f}${l}`;
+    else if (base === 'initial') localPart = `${f.charAt(0)}.${l}`;
+    else if (base === 'reversed') localPart = `${l}.${f}`;
+    else localPart = `${f}_${l}`;
+    const suffixStyle = rng.weighted({ digits: 5, year: 2, shortYear: 2 });
+    const suffix = suffixStyle === 'year' ? String(birthYear)
+      : suffixStyle === 'shortYear' ? String(birthYear).slice(2)
+        : rng.digits(rng.int(2, 6));
+    return `${localPart}${suffix}`.replace(/^[._]+/, '').slice(0, 40);
+  }
+  function buildEmail(rng, profile, first, last, birthYear) {
+    const domain = rng.weighted(profile.emailDomainWeights || EMAIL_WEIGHTS._default) || 'gmail.com';
+    return `${emailLocalPart(rng, first, last, birthYear)}@${domain}`;
+  }
+  // 个人主页固定落在本站 /u/ 展示路径，避免随机命中真实第三方个人网站。
+  function buildHomepage(rng, first, last) {
+    const slug = [asciiSlug(first), asciiSlug(last)].filter(Boolean).join('-') || 'profile';
+    return `${SITE.origin}/u/${slug}-${rng.base36(6)}`;
+  }
+
+  // 身高按性别使用截断正态；体重不独立随机，必须由身高 + BMI 计算得到。
+  const HEIGHT_RULES = {
+    male: { mean: 175, sd: 7, min: 158, max: 198 },
+    female: { mean: 162, sd: 6.2, min: 148, max: 179 },
+    x: { mean: 170, sd: 8, min: 150, max: 190 }
+  };
+  function bodyMetrics(rng, genderKey) {
+    const rule = HEIGHT_RULES[genderKey] || HEIGHT_RULES.x;
+    const heightCm = Math.round(rng.normal(rule.mean, rule.sd, rule.min, rule.max));
+    // 90% 样本落在 BMI 18.5–24.9，其余落在 17.5–27.0 的合理尾部，避免所有人物过度一致。
+    const bmi = rng.next() < 0.9 ? rng.triangular(18.5, 21.7, 24.9) : rng.triangular(17.5, 22.0, 27.0);
+    const metres = heightCm / 100;
+    return { heightCm, weightKg: Math.round(bmi * metres * metres), bmi: Math.round(bmi * 10) / 10 };
   }
 
   // -----------------------------
@@ -994,114 +1460,175 @@
     if (f.city && admin.cities.includes(f.city)) cityPool = [f.city];
     else if (f.admin) cityPool = admin.cities;
     const city = rng.pick(cityPool);
-    const districts = (admin.districts && admin.districts.length) ? admin.districts : null;
-    return { admin, city, district: districts ? rng.pick(districts) : '' };
+    const cityInfo = (CITY_DATA[profile.code] || {})[city] || {};
+    const districts = (cityInfo.districts && cityInfo.districts.length) ? cityInfo.districts : null;
+    const streets = (cityInfo.streets && cityInfo.streets.length) ? cityInfo.streets : profile.streets;
+    return { admin, city, streets, district: districts ? rng.pick(districts) : '' };
   }
 
   function generateIdentity(seedKey) {
     const p = PROFILES[state.country];
     const rng = new SeededRandom(`${seedKey}|${state.country}|${state.filter.admin || ''}|${state.filter.city || ''}`);
     const place = pickPlace(p, rng);
-    const genderKey = rng.bool() ? 'male' : 'female';
+
+    // 性别与姓名池、称谓联动；Unspecified 从两个姓名池中随机取用。
+    const genderKey = rng.weighted({ male: 48, female: 48, x: 4 });
+    const namePoolKey = genderKey === 'x' ? (rng.bool() ? 'male' : 'female') : genderKey;
     const last = rng.pick(p.last);
-    const first = rng.pick(p[genderKey]);
+    const first = rng.pick(p[namePoolKey]);
     const rLast = romanOf(last, p.romanLast);
-    const rFirst = romanOf(first, genderKey === 'male' ? p.romanMale : p.romanFemale);
+    const rFirst = romanOf(first, namePoolKey === 'male' ? p.romanMale : p.romanFemale);
     const cjk = ['CN', 'JP', 'KR', 'TW', 'HK'].includes(p.code);
     const nameLocal = !cjk ? `${rFirst} ${rLast}`
       : (p.code === 'JP' || p.code === 'KR' ? `${localOf(last)} ${localOf(first)}` : `${localOf(last)}${localOf(first)}`);
     const nameRoman = `${rFirst} ${rLast}`;
 
-    const ageYears = rng.int(20, 55);
-    const year = 2026 - ageYears;
-    const month = rng.int(1, 12);
-    const day = rng.int(1, 28);
-    const dob = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    // 年龄 18~68，生日由年龄反推，保证两个字段始终一致。
+    const ageYears = rng.int(18, 68);
+    const today = new Date();
+    const birth = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    birth.setDate(birth.getDate() - rng.int(0, 364));
+    birth.setFullYear(birth.getFullYear() - ageYears);
+    const dob = `${birth.getFullYear()}-${String(birth.getMonth() + 1).padStart(2, '0')}-${String(birth.getDate()).padStart(2, '0')}`;
+    const body = bodyMetrics(rng, genderKey);
 
     const parts = {
-      house: p.house(rng), street: rng.pick(p.streets), district: place.district, city: place.city,
-      admin: place.admin.name, adminCode: place.admin.code || '', postal: p.postal(rng, place.admin)
+      house: p.house(rng), street: rng.pick(place.streets || p.streets), district: place.district, city: place.city,
+      admin: place.admin.name, adminCode: place.admin.code || '',
+      postal: p.postal(rng, place.admin, postalPrefix(p.code, place.city, place.admin.name))
     };
     const localLines = p.localFormat(parts);
     const intlLines = p.intlFormat(parts);
-    const emailLocal = `${rFirst}.${rLast}${rng.digits(2)}`.toLowerCase().replace(/[^a-z0-9.]/g, '') || 'test.user';
-    const email = `${emailLocal}@example.test`;
+    const email = buildEmail(rng, p, rFirst, rLast, birth.getFullYear());
     const phone = p.phone(rng);
-
-    const pay = pickSandboxCard(rng, p);
-    const payCard = pay.card;
-    const expiry = `${String(rng.int(1, 12)).padStart(2, '0')}/${rng.int(27, 34)}`;
-    const cvc = payCard.brand === 'Amex' ? rng.digits(4) : rng.digits(3);
+    const billing = intlLines.join(', ');
+    const card = generateCard(rng, p, nameRoman, billing);
     const salary = rng.int(p.salary[0], p.salary[1]);
-    const avs = rng.pick(lang === 'zh' ? ['Match（一致）', 'Partial（部分匹配）', 'Fail（不匹配）'] : ['Match', 'Partial', 'Fail']);
-    const secQuestions = lang === 'zh'
-      ? ['你第一只宠物的名字是什么？', '你小学老师的名字是什么？', '你第一次旅行去的城市？']
-      : ['What was your first pet\'s name?', 'What was your primary school teacher\'s name?', 'Which city did you first travel to?'];
-    const secAnswers = ['maple', 'quartz', 'harbor', 'cedar', 'lumen', 'aster'];
-    const interests = lang === 'zh'
-      ? ['摄影', '徒步', '阅读', '烹食', '羽毛球', '电子游戏']
-      : ['Photography', 'Hiking', 'Reading', 'Cooking', 'Badminton', 'Gaming'];
-    const bios = lang === 'zh'
-      ? ['喜欢安静的周末和一杯咖啡。', '周末喜欢去市集闲逛。', '正在学一门新语言。', '喜欢老电影和长散步。']
-      : ['Enjoys quiet weekends and a good coffee.', 'Browses local markets on weekends.', 'Learning a new language.', 'Loves old movies and long walks.'];
-    const hairColors = lang === 'zh' ? ['黑色', '深棕色', '棕色', '金色', '栗色'] : ['Black', 'Dark Brown', 'Brown', 'Blond', 'Chestnut'];
 
-    const uuidHex = () => rng.digits(8) + '-' + rng.digits(4) + '-4' + rng.digits(3) + '-' + rng.pick(['8', '9', 'a', 'b']) + rng.digits(3) + '-' + rng.digits(12);
-    const uuid = uuidHex();
-    const username = `${rFirst.toLowerCase().replace(/[^a-z0-9]/g, '')}_${rng.digits(4)}`;
+    const username = `${asciiSlug(rFirst) || 'user'}_${rng.digits(4)}`;
     const pwChars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%&*';
     const password = Array.from({ length: 16 }, () => pwChars[rng.int(0, pwChars.length - 1)]).join('');
-    const os = rng.pick(['macOS 15 · Safari 18', 'Windows 11 · Chrome 128', 'macOS 14 · Chrome 127', 'iOS 17 · Safari', 'Android 15 · Chrome', 'Ubuntu 24.04 · Firefox 127']);
-    const ua = rng.pick([
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Safari/605.1.15',
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-      'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0',
-      'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1'
+    const uuid = `${rng.hex(8)}-${rng.hex(4)}-4${rng.hex(3)}-${rng.pick(['8', '9', 'a', 'b'])}${rng.hex(3)}-${rng.hex(12)}`;
+    const platform = rng.pick([
+      {
+        os: 'macOS 15 · Safari 18',
+        ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15'
+      },
+      {
+        os: 'macOS 14 · Chrome 128',
+        ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+      },
+      {
+        os: 'Windows 11 · Chrome 128',
+        ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
+      },
+      {
+        os: 'Windows 11 · Edge 128',
+        ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0'
+      },
+      {
+        os: 'Ubuntu 24.04 · Firefox 128',
+        ua: 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0'
+      },
+      {
+        os: 'iOS 17 · Safari',
+        ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Mobile/15E148 Safari/604.1',
+        mobile: true
+      },
+      {
+        os: 'Android 15 · Chrome',
+        ua: 'Mozilla/5.0 (Linux; Android 15; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Mobile Safari/537.36',
+        mobile: true
+      }
     ]);
+    const os = platform.os;
+    const ua = platform.ua;
+    // 屏幕与设备类别跟随平台，移动端不会报 2560×1440
+    const screen = platform.mobile
+      ? rng.pick(['390×844', '414×896', '360×800'])
+      : rng.pick(['1920×1080', '2560×1440', '1440×900', '1366×768']);
+    const deviceKey = platform.mobile ? rng.pick(['dev3', 'dev4']) : rng.pick(['dev1', 'dev2']);
+    const interestKeys = [];
+    while (interestKeys.length < 3) {
+      const key = `int${rng.int(1, 6)}`;
+      if (!interestKeys.includes(key)) interestKeys.push(key);
+    }
 
     return {
-      seedKey, gender: genderKey === 'male' ? t('genderM') : t('genderF'),
+      seedKey,
+      genderKey, titleKey: genderKey === 'male' ? 'tMr' : genderKey === 'female' ? 'tMs' : 'tMx',
       nameLocal, nameRoman, dob, age: ageYears,
-      title: genderKey === 'male' ? t('titleM') : t('titleF'),
       address: {
         local: localLines.join('\n'), international: intlLines.join(' '),
         street: parts.street, house: parts.house, district: parts.district, city: parts.city,
         region: parts.admin, regionCode: parts.adminCode, postal: parts.postal,
-        country: `${p.nameZh} / ${p.nativeName} (${p.code})`
+        countryCode: p.code, countryNative: p.nativeName
       },
       phone, email,
-      payment: {
-        provider: pay.provider.name, catalog: pay.provider.catalog, catalogUrl: pay.provider.url,
-        brand: payCard.brand, number: groupCardNumber(payCard.number, payCard.brand),
-        issuingCountry: payCard.country ? (PROFILES[payCard.country] ? PROFILES[payCard.country].nameZh : payCard.country)
-          : (lang === 'zh' ? 'Generic Sandbox（官方通用测试卡）' : 'Generic Sandbox (official generic test card)'),
-        currency: p.currency, expiry, cvc, holder: nameRoman, billing: intlLines.join(', '),
-        scenario: payCard.scenario, avs
-      },
+      card,
       work: {
         job: rng.pick(p.jobs), company: rng.pick(p.companies),
-        industry: t('tagSynthetic') === '合成测试' ? rng.pick(['互联网 / IT', '金融', '教育', '制造业', '零售']) : rng.pick(['Internet / IT', 'Finance', 'Education', 'Manufacturing', 'Retail']),
-        companySize: rng.pick(lang === 'zh' ? ['1-10 人', '11-50 人', '51-200 人', '201-500 人', '500 人以上'] : ['1-10', '11-50', '51-200', '201-500', '500+']),
-        employment: rng.pick([t('emp1'), t('emp2'), t('emp3')]),
+        industryKey: `ind${rng.int(1, 6)}`,
+        companySize: rng.pick(['1-10', '11-50', '51-200', '201-500', '500+']),
+        employmentKey: rng.weighted({ emp1: 6, emp2: 2, emp3: 2, emp4: 2 }),
         salary: salary.toLocaleString('en-US'), currency: p.currency,
-        education: lang === 'zh' ? rng.pick(['学士', '硕士', '博士', '专科']) : rng.pick(['Bachelor', 'Master', 'PhD', 'Associate'])
+        educationKey: rng.weighted({ edu1: 2, edu2: 2, edu3: 4, edu4: 2 })
       },
       account: {
         username, password, uuid,
-        website: `https://${username}.example.test`, os, ua,
+        website: buildHomepage(rng, rFirst, rLast), os, ua,
         locale: p.locale, timezone: p.tz, language: p.langCode,
-        screen: rng.pick(['1920×1080', '2560×1440', '1440×900', '1366×768', '390×844']),
-        device: rng.pick(lang === 'zh' ? ['桌面端', '笔记本', '手机', '平板'] : ['Desktop', 'Laptop', 'Mobile', 'Tablet'])
+        screen, deviceKey
       },
       extra: {
-        height: `${rng.int(150, 195)} cm`, weight: `${rng.int(45, 95)} kg`,
-        blood: rng.pick(['A', 'B', 'AB', 'O']), hair: rng.pick(hairColors),
-        secQ: rng.pick(secQuestions), secA: rng.pick(secAnswers),
-        interests: [rng.pick(interests), rng.pick(interests), rng.pick(interests)].filter((v, i, a) => a.indexOf(v) === i).join(' / '),
-        bio: rng.pick(bios),
+        heightCm: body.heightCm, weightKg: body.weightKg, bmi: body.bmi,
+        blood: rng.pick(['A', 'B', 'AB', 'O']),
+        hairKey: `hair${rng.int(1, 5)}`,
+        secQKey: `secQ${rng.int(1, 3)}`,
+        secA: rng.pick(['maple', 'quartz', 'harbor', 'cedar', 'lumen', 'aster', 'willow', 'onyx']),
+        interestKeys,
+        bioKey: `bio${rng.int(1, 3)}`,
         avatar: nameRoman.charAt(0).toUpperCase()
       }
     };
+  }
+
+  // 把生成结果里的枚举 key 转成当前界面语言的展示文案
+  function view(id) {
+    const p = PROFILES[state.country];
+    return {
+      gender: t(id.genderKey === 'male' ? 'gMale' : id.genderKey === 'female' ? 'gFemale' : 'gX'),
+      title: t(id.titleKey),
+      height: `${id.extra.heightCm} cm`,
+      weight: `${id.extra.weightKg} kg`,
+      hair: t(id.extra.hairKey),
+      secQ: t(id.extra.secQKey),
+      bio: t(id.extra.bioKey),
+      interests: id.extra.interestKeys.map((k) => t(k)).join(' / '),
+      industry: t(id.work.industryKey),
+      employment: t(id.work.employmentKey),
+      education: t(id.work.educationKey),
+      device: t(id.account.deviceKey),
+      cardProduct: t(id.card.productKey),
+      country: `${countryName(p)} / ${id.address.countryNative} (${id.address.countryCode})`
+    };
+  }
+
+  // -----------------------------
+  // Seed / URL（同一 Seed + 同一筛选条件 → 同一结果，便于 QA 复现）
+  // -----------------------------
+  function identitySeed() {
+    return state.seed ? `seed:${state.seed}#${state.refresh}` : `v9-${state.refresh}`;
+  }
+  function syncUrl() {
+    const p = PROFILES[state.country];
+    const qs = new URLSearchParams();
+    qs.set('country', p.pageSlug);
+    if (lang !== DEFAULT_LOCALE) qs.set('lang', lang);
+    if (state.seed) qs.set('seed', state.seed);
+    if (state.filter.city) qs.set('city', state.filter.city);
+    else if (state.filter.admin) qs.set('region', state.filter.admin);
+    try { history.replaceState(null, '', `${location.pathname}?${qs.toString()}`); } catch { /* ignore */ }
   }
 
   // -----------------------------
@@ -1110,33 +1637,35 @@
   function row(label, value, opts = {}) {
     const v = Array.isArray(value) ? value.join('\n') : String(value);
     const cls = opts.big ? ' big' : '';
-    return `<div class="row"><div class="k">${safe(label)}</div><div class="v${cls}">${safe(v)}</div><button type="button" class="copy" data-copy="${safe(v)}" aria-label="${safe(label)} copy">${lang === 'zh' ? '复制' : 'Copy'}</button></div>`;
+    return `<div class="row"><div class="k">${safe(label)}</div><div class="v${cls}">${safe(v)}</div><button type="button" class="copy" data-copy="${safe(v)}" aria-label="${safe(label)} ${safe(t('copy'))}">${safe(t('copy'))}</button></div>`;
   }
   function cardRows(id, rowsHtml) { $(id).innerHTML = rowsHtml; }
 
   function renderIdentity() {
-    state.identity = generateIdentity(`v6-${state.refresh}`);
+    state.identity = generateIdentity(identitySeed());
     const id = state.identity;
+    const v = view(id);
     const p = PROFILES[state.country];
+    const cn = countryName(p);
 
-    const titleText = lang === 'en' ? `${p.nameEn} Address / Test Identity Generator` : `${p.nameZh}地址 / 测试身份生成器`;
+    const titleText = tpl('pageTitleTpl', { c: cn });
     $('pageTitle').textContent = titleText;
-    document.title = lang === 'en' ? `${titleText} - TinyProductLab` : `${titleText} - 小产品实验室`;
-    const desc = `${p.nameZh}测试身份与地址生成器：真实${p.nameZh}地名格式 + 合成测试人物、联系方式与 Sandbox 支付测试资料，浏览器本地生成。`;
+    document.title = `${titleText} - ${t('siteName')}`;
     const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', desc);
+    if (meta) meta.setAttribute('content', tpl('descTpl', { c: cn }));
 
     cardRows('basic', [
       row(t('fNameLocal'), id.nameLocal),
       row(t('fNameRoman'), id.nameRoman),
-      row(t('fGender'), id.gender),
+      row(t('fGender'), v.gender),
+      row(t('fTitle'), v.title),
       row(t('fDob'), id.dob),
       row(t('fAge'), id.age),
-      row(t('fTitle'), id.title),
-      row(t('fHeight'), id.extra.height),
-      row(t('fWeight'), id.extra.weight),
+      row(t('fHeight'), v.height),
+      row(t('fWeight'), v.weight),
       row(t('fBlood'), id.extra.blood),
-      row(t('fHair'), id.extra.hair)
+      row(t('fHair'), v.hair),
+      row(t('fEducation'), v.education)
     ].join(''));
     cardRows('address', [
       row(t('fAddrLocal'), id.address.local, { big: true }),
@@ -1147,32 +1676,28 @@
       row(t('fCity'), id.address.city),
       id.address.region ? row(t('fRegion'), id.address.region + (id.address.regionCode ? ` (${id.address.regionCode})` : '')) : '',
       id.address.postal ? row(t('fPostal'), id.address.postal) : '',
-      row(t('fCountry'), id.address.country),
+      row(t('fCountry'), v.country),
       row(t('fTimezone'), id.account.timezone),
       row(t('fPhone'), id.phone),
       row(t('fEmail'), id.email)
     ].join(''));
-    cardRows('payment', [
-      row(t('fProvider'), id.payment.provider),
-      row(t('fBrand'), id.payment.brand),
-      row(t('fCardNumber'), id.payment.number),
-      row(t('fIssuingCountry'), id.payment.issuingCountry),
-      row(t('fCurrency'), id.payment.currency),
-      row(t('fExpiry'), id.payment.expiry),
-      row(t('fCvc'), `${id.payment.cvc}（${t('cvcNote')}）`),
-      row(t('fHolder'), id.payment.holder),
-      row(t('fBilling'), id.payment.billing),
-      row(t('fAvs'), id.payment.avs),
-      row(t('fScenario'), id.payment.scenario)
-    ].join('') + `<div class="card-source">${lang === 'zh' ? '来源' : 'Source'}: <a href="${id.payment.catalogUrl}" target="_blank" rel="noopener">${safe(id.payment.provider)} · ${safe(id.payment.catalog)}</a> · Sandbox / Test Only</div>`);
+    cardRows('cardData', [
+      row(t('fBrand'), id.card.brand),
+      row(t('fCardProduct'), v.cardProduct),
+      row(t('fCardNumber'), id.card.number),
+      row(t('fExpiry'), id.card.expiry),
+      row(t('fCvv'), id.card.cvv),
+      row(t('fHolder'), id.card.holder),
+      row(t('fCurrency'), id.card.currency),
+      row(t('fBilling'), id.card.billing)
+    ].join(''));
     cardRows('work', [
       row(t('fJob'), id.work.job),
       row(t('fCompany'), id.work.company),
-      row(t('fIndustry'), id.work.industry),
+      row(t('fIndustry'), v.industry),
       row(t('fCompanySize'), id.work.companySize),
-      row(t('fEmployment'), id.work.employment),
-      row(t('fSalary'), `${id.work.salary} ${id.work.currency}`),
-      row(t('fEducation'), id.work.education)
+      row(t('fEmployment'), v.employment),
+      row(t('fSalary'), `${id.work.salary} ${id.work.currency}`)
     ].join(''));
     cardRows('account', [
       row(t('fUsername'), id.account.username),
@@ -1185,14 +1710,14 @@
       row(t('fTimezone'), id.account.timezone),
       row(t('fLanguage'), id.account.language),
       row(t('fScreen'), id.account.screen),
-      row(t('fDevice'), id.account.device)
+      row(t('fDevice'), v.device)
     ].join(''));
     cardRows('extraProfile', [
-      `<div class="row"><div class="k">${safe(t('fAvatar'))}</div><div class="v"><span class="avatar-chip">${safe(id.extra.avatar)}</span></div><button type="button" class="copy" data-copy="${safe(id.extra.avatar)}" aria-label="copy avatar">${lang === 'zh' ? '复制' : 'Copy'}</button></div>`,
-      row(t('fSecQ'), id.extra.secQ),
+      `<div class="row"><div class="k">${safe(t('fAvatar'))}</div><div class="v"><span class="avatar-chip">${safe(id.extra.avatar)}</span></div><button type="button" class="copy" data-copy="${safe(id.extra.avatar)}" aria-label="${safe(t('fAvatar'))} ${safe(t('copy'))}">${safe(t('copy'))}</button></div>`,
+      row(t('fSecQ'), v.secQ),
       row(t('fSecA'), id.extra.secA),
-      row(t('fInterests'), id.extra.interests),
-      row(t('fBio'), id.extra.bio)
+      row(t('fInterests'), v.interests),
+      row(t('fBio'), v.bio)
     ].join(''));
 
     renderCitySidebar();
@@ -1211,13 +1736,28 @@
   // -----------------------------
   // Quick nav + mega dropdown
   // -----------------------------
+  const CONTINENT_LABELS = {
+    '亚洲': { 'zh-TW': '亞洲', en: 'Asia', ja: 'アジア', ko: '아시아', de: 'Asien', fr: 'Asie', es: 'Asia', pt: 'Ásia', it: 'Asia', ru: 'Азия', ar: 'آسيا', hi: 'एशिया', id: 'Asia', th: 'เอเชีย', vi: 'Châu Á' },
+    '欧洲': { 'zh-TW': '歐洲', en: 'Europe', ja: 'ヨーロッパ', ko: '유럽', de: 'Europa', fr: 'Europe', es: 'Europa', pt: 'Europa', it: 'Europa', ru: 'Европа', ar: 'أوروبا', hi: 'यूरोप', id: 'Eropa', th: 'ยุโรป', vi: 'Châu Âu' },
+    '北美洲': { 'zh-TW': '北美洲', en: 'North America', ja: '北アメリカ', ko: '북아메리카', de: 'Nordamerika', fr: 'Amérique du Nord', es: 'América del Norte', pt: 'América do Norte', it: 'America del Nord', ru: 'Северная Америка', ar: 'أمريكا الشمالية', hi: 'उत्तर अमेरिका', id: 'Amerika Utara', th: 'อเมริกาเหนือ', vi: 'Bắc Mỹ' },
+    '南美洲': { 'zh-TW': '南美洲', en: 'South America', ja: '南アメリカ', ko: '남아메리카', de: 'Südamerika', fr: 'Amérique du Sud', es: 'América del Sur', pt: 'América do Sul', it: 'America del Sud', ru: 'Южная Америка', ar: 'أمريكا الجنوبية', hi: 'दक्षिण अमेरिका', id: 'Amerika Selatan', th: 'อเมริกาใต้', vi: 'Nam Mỹ' },
+    '大洋洲': { 'zh-TW': '大洋洲', en: 'Oceania', ja: 'オセアニア', ko: '오세아니아', de: 'Ozeanien', fr: 'Océanie', es: 'Oceanía', pt: 'Oceania', it: 'Oceania', ru: 'Океания', ar: 'أوقيانوسيا', hi: 'ओशिनिया', id: 'Oseania', th: 'โอเชียเนีย', vi: 'Châu Đại Dương' },
+    '非洲': { 'zh-TW': '非洲', en: 'Africa', ja: 'アフリカ', ko: '아프리카', de: 'Afrika', fr: 'Afrique', es: 'África', pt: 'África', it: 'Africa', ru: 'Африка', ar: 'أفريقيا', hi: 'अफ़्रीका', id: 'Afrika', th: 'แอฟริกา', vi: 'Châu Phi' },
+    '其他地区': { 'zh-TW': '其他地區', en: 'Other regions', ja: 'その他の地域', ko: '기타 지역', de: 'Andere Regionen', fr: 'Autres régions', es: 'Otras regiones', pt: 'Outras regiões', it: 'Altre regioni', ru: 'Другие регионы', ar: 'مناطق أخرى', hi: 'अन्य क्षेत्र', id: 'Wilayah lain', th: 'ภูมิภาคอื่น', vi: 'Khu vực khác' }
+  };
+  function continentLabel(cont) {
+    if (lang === 'zh-CN') return cont;
+    const row = CONTINENT_LABELS[cont];
+    return (row && row[lang]) || cont;
+  }
   function renderQuickNav() {
     $('quickNav').innerHTML = QUICK.map((c) => {
       const p = PROFILES[c];
       const current = c === state.country;
-      return `<button type="button" class="country${current ? ' active' : ''}" data-country-btn="${c}" ${current ? 'aria-current="true"' : ''}>${p.flag} ${p.nameZh}</button>`;
+      return `<button type="button" class="country${current ? ' active' : ''}" data-country-btn="${c}" ${current ? 'aria-current="true"' : ''}>${p.flag} ${safe(countryName(p))}</button>`;
     }).join('');
     $('megaBtn').textContent = `${t('allCountries')} · ${Object.keys(PROFILES).length} ⌄`;
+    $('megaBtn').setAttribute('title', `${Object.keys(PROFILES).length} ${t('countryCount')}`);
   }
   function renderMega() {
     const q = ($('megaSearch').value || '').trim().toLowerCase();
@@ -1226,14 +1766,16 @@
     const groups = CONTINENTS.map((cont) => {
       const items = Object.values(PROFILES)
         .filter((p) => p.continent === cont)
-        .filter((p) => !q || `${p.nameZh} ${p.nameEn} ${p.nativeName} ${p.code} ${p.alpha3} ${p.slug}`.toLowerCase().includes(q));
+        .filter((p) => !q || `${p.nameZh} ${p.nameEn} ${p.nativeName} ${countryName(p)} ${p.code} ${p.alpha3} ${p.slug}`.toLowerCase().includes(q));
       if (!items.length) return '';
-      return `<div class="mega-group-title">${cont}</div><div class="mega-grid">${items.map((p) => megaItem(p)).join('')}</div>`;
+      return `<div class="mega-group-title">${safe(continentLabel(cont))}</div><div class="mega-grid">${items.map((p) => megaItem(p)).join('')}</div>`;
     }).join('');
-    $('megaGroups').innerHTML = recentHtml + (groups || `<div class="mega-empty">${lang === 'zh' ? '没有匹配的国家' : 'No matching country'}</div>`);
+    $('megaGroups').innerHTML = recentHtml + (groups || `<div class="mega-empty">${safe(t('noMatch'))}</div>`);
     function megaItem(p) {
       const active = p.code === state.country;
-      return `<button type="button" class="copt${active ? ' active' : ''}" data-country-btn="${p.code}" ${active ? 'aria-selected="true"' : ''}><span>${p.flag}</span><span class="cname">${p.nameZh}<span class="cmeta">${p.nameEn} · ${p.code}</span></span></button>`;
+      const primary = countryName(p);
+      const secondary = primary === p.nameEn ? p.code : `${p.nameEn} · ${p.code}`;
+      return `<button type="button" class="copt${active ? ' active' : ''}" data-country-btn="${p.code}" ${active ? 'aria-selected="true"' : ''}><span>${p.flag}</span><span class="cname">${safe(primary)}<span class="cmeta">${safe(secondary)}</span></span></button>`;
     }
   }
   function openMega() { $('megaPanel').classList.add('open'); $('megaBtn').setAttribute('aria-expanded', 'true'); $('megaSearch').value = ''; renderMega(); setTimeout(() => $('megaSearch').focus(), 30); }
@@ -1247,32 +1789,54 @@
     closeMega();
     state.recentCountries = [code, ...state.recentCountries.filter((c) => c !== code)].slice(0, 8);
     LS.set('tlb-recent-countries', state.recentCountries);
-    const url = `${location.pathname}?country=${PROFILES[code].slug}#${PROFILES[code].slug}`;
-    history.replaceState(null, '', url);
+    syncUrl();
     renderIdentity();
   }
 
   // -----------------------------
   // City sidebar
   // -----------------------------
+  // 城市是当前国家的唯一入口：可搜索、按一级行政区分组、完整可访问。
+  // 列表很大时按块追加渲染（滚动到底自动接着渲染），不使用“查看更多”隐藏数据。
+  const CITY_CHUNK = 300;
+  const cityView = { entries: [], rendered: 0 };
+
+  function cityEntries(profile, q) {
+    const entries = [];
+    profile.admins.forEach((a) => {
+      const adminHit = a.name.toLowerCase().includes(q);
+      const cities = a.cities.filter((c) => !q || adminHit || `${a.name} ${c}`.toLowerCase().includes(q));
+      if (!cities.length && !adminHit) return;
+      entries.push({ type: 'group', admin: a.name });
+      (cities.length ? cities : a.cities).forEach((c) => entries.push({ type: 'city', admin: a.name, city: c }));
+    });
+    return entries;
+  }
+  function cityEntryHtml(entry) {
+    if (entry.type === 'group') {
+      const active = state.filter.admin === entry.admin && !state.filter.city;
+      return `<button type="button" class="citygroup${active ? ' active' : ''}" data-city-btn="${safe(entry.admin)}|" ${active ? 'aria-selected="true"' : ''}>${safe(entry.admin)}</button>`;
+    }
+    const active = state.filter.city === entry.city;
+    return `<button type="button" class="city${active ? ' active' : ''}" data-city-btn="${safe(entry.admin)}|${safe(entry.city)}" ${active ? 'aria-selected="true"' : ''}>${safe(entry.city)}</button>`;
+  }
+  function appendCityChunk() {
+    if (cityView.rendered >= cityView.entries.length) return;
+    const slice = cityView.entries.slice(cityView.rendered, cityView.rendered + CITY_CHUNK);
+    $('cityList').insertAdjacentHTML('beforeend', slice.map(cityEntryHtml).join(''));
+    cityView.rendered += slice.length;
+  }
   function renderCitySidebar() {
     const p = PROFILES[state.country];
     const q = ($('citySearch').value || '').trim().toLowerCase();
     const list = $('cityList');
-    let html = `<button type="button" class="city${!state.filter.admin && !state.filter.city ? ' active' : ''}" data-city-btn="|">${t('randomAll')}</button>`;
-    let count = 1;
-    p.admins.forEach((a) => {
-      const cities = a.cities.filter((c) => !q || `${a.name} ${c}`.toLowerCase().includes(q));
-      if (q && !cities.length && !a.name.toLowerCase().includes(q)) return;
-      html += `<div class="citygroup">${safe(a.name)}</div>`;
-      cities.forEach((c) => {
-        const active = state.filter.city === c;
-        html += `<button type="button" class="city${active ? ' active' : ''}" data-city-btn="${safe(a.name)}|${safe(c)}">${safe(c)}</button>`;
-        count += 1;
-      });
-    });
-    list.innerHTML = html;
-    $('cityCount').textContent = `${count} ${t('cityUnit')}`;
+    const anyFilter = !state.filter.admin && !state.filter.city;
+    cityView.entries = cityEntries(p, q);
+    cityView.rendered = 0;
+    list.innerHTML = `<button type="button" class="city all${anyFilter ? ' active' : ''}" data-city-btn="|" ${anyFilter ? 'aria-selected="true"' : ''}>${safe(t('randomAll'))}</button>`;
+    appendCityChunk();
+    const cityCount = cityView.entries.filter((e) => e.type === 'city').length + 1;
+    $('cityCount').textContent = `${cityCount} ${t('cityUnit')}`;
   }
 
   // -----------------------------
@@ -1282,25 +1846,34 @@
     return Array.from(document.querySelectorAll('.batch-field:checked')).map((el) => el.value);
   }
   function flatten(id, fields) {
+    const v = view(id);
     const out = {};
     if (fields.includes('name')) { out.name = id.nameLocal; out.nameRoman = id.nameRoman; }
-    if (fields.includes('gender')) out.gender = id.gender;
+    if (fields.includes('gender')) out.gender = v.gender;
     if (fields.includes('dob')) out.dob = id.dob;
     if (fields.includes('address')) out.address = id.address.international;
+    if (fields.includes('city')) out.city = id.address.city;
+    if (fields.includes('postal')) out.postalCode = id.address.postal;
     if (fields.includes('phone')) out.phone = id.phone;
     if (fields.includes('email')) out.email = id.email;
     if (fields.includes('company')) out.company = id.work.company;
     if (fields.includes('job')) out.job = id.work.job;
-    if (fields.includes('card')) out.testCard = id.payment.number;
+    if (fields.includes('card')) {
+      out.cardBrand = id.card.brand;
+      out.cardNumber = id.card.number;
+      out.cardExpiry = id.card.expiry;
+      out.cardCvv = id.card.cvv;
+    }
     if (fields.includes('username')) out.username = id.account.username;
     if (fields.includes('uuid')) out.uuid = id.account.uuid;
     if (state.batchCase === 'snake') {
       const snaked = {};
-      Object.entries(out).forEach(([k, v]) => { snaked[k.replace(/[A-Z]/g, (m) => '_' + m.toLowerCase())] = v; });
+      Object.entries(out).forEach(([k, val]) => { snaked[k.replace(/[A-Z]/g, (m) => '_' + m.toLowerCase())] = val; });
       return snaked;
     }
     return out;
   }
+
   function runBatch() {
     const count = Math.min(500, Math.max(1, state.batchCount));
     const seed = ($('batchSeed').value || '').trim() || `batch-${Date.now()}`;
@@ -1355,7 +1928,7 @@
       ? saved.map((it, i) => `<div class="data-item"><div class="data-main"><b>${safe(it.name)}</b><span>${safe(it.address)}</span></div><button type="button" class="mini" data-del-saved="${i}">${t('del')}</button></div>`).join('')
       : `<div class="data-empty">${t('emptySaved')}</div>`;
     $('recentList').innerHTML = state.recent.length
-      ? state.recent.map((it, i) => `<div class="data-item"><div class="data-main"><b>${safe(it.name)}</b><span>${safe(it.address)}</span><span class="data-meta">${PROFILES[it.country] ? PROFILES[it.country].flag : ''} ${new Date(it.ts).toLocaleString()}</span></div><button type="button" class="mini" data-del-recent="${i}">${t('del')}</button></div>`).join('')
+      ? state.recent.map((it, i) => `<div class="data-item"><div class="data-main"><b>${safe(it.name)}</b><span>${safe(it.address)}</span><span class="data-meta">${PROFILES[it.country] ? PROFILES[it.country].flag : ''} ${new Date(it.ts).toLocaleString(lang)}</span></div><button type="button" class="mini" data-del-recent="${i}">${t('del')}</button></div>`).join('')
       : `<div class="data-empty">${t('emptyRecent')}</div>`;
     updateDataToggles();
   }
@@ -1371,16 +1944,35 @@
 
   function copyAllIdentity() {
     const id = state.identity;
+    const v = view(id);
     const lines = [
-      `${t('fNameLocal')}: ${id.nameLocal}`, `${t('fNameRoman')}: ${id.nameRoman}`, `${t('fGender')}: ${id.gender}`,
-      `${t('fDob')}: ${id.dob} (${t('fAge')}: ${id.age})`, `${t('fTitle')}: ${id.title}`,
-      `${t('fAddrLocal')}: ${id.address.local}`, `${t('fAddrIntl')}: ${id.address.international}`,
-      `${t('fCity')}: ${id.address.city}`, `${t('fRegion')}: ${id.address.region}`, `${t('fPostal')}: ${id.address.postal}`,
-      `${t('fPhone')}: ${id.phone}`, `${t('fEmail')}: ${id.email}`,
-      `${t('fProvider')}: ${id.payment.provider} (${t('tagTestOnly')})`, `${t('fCardNumber')}: ${id.payment.number}`,
-      `${t('fScenario')}: ${id.payment.scenario}`,
-      `${t('fJob')}: ${id.work.job}`, `${t('fCompany')}: ${id.work.company}`,
-      `${t('fUsername')}: ${id.account.username}`, `${t('fUuid')}: ${id.account.uuid}`
+      `${t('fNameLocal')}: ${id.nameLocal}`,
+      `${t('fNameRoman')}: ${id.nameRoman}`,
+      `${t('fGender')}: ${v.gender}`,
+      `${t('fDob')}: ${id.dob} (${t('fAge')}: ${id.age})`,
+      `${t('fTitle')}: ${v.title}`,
+      `${t('fHeight')}: ${v.height}`,
+      `${t('fWeight')}: ${v.weight}`,
+      `${t('fAddrLocal')}: ${id.address.local.replace(/\n/g, ' / ')}`,
+      `${t('fAddrIntl')}: ${id.address.international}`,
+      `${t('fCity')}: ${id.address.city}`,
+      `${t('fRegion')}: ${id.address.region}`,
+      `${t('fPostal')}: ${id.address.postal}`,
+      `${t('fCountry')}: ${v.country}`,
+      `${t('fPhone')}: ${id.phone}`,
+      `${t('fEmail')}: ${id.email}`,
+      `${t('fBrand')}: ${id.card.brand} (${v.cardProduct})`,
+      `${t('fCardNumber')}: ${id.card.number}`,
+      `${t('fExpiry')}: ${id.card.expiry}`,
+      `${t('fCvv')}: ${id.card.cvv}`,
+      `${t('fHolder')}: ${id.card.holder}`,
+      `${t('fJob')}: ${id.work.job}`,
+      `${t('fCompany')}: ${id.work.company}`,
+      `${t('fSalary')}: ${id.work.salary} ${id.work.currency}`,
+      `${t('fUsername')}: ${id.account.username}`,
+      `${t('fPassword')}: ${id.account.password}`,
+      `${t('fUuid')}: ${id.account.uuid}`,
+      `${t('fWebsite')}: ${id.account.website}`
     ];
     copyText(lines.join('\n'), t('copiedAll'));
   }
@@ -1408,26 +2000,25 @@
     const id = state.identity;
     if (f.city && cities[f.city]) return { latlng: cities[f.city], precision: 'city-center', label: f.city };
     if (id && cities[id.address.city]) return { latlng: cities[id.address.city], precision: 'city-center', label: id.address.city };
-    if (p.cc && p.cc[0] !== 0) return { latlng: p.cc, precision: 'country-center', label: p.nameZh };
+    if (p.cc && p.cc[0] !== 0) return { latlng: p.cc, precision: 'country-center', label: countryName(p) };
     return null;
   }
   function precisionLabel(precision) {
-    const zh = { 'city-center': '城市中心', 'region-center': '区域中心', 'country-center': '国家中心' };
-    const en = { 'city-center': 'city center', 'region-center': 'region center', 'country-center': 'country center' };
-    return (lang === 'zh' ? zh[precision] : en[precision]) || precision;
+    const keys = { 'city-center': 'precCity', 'region-center': 'precRegion', 'country-center': 'precCountry' };
+    return keys[precision] ? t(keys[precision]) : precision;
   }
   function updateMap() {
     const p = PROFILES[state.country];
     const center = mapCenterFor(p);
     const meta = $('mapMeta');
     if (!center) {
-      meta.innerHTML = safe(lang === 'zh' ? '该地区暂无可靠中心坐标，仅显示文字位置。' : 'No reliable center coordinate for this area; text location only.');
+      meta.innerHTML = safe(t('mapNoCoord'));
       $('mapBox').innerHTML = '';
       return;
     }
     const [lat, lng] = center.latlng;
-    const placeText = [p.nameZh, state.identity ? state.identity.address.city : '', center.label].filter((v, i, a) => v && a.indexOf(v) === i).join(' / ');
-    meta.innerHTML = `<b>${safe(placeText)}</b><br>${safe(t('fTimezone'))}: ${safe(p.tz)}<br>${lang === 'zh' ? '区域中心' : 'Center'}: ${lat.toFixed(2)}, ${lng.toFixed(2)} · ${safe(precisionLabel(center.precision))}`;
+    const placeText = [countryName(p), state.identity ? state.identity.address.city : '', center.label].filter((v, i, a) => v && a.indexOf(v) === i).join(' / ');
+    meta.innerHTML = `<b>${safe(placeText)}</b><br>${safe(t('mapTz'))}: ${safe(p.tz)}<br>${safe(t('mapCenter'))}: ${lat.toFixed(2)}, ${lng.toFixed(2)} · ${safe(precisionLabel(center.precision))}`;
     $('mapBox').setAttribute('aria-label', `${placeText} map`);
     if (mapState.map) {
       applyMap(lat, lng, p);
@@ -1468,12 +2059,12 @@
     mapState.map.setView([lat, lng], MAP_CONFIG.defaultZoom);
     if (mapState.marker) mapState.marker.remove();
     mapState.marker = L.circleMarker([lat, lng], { radius: 12, color: '#2563eb', fillOpacity: 0.25 }).addTo(mapState.map)
-      .bindTooltip(p.nameZh, { permanent: false });
+      .bindTooltip(countryName(p), { permanent: false });
   }
   function mapFailed() {
     if (mapState.map || mapState.failed) return;
     mapState.failed = true;
-    $('mapBox').innerHTML = `<div class="map-fallback">${safe(lang === 'zh' ? '地图暂时不可用，可使用上方文字位置与中心坐标。' : 'Map unavailable. Use the text location and center coordinates above.')}</div>`;
+    $('mapBox').innerHTML = `<div class="map-fallback">${safe(t('mapUnavailable'))}</div>`;
   }
 
   // -----------------------------
@@ -1482,28 +2073,66 @@
   function applyI18n() {
     document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
     document.querySelectorAll('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
-    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
-    $('langBtn').textContent = lang === 'zh' ? 'EN' : '中文';
+    document.querySelectorAll('[data-i18n-aria]').forEach((el) => { el.setAttribute('aria-label', t(el.dataset.i18nAria)); });
+    document.documentElement.lang = lang;
+    document.documentElement.dir = RTL_LOCALES.includes(lang) ? 'rtl' : 'ltr';
+    const picker = $('langSelect');
+    if (picker) {
+      if (!picker.options.length) {
+        picker.innerHTML = LOCALES.map((l) => `<option value="${l.code}">${safe(l.label)}</option>`).join('');
+      }
+      picker.value = lang;
+    }
+  }
+  function setLang(next) {
+    const code = normalizeLocale(next) || DEFAULT_LOCALE;
+    if (code === lang) return;
+    lang = code;
+    try { localStorage.setItem('tlb-lang', lang); } catch { /* ignore */ }
+    applyI18n();
+    syncUrl();
+    renderIdentity();
+    renderBatchTable();
+    renderDataSection();
   }
 
   // -----------------------------
   // Init + events
   // -----------------------------
-  function parseInitialCountry() {
-    const fromBody = document.body.dataset.country;
-    if (fromBody && PROFILES[fromBody]) return fromBody;
-    const hash = location.hash.replace('#', '');
-    if (profileBySlug[hash]) return profileBySlug[hash].code;
+  function parseInitialState() {
     const qs = new URLSearchParams(location.search);
+    const fromBody = document.body.dataset.country;
+    const hash = location.hash.replace('#', '');
     const slug = qs.get('country');
-    if (slug && profileBySlug[slug]) return profileBySlug[slug].code;
-    return 'JP';
+    let country = 'JP';
+    if (fromBody && PROFILES[fromBody]) country = fromBody;
+    else if (profileBySlug[hash]) country = profileBySlug[hash].code;
+    else if (slug && profileBySlug[slug]) country = profileBySlug[slug].code;
+
+    const seed = (qs.get('seed') || '').trim().slice(0, 64);
+    const p = PROFILES[country];
+    const city = qs.get('city') || '';
+    const region = qs.get('region') || '';
+    const filter = { admin: null, city: null };
+    if (city && p.admins.some((a) => a.cities.includes(city))) {
+      filter.city = city;
+      const owner = p.admins.find((a) => a.cities.includes(city));
+      filter.admin = owner ? owner.name : null;
+    } else if (region && p.admins.some((a) => a.name === region)) {
+      filter.admin = region;
+    }
+    return { country, seed, filter };
   }
 
   function init() {
     loadStore();
-    state.country = parseInitialCountry();
+    const initial = parseInitialState();
+    state.country = initial.country;
+    state.seed = initial.seed;
+    state.filter = initial.filter;
     applyI18n();
+    const seedInput = $('seedInput');
+    if (seedInput) seedInput.value = state.seed;
     renderIdentity();
     renderBatchTable();
     renderDataSection();
@@ -1516,6 +2145,7 @@
         const [admin, city] = cityBtn.dataset.cityBtn.split('|');
         state.filter = { admin: admin || null, city: city || null };
         state.refresh = 0;
+        syncUrl();
         renderIdentity();
         return;
       }
@@ -1533,6 +2163,10 @@
     $('megaSearch').addEventListener('input', renderMega);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMega(); });
     $('citySearch').addEventListener('input', () => renderCitySidebar());
+    $('cityList').addEventListener('scroll', (e) => {
+      const el = e.currentTarget;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120) appendCityChunk();
+    });
 
     $('regenBtn').addEventListener('click', () => { state.refresh += 1; renderIdentity(); });
     $('copyAllBtn').addEventListener('click', copyAllIdentity);
@@ -1540,9 +2174,9 @@
       const id = state.identity;
       state.saved.unshift({ ts: Date.now(), country: state.country, name: id.nameLocal, address: id.address.local });
       state.saved = state.saved.slice(0, 50);
-      LS.set('tlb-saved', state.saved);
+      const ok = LS.set('tlb-saved', state.saved);
       renderDataSection();
-      toast(t('savedOk'));
+      toast(ok ? t('savedOk') : t('saveFail'));
     });
     $('exportBtn').addEventListener('click', () => {
       const id = state.identity;
@@ -1589,17 +2223,39 @@
     $('exportJsonl').addEventListener('click', () => exportBatch('jsonl'));
     $('exportTxt').addEventListener('click', () => exportBatch('txt'));
 
-    $('langBtn').addEventListener('click', () => {
-      lang = lang === 'zh' ? 'en' : 'zh';
-      try { localStorage.setItem('tlb-lang', lang); } catch { /* ignore */ }
-      applyI18n();
-      renderIdentity();
-      renderBatchTable();
-    });
+    if ($('langSelect')) $('langSelect').addEventListener('change', (e) => setLang(e.target.value));
 
-    $('dataVersion').textContent = DATA_VERSION;
+    if ($('seedInput')) {
+      const applySeed = () => {
+        const next = ($('seedInput').value || '').trim().slice(0, 64);
+        if (next === state.seed) return;
+        state.seed = next;
+        state.refresh = 0;
+        syncUrl();
+        renderIdentity();
+      };
+      $('seedInput').addEventListener('change', applySeed);
+      $('seedInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') applySeed(); });
+    }
+
+    $('dataVersion').textContent = `v${DATA_VERSION}`;
     $('year').textContent = String(new Date().getFullYear());
+    const mail = $('feedbackMail');
+    if (mail) { mail.href = `mailto:${SITE.feedbackEmail}`; mail.textContent = SITE.feedbackEmail; }
+    syncUrl();
   }
 
-  document.addEventListener('DOMContentLoaded', init);
+  // 浏览器里启动 UI；在 Node 下（单元测试）只导出纯逻辑，不触碰 DOM。
+  if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('DOMContentLoaded', init);
+  }
+  if (typeof globalThis !== 'undefined') {
+    globalThis.ADDRGEN = {
+      DATA_VERSION, SITE, PROFILES, CARD_BRANDS, CARD_WEIGHTS, CARD_WEIGHTS_DEFAULT,
+      EMAIL_DOMAINS, EMAIL_WEIGHTS, HEIGHT_RULES, SeededRandom,
+      luhnCheckDigit, luhnValid, looksTemplated, groupPan, generatePan, generateCard,
+      bodyMetrics, buildEmail, buildHomepage, emailLocalPart, asciiSlug,
+      generateIdentity, flatten, state, setLocaleForTest(code) { lang = normalizeLocale(code) || DEFAULT_LOCALE; }
+    };
+  }
 })();

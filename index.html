@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>日本地址 / 测试身份生成器 - 小产品实验室</title>
-<meta name="description" content="全球地址 / 测试身份生成器：真实国家地名格式 + 合成测试人物、联系方式、Sandbox 支付测试资料与账号资料，浏览器本地生成，可批量导出 CSV/JSON/JSONL/TXT。">
-<meta name="keywords" content="日本地址生成器, 美国地址生成器, 测试数据生成器, 测试身份生成器, sandbox 测试卡, 随机地址生成, 测试数据, fake address generator">
+<title>全球地址与人物资料生成器 - 小产品实验室</title>
+<meta name="description" content="全球地址与人物资料生成器：249 个国家 / 地区的真实地名与地址格式 + 随机姓名、电话、邮箱、银行卡外观与账号资料，浏览器本地生成，可批量导出 CSV/JSON/JSONL/TXT。">
+<meta name="keywords" content="地址生成器, 全球地址生成器, 随机地址, 随机人物资料, 日本地址生成器, 美国地址生成器, 随机姓名电话邮箱, address generator, random address">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://addressgen.tinylabpro.com/">
-<meta property="og:title" content="全球地址 / 测试身份生成器 - 小产品实验室">
-<meta property="og:description" content="打开即生成：真实地名 + 合成测试身份、Sandbox 支付测试资料，全部字段直出。">
+<meta property="og:title" content="全球地址与人物资料生成器 - 小产品实验室">
+<meta property="og:description" content="打开即生成：真实地名与本地地址格式 + 随机人物、联系方式、银行卡与账号资料，全部字段直出。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://addressgen.tinylabpro.com/">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧪</text></svg>">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebApplication","name":"小产品实验室 · 全球地址生成器","alternateName":"Global Test Identity Generator","url":"https://addressgen.tinylabpro.com/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0"},"description":"生成符合各国格式习惯的合成测试地址与测试身份资料，用于开发、QA、表单验证与国际化测试。"}
+{"@context":"https://schema.org","@type":"WebApplication","name":"小产品实验室 · 全球地址生成器","alternateName":"Global Address & Profile Generator","url":"https://addressgen.tinylabpro.com/","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"},"description":"按 249 个国家 / 地区的地名与地址格式随机生成地址与人物资料，用于开发、QA、表单验证与国际化测试。","inLanguage":["zh-CN","zh-TW","en","ja","ko","de","fr","es","pt","it","ru","ar","hi","id","th","vi"]}
 </script>
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -22,18 +22,18 @@
 <div class="top">
   <div class="topin">
     <div class="brandrow">
-      <a class="brand" href="./"><img class="brand-img" src="assets/logo/address-generator-logo.png" alt="地址生成器 logo" width="26" height="26"><span>小产品实验室 · 全球地址生成器</span></a>
+      <a class="brand" href="./"><img class="brand-img" src="assets/logo/address-generator-logo.png" alt="地址生成器 logo" width="26" height="26"><span data-i18n="siteName">小产品实验室 · 全球地址生成器</span></a>
       <nav class="countries" id="quickNav" aria-label="常用国家"></nav>
       <div class="country-picker">
         <button type="button" class="allbtn" id="megaBtn" aria-expanded="false" aria-controls="megaPanel"></button>
-        <button type="button" class="allbtn lang" id="langBtn">EN</button>
+        <select class="allbtn lang" id="langSelect" aria-label="Language / 界面语言"></select>
       </div>
     </div>
   </div>
   <div class="mega-panel" id="megaPanel">
     <div class="panelin">
       <div class="paneltop">
-        <input id="megaSearch" class="country-search" data-i18n-ph="searchCountryPh" aria-label="搜索国家">
+        <input id="megaSearch" class="country-search" data-i18n-ph="searchCountryPh" data-i18n-aria="allCountries" aria-label="搜索国家">
         <button type="button" class="close" id="megaClose" data-i18n="close">关闭</button>
       </div>
       <div class="mega-scroll" id="megaGroups"></div>
@@ -44,35 +44,38 @@
 <main class="wrap">
   <section class="hero">
     <div>
-      <h1 id="pageTitle">日本地址 / 测试身份生成器</h1>
-      <p class="sub" data-i18n="pageSub">选择国家或城市后，人物、地址、联系方式、Sandbox 支付测试资料与账号资料同步生成。</p>
+      <h1 id="pageTitle">日本地址与人物资料生成器</h1>
+      <p class="sub" data-i18n="pageSub">选择国家或城市后，地址、人物、联系方式、银行卡与账号资料同步生成。</p>
     </div>
     <div class="actions">
-      <button type="button" class="btn primary" id="regenBtn" data-i18n="regenerate">↻ 重新生成全部</button>
-      <button type="button" class="btn" id="copyAllBtn" data-i18n="copyAll">复制全部</button>
-      <button type="button" class="btn" id="saveBtn" data-i18n="save">保存</button>
-      <button type="button" class="btn" id="exportBtn" data-i18n="exportJson">导出 JSON</button>
+      <div class="actions-btns">
+        <button type="button" class="btn primary" id="regenBtn" data-i18n="regenerate">↻ 重新生成全部</button>
+        <button type="button" class="btn" id="copyAllBtn" data-i18n="copyAll">复制全部</button>
+        <button type="button" class="btn" id="saveBtn" data-i18n="save">保存</button>
+        <button type="button" class="btn" id="exportBtn" data-i18n="exportJson">导出</button>
+      </div>
+      <label class="seedbox"><span data-i18n="seedLabel">Seed</span><input type="text" id="seedInput" data-i18n-ph="seedPh" data-i18n-aria="seedLabel" aria-label="Seed" maxlength="64"></label>
     </div>
   </section>
 
-  <div class="notice" data-i18n="notice">生成内容为合成测试数据。城市 / 行政区为公开地名；支付资料仅为 Sandbox / Test Only，不可用于真实交易。</div>
+  <div class="notice" data-i18n="notice">随机生成内容不代表真实个人、真实银行卡或可投递住宅地址。</div>
 
   <section class="layout">
     <aside class="side">
       <div class="sidehead">
         <div class="sideheadtop"><b data-i18n="cityTitle">城市 / 地区</b><span class="count" id="cityCount"></span></div>
-        <input class="search" id="citySearch" data-i18n-ph="searchCityPh" aria-label="搜索城市">
+        <input class="search" id="citySearch" data-i18n-ph="searchCityPh" data-i18n-aria="cityTitle" aria-label="搜索城市">
       </div>
-      <div class="citylist" id="cityList" role="listbox" aria-label="城市列表"></div>
+      <div class="citylist" id="cityList" role="listbox" data-i18n-aria="cityTitle" aria-label="城市列表"></div>
     </aside>
 
     <div class="grid">
-      <article class="card"><div class="cardhead"><span data-i18n="cardBasic">基本资料</span><span class="tag" data-i18n="tagSynthetic">合成测试</span></div><div class="rows" id="basic"></div></article>
-      <article class="card"><div class="cardhead"><span data-i18n="cardAddress">地址与联系方式</span><span class="tag" data-i18n="tagRealPlusSyn">真实地名 + 合成资料</span></div><div class="rows" id="address"></div></article>
-      <article class="card"><div class="cardhead"><span data-i18n="cardPayment">Sandbox 支付测试资料</span><span class="tag warn" data-i18n="tagTestOnly">Test Only</span></div><div class="rows" id="payment"></div></article>
-      <article class="card"><div class="cardhead"><span data-i18n="cardWork">工作资料</span><span class="tag" data-i18n="tagSynthetic">合成测试</span></div><div class="rows" id="work"></div></article>
-      <article class="card wide"><div class="cardhead"><span data-i18n="cardAccount">账号与技术资料</span><span class="tag" data-i18n="tagSynthetic">合成测试</span></div><div class="rows" id="account"></div></article>
-      <article class="card"><div class="cardhead"><span data-i18n="cardExtra">其他人物档案</span><span class="tag" data-i18n="tagSynthetic">合成测试</span></div><div class="rows" id="extraProfile"></div></article>
+      <article class="card"><div class="cardhead"><span data-i18n="cardBasic">基本资料</span><span class="tag" data-i18n="tagPerson">人物</span></div><div class="rows" id="basic"></div></article>
+      <article class="card"><div class="cardhead"><span data-i18n="cardAddress">地址与联系方式</span><span class="tag" data-i18n="tagCountry">当前国家</span></div><div class="rows" id="address"></div></article>
+      <article class="card"><div class="cardhead"><span data-i18n="cardCard">银行卡</span><span class="tag" data-i18n="tagRandom">随机生成</span></div><div class="rows" id="cardData"></div></article>
+      <article class="card"><div class="cardhead"><span data-i18n="cardWork">工作资料</span><span class="tag" data-i18n="tagPerson">人物</span></div><div class="rows" id="work"></div></article>
+      <article class="card wide"><div class="cardhead"><span data-i18n="cardAccount">账号与技术资料</span><span class="tag" data-i18n="tagPerson">人物</span></div><div class="rows" id="account"></div></article>
+      <article class="card"><div class="cardhead"><span data-i18n="cardExtra">其他人物档案</span><span class="tag" data-i18n="tagPerson">人物</span></div><div class="rows" id="extraProfile"></div></article>
       <article class="card wide" id="mapCard"><div class="cardhead"><span data-i18n="cardMap">区域地图</span><span class="tag warn" data-i18n="mapTag">区域位置 · 非精确住宅定位</span></div><div class="rows map-rows"><div class="map-meta" id="mapMeta"></div><div id="mapBox" class="map-box" role="img"></div></div></article>
     </div>
   </section>
@@ -104,17 +107,19 @@
       <div class="ctrl-group">
         <span class="ctrl-label" data-i18n="batchFields">字段</span>
         <div class="chips">
-          <label class="chip"><input type="checkbox" class="batch-field" value="name" checked> 姓名</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="gender" checked> 性别</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="dob"> 出生日期</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="address" checked> 地址</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="phone" checked> 电话</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="email" checked> 邮箱</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="company"> 公司</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="job"> 职业</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="card"> 测试卡</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="username"> 用户名</label>
-          <label class="chip"><input type="checkbox" class="batch-field" value="uuid" checked> UUID</label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="name" checked> <span data-i18n="bfName">姓名</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="gender" checked> <span data-i18n="bfGender">性别</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="dob"> <span data-i18n="bfDob">出生日期</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="address" checked> <span data-i18n="bfAddress">地址</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="city"> <span data-i18n="bfCity">城市</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="postal"> <span data-i18n="bfPostal">邮编</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="phone" checked> <span data-i18n="bfPhone">电话</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="email" checked> <span data-i18n="bfEmail">邮箱</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="company"> <span data-i18n="bfCompany">公司</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="job"> <span data-i18n="bfJob">职业</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="card"> <span data-i18n="bfCard">银行卡号</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="username"> <span data-i18n="bfUsername">用户名</span></label>
+          <label class="chip"><input type="checkbox" class="batch-field" value="uuid" checked> <span data-i18n="bfUuid">UUID</span></label>
         </div>
       </div>
       <div class="batch-actions">
@@ -153,8 +158,8 @@
 <footer class="footer">
   <div class="footerin">
     <div>
-      <div class="fbrand">小产品实验室 · 全球地址生成器</div>
-      <p class="sub">生成符合不同国家格式习惯的合成测试身份资料，用于开发、QA、表单验证和国际化测试。</p>
+      <div class="fbrand" data-i18n="siteName">小产品实验室 · 全球地址生成器</div>
+      <p class="sub" data-i18n="siteTagline">随机生成符合不同国家格式习惯的地址与人物资料。</p>
     </div>
     <div>
       <div class="ftitle" data-i18n="fBrandTitle">产品</div>
@@ -179,7 +184,8 @@
         <img class="qr" src="assets/wechat-official-account-qr.png" alt="小产品实验室微信公众号二维码" width="120" height="120" loading="lazy" decoding="async">
         <div class="contact">
           <span data-i18n="fMore">更多产品，关注微信公众号</span><br>
-          <b>小产品实验室</b><br>
+          <span class="wechat-line"><span data-i18n="fWechatLabel">微信公众号</span>：<b>小产品实验室</b></span><br>
+          <span class="mail-line"><span data-i18n="fFeedback">反馈邮箱</span>：<a id="feedbackMail" href="mailto:userfeedback@zohomail.com">userfeedback@zohomail.com</a></span><br>
           <span class="footnote" data-i18n="fLocalNote">生成数据只保存在本机浏览器，不上传服务器。</span>
         </div>
       </div>
@@ -187,11 +193,12 @@
   </div>
   <div class="copyright">
     <span>© <span id="year">2026</span> TinyProductLab / 小产品实验室</span>
-    <span><span data-i18n="fCopyright">合成测试数据 · 浏览器本地生成 · Sandbox Payment Only</span> · 数据版本 <span id="dataVersion"></span></span>
+    <span><span data-i18n="fCopyright">浏览器本地生成 · 随机资料不代表真实个人</span> · <span id="dataVersion"></span></span>
   </div>
 </footer>
 
 <div id="toast" role="status" aria-live="polite"></div>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

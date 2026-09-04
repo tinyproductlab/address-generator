@@ -1,0 +1,11 @@
+{
+  "id": "jcb",
+  "name": "JCB",
+  "ruleVersion": "2026.09.04",
+  "cvvLength": 3,
+  "iinRanges": [
+    { "rangeFrom": "3528", "rangeTo": "3589", "length": 16 }
+  ],
+  "grouping": { "16": [4, 4, 4, 4] },
+  "notes": "JCB 公开 IIN 区间 3528–3589，长度 16 位。仅生成外观型 PAN，末位主动破坏 Luhn 校验。"
+}

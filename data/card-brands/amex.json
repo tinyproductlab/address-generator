@@ -1,0 +1,12 @@
+{
+  "id": "amex",
+  "name": "American Express",
+  "ruleVersion": "2026.09.04",
+  "cvvLength": 4,
+  "iinRanges": [
+    { "prefix": "34", "length": 15 },
+    { "prefix": "37", "length": 15 }
+  ],
+  "grouping": { "15": [4, 6, 5] },
+  "notes": "American Express 以 34 / 37 开头，长度 15 位，安全码（CID）4 位，显示分组 4-6-5。末位主动破坏 Luhn 校验。"
+}

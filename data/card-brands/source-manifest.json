@@ -1,0 +1,60 @@
+{
+  "schema": "card-brand-rule-registry/1",
+  "ruleVersion": "2026.09.04",
+  "generatedAt": "2026-09-04",
+  "policy": {
+    "purpose": "仅按卡组织公开的账号编号结构（前缀区间、长度、安全码位数、显示分组）生成外观型 PAN，用于表单布局、UI 演示与开发调试。",
+    "prohibited": [
+      "读取、购买或内置任何真实 BIN / IIN 发行人数据库",
+      "展示真实发卡银行、真实账户、余额、IBAN 或 routing number",
+      "提供卡号有效性校验、余额查询或支付验证功能",
+      "接受用户输入的真实卡号进行补全、推导或识别"
+    ],
+    "luhn": "生成器在最后一位主动选择与正确校验位不同的数字，因此所有输出均无法通过 Luhn 校验。"
+  },
+  "brands": [
+    {
+      "id": "visa",
+      "file": "visa.json",
+      "sourceUrl": "https://usa.visa.com/",
+      "sourceKind": "官方公开卡片识别资料（账号以 4 开头）",
+      "verifiedAt": "2026-09-04"
+    },
+    {
+      "id": "mastercard",
+      "file": "mastercard.json",
+      "sourceUrl": "https://www.mastercard.com/",
+      "sourceKind": "官方公开 BIN / Account Range 资料（51–55、222100–272099）",
+      "verifiedAt": "2026-09-04"
+    },
+    {
+      "id": "amex",
+      "file": "amex.json",
+      "sourceUrl": "https://www.americanexpress.com/",
+      "sourceKind": "官方公开卡片识别资料（34 / 37 开头、15 位、4 位 CID）",
+      "verifiedAt": "2026-09-04"
+    },
+    {
+      "id": "unionpay",
+      "file": "unionpay.json",
+      "sourceUrl": "https://www.unionpayintl.com/",
+      "sourceKind": "银联国际公开资料（卡号以 62 开头）",
+      "verifiedAt": "2026-09-04"
+    },
+    {
+      "id": "jcb",
+      "file": "jcb.json",
+      "sourceUrl": "https://www.discoverglobalnetwork.com/",
+      "sourceKind": "Discover Global Network 公开 IIN range summary 中的 JCB 区间",
+      "verifiedAt": "2026-09-04"
+    },
+    {
+      "id": "discover",
+      "file": "discover.json",
+      "sourceUrl": "https://www.discoverglobalnetwork.com/",
+      "sourceKind": "Discover Global Network 公开 IIN range summary",
+      "verifiedAt": "2026-09-04"
+    }
+  ],
+  "updatePolicy": "规则变更属于规范更新，必须人工核验官方来源后合并；禁止自动抓取真实 BIN 列表。"
+}

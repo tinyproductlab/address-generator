@@ -1,0 +1,34 @@
+{
+  "id": "visa",
+  "name": "Visa",
+  "ruleVersion": "2026.09.04",
+  "cvvLength": 3,
+  "iinRanges": [
+    {
+      "prefix": "4",
+      "length": 16,
+      "weight": 9
+    },
+    {
+      "prefix": "4",
+      "length": 19,
+      "weight": 1
+    }
+  ],
+  "grouping": {
+    "16": [
+      4,
+      4,
+      4,
+      4
+    ],
+    "19": [
+      4,
+      4,
+      4,
+      4,
+      3
+    ]
+  },
+  "notes": "Visa 账号以 4 开头。仅用于生成外观型 PAN；不接入真实发行人 BIN 数据库；末位主动破坏 Luhn 校验。"
+}

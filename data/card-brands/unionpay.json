@@ -1,0 +1,31 @@
+{
+  "id": "unionpay",
+  "name": "UnionPay",
+  "ruleVersion": "2026.09.04",
+  "cvvLength": 3,
+  "iinRanges": [
+    {
+      "prefix": "62",
+      "length": 16,
+      "weight": 8
+    },
+    {
+      "prefix": "62",
+      "length": 19,
+      "weight": 2
+    }
+  ],
+  "grouping": {
+    "16": [
+      4,
+      4,
+      4,
+      4
+    ],
+    "19": [
+      6,
+      13
+    ]
+  },
+  "notes": "UnionPay 卡号以 62 开头，常见长度 16 或 19 位。不接入真实银行 BIN 库；末位主动破坏 Luhn 校验。"
+}

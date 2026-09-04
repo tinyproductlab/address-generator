@@ -1,0 +1,14 @@
+{
+  "id": "discover",
+  "name": "Discover",
+  "ruleVersion": "2026.09.04",
+  "cvvLength": 3,
+  "iinRanges": [
+    { "prefix": "6011", "length": 16 },
+    { "rangeFrom": "644", "rangeTo": "649", "length": 16 },
+    { "prefix": "65", "length": 16 },
+    { "rangeFrom": "622126", "rangeTo": "622925", "length": 16 }
+  ],
+  "grouping": { "16": [4, 4, 4, 4] },
+  "notes": "Discover Global Network 公开 IIN 摘要：6011、644–649、65、622126–622925。仅生成外观型 PAN，末位主动破坏 Luhn 校验。"
+}
