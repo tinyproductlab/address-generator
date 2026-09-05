@@ -96,10 +96,13 @@ const today = new Date().toISOString().slice(0, 10);
 const urls = [
   { loc: `${ORIGIN}/`, freq: 'daily', pri: '1.0' },
   ...COUNTRIES.map((c) => ({ loc: `${ORIGIN}/${c.slug}/`, freq: 'weekly', pri: '0.9' })),
-  { loc: `${ORIGIN}/sources.html`, freq: 'monthly', pri: '0.4' },
-  { loc: `${ORIGIN}/privacy.html`, freq: 'monthly', pri: '0.3' },
-  { loc: `${ORIGIN}/terms.html`, freq: 'monthly', pri: '0.3' },
-  { loc: `${ORIGIN}/about.html`, freq: 'monthly', pri: '0.3' }
+  // Cloudflare Pages 会把 /privacy.html 308 到 /privacy，
+  // sitemap 里必须直接写重定向后的地址 —— 指向跳转的 URL 会浪费抓取预算，
+  // 也和页面自己的 canonical 对不上
+  { loc: `${ORIGIN}/sources`, freq: 'monthly', pri: '0.4' },
+  { loc: `${ORIGIN}/privacy`, freq: 'monthly', pri: '0.3' },
+  { loc: `${ORIGIN}/terms`, freq: 'monthly', pri: '0.3' },
+  { loc: `${ORIGIN}/about`, freq: 'monthly', pri: '0.3' }
 ];
 files.push(['sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

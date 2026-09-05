@@ -25,7 +25,7 @@ else if (statSync(join(root, qr)).size < 3000) fail(`${qr} 体积过小，疑似
 
 // 3) 生成器页面不得残留 V8 的测试化文案；法务/说明页可以在正文里解释这些词，只查占位符。
 const forbidden = ['测试身份', '测试邮箱', '测试卡号', 'Sandbox', 'Test Only', 'example.test', 'test.example', '【待填写反馈邮箱】'];
-const proseOnly = new Set(['privacy.html', 'terms.html', 'sources.html', 'about.html', 'u/index.html']);
+const proseOnly = new Set(['privacy.html', 'terms.html', 'sources.html', 'about.html', 'u/index.html', '404.html']);
 const htmlFiles = readdirSync(root, { withFileTypes: true })
   .flatMap((e) => (e.isDirectory() && !e.name.startsWith('.') && !e.name.startsWith('_')
     ? readdirSync(join(root, e.name)).filter((f) => f.endsWith('.html')).map((f) => join(e.name, f))
@@ -35,7 +35,9 @@ for (const f of htmlFiles) {
   const words = proseOnly.has(f) ? ['【待填写反馈邮箱】'] : forbidden;
   words.forEach((w) => { if (html.includes(w)) fail(`${f} 仍包含「${w}」`); });
   if (!/<meta name="viewport"/.test(html)) fail(`${f} 缺少 viewport`);
-  if (!/<link rel="canonical"/.test(html)) fail(`${f} 缺少 canonical`);
+  // noindex 页面（404、/u/ 说明页）不需要 canonical
+  const noindex = /<meta name="robots" content="noindex/.test(html);
+  if (!noindex && !/<link rel="canonical"/.test(html)) fail(`${f} 缺少 canonical`);
 }
 ['i18n.js', 'app.js'].forEach((f) => {
   const s = read(f);
@@ -63,7 +65,10 @@ if (version && !read('sources.html').includes(version[1])) {
 const sitemap = read('sitemap.xml');
 [...sitemap.matchAll(/<loc>https:\/\/addressgen\.tinylabpro\.com\/([^<]*)<\/loc>/g)].forEach(([, path]) => {
   if (!path) return;
-  const target = path.endsWith('/') ? join(path, 'index.html') : path;
+  // sitemap 写的是 Cloudflare 重定向后的无扩展名地址（/privacy），
+  // 对应的文件是 privacy.html
+  const target = path.endsWith('/') ? join(path, 'index.html')
+    : existsSync(join(root, path)) ? path : `${path}.html`;
   if (!existsSync(join(root, target))) fail(`sitemap 指向不存在的页面：${path}`);
 });
 
