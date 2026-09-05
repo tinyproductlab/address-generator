@@ -12,6 +12,13 @@
 <meta property="og:description" content="打开即生成：真实地名与本地地址格式 + 随机人物、联系方式、银行卡与账号资料，全部字段直出。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://addressgen.tinylabpro.com/br-address-generator/">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f2127" media="(prefers-color-scheme: dark)">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="地址生成器">
 <link rel="icon" href="../favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
@@ -62,9 +69,19 @@
 
 
   <section class="layout">
-    <aside class="side">
+    <button type="button" class="city-trigger" id="cityTrigger" aria-expanded="false" aria-controls="citySide">
+      <span class="city-trigger-label" data-i18n="cityTitle">城市 / 地区</span>
+      <span class="city-trigger-value" id="cityTriggerValue"></span>
+      <span class="city-trigger-action" data-i18n="cityChoose">选择城市</span>
+    </button>
+
+    <aside class="side" id="citySide">
       <div class="sidehead">
-        <div class="sideheadtop"><b data-i18n="cityTitle">城市 / 地区</b><span class="count" id="cityCount"></span></div>
+        <div class="sideheadtop">
+          <b data-i18n="cityTitle">城市 / 地区</b>
+          <span class="count" id="cityCount"></span>
+          <button type="button" class="sheet-close" id="cityClose" data-i18n="close">关闭</button>
+        </div>
         <input class="search" id="citySearch" data-i18n-ph="searchCityPh" data-i18n-aria="cityTitle" aria-label="搜索城市">
       </div>
       <div class="citylist" id="cityList" role="listbox" data-i18n-aria="cityTitle" aria-label="城市列表"></div>
@@ -201,5 +218,13 @@
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="../i18n.js"></script>
 <script src="../app.js"></script>
+<script>
+  // PWA：注册 Service Worker，让装到桌面/主屏后断网也能继续生成
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/service-worker.js').catch(() => { /* 不支持或被策略禁用时静默降级 */ });
+    });
+  }
+</script>
 </body>
 </html>

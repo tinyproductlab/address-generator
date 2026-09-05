@@ -12,6 +12,8 @@
 - **16 种界面语言**（含阿拉伯语 RTL）；界面语言与资料本地化分开，本地地址与姓名始终按所选国家语言输出
 - Seed 可复现（`?seed=`，同 Seed + 同筛选 = 同结果）；批量 1–500 条；CSV / JSON / JSONL / TXT 导出
 - Leaflet + OpenStreetMap 区域地图：只用城市 / 行政区 / 国家中心坐标，不对合成门牌做地理编码
+- **可安装为 PWA**：装到主屏后断网仍可生成、复制、批量导出（生成逻辑本来就全在本地）
+- 移动端：城市入口收成一行"当前城市 + 选择城市"，点开是全屏选择器；主操作按钮 46px 触控高度
 - 无构建步骤、无后端、无数据库、无 Math.random（全程 SeededRandom）
 
 ## 数据边界
@@ -32,6 +34,8 @@
 
 ```text
 index.html              首页（生成器模板，唯一手工维护的页面结构）
+manifest.webmanifest    PWA 清单（图标 / 快捷方式 / standalone）
+service-worker.js       离线缓存；**显式排除地图瓦片**，不做离线囤积
 i18n.js                 16 种界面语言的语言包
 app.js                  国家档案、生成器、卡组织规则、地图、批量导出
 styles.css              样式（含深色模式与 RTL）
@@ -43,6 +47,21 @@ data/card-brands/       卡组织编号规则与来源 manifest
 scripts/                页面生成与上线前检查
 tests/                  单元测试（node --test）
 ```
+
+## PWA 与离线
+
+`service-worker.js` 的缓存策略：
+
+| 请求 | 策略 |
+|---|---|
+| 应用外壳（HTML / CSS / JS / 图标） | 安装时 precache |
+| 导航请求（HTML） | network-first，断网回退缓存，避免部署后卡在旧页面 |
+| 同源静态资源 | stale-while-revalidate，更新写回命中它的那个 cache |
+| **地图瓦片与所有跨域请求** | **直接放行到网络，绝不写入 Cache Storage** |
+
+最后一行是硬要求：OpenStreetMap 的瓦片使用政策禁止批量下载与离线囤积，
+`scripts/check-release.mjs` 会检查 SW 里保留了瓦片主机的排除逻辑，删掉就 fail build。
+因此离线时地址、人物、银行卡、批量导出照常工作，只有地图会降级为文字位置与中心坐标。
 
 ## 开发
 

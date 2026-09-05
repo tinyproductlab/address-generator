@@ -44,7 +44,7 @@ function countryPage(c) {
   const url = `${ORIGIN}/${c.slug}/`;
   let html = template;
   // 资源改为上一级相对路径
-  html = html.replace(/(href|src)="(styles\.css|app\.js|i18n\.js|favicon\.ico|assets\/[^"]+)"/g, '$1="../$2"');
+  html = html.replace(/(href|src)="(styles\.css|app\.js|i18n\.js|favicon\.ico|manifest\.webmanifest|assets\/[^"]+)"/g, '$1="../$2"');
   html = html.replace(/(href)="(privacy|terms|about|sources)\.html"/g, '$1="../$2.html"');
   html = html.replace(/href="\.\/#batch"/g, 'href="#batch"');
   html = html.replace(/href="\.\/"/g, 'href="../"');

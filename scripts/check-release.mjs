@@ -67,6 +67,44 @@ const sitemap = read('sitemap.xml');
   if (!existsSync(join(root, target))) fail(`sitemap 指向不存在的页面：${path}`);
 });
 
+// 8) PWA：manifest 必须可解析、图标齐全，Service Worker 必须存在且不缓存地图瓦片
+const manifestFile = 'manifest.webmanifest';
+if (!existsSync(join(root, manifestFile))) fail(`缺少 ${manifestFile}`);
+else {
+  const mf = JSON.parse(read(manifestFile));
+  ['name', 'short_name', 'start_url', 'scope', 'display', 'icons'].forEach((k) => {
+    if (!mf[k]) fail(`manifest 缺少 ${k}`);
+  });
+  const sizes = (mf.icons || []).map((i) => i.sizes);
+  ['192x192', '512x512'].forEach((s) => { if (!sizes.includes(s)) fail(`manifest 缺少 ${s} 图标（可安装性要求）`); });
+  if (!(mf.icons || []).some((i) => (i.purpose || '').includes('maskable'))) fail('manifest 缺少 maskable 图标');
+  (mf.icons || []).forEach((i) => {
+    const rel = i.src.replace(/^\//, '');
+    if (!existsSync(join(root, rel))) fail(`manifest 图标文件不存在：${i.src}`);
+  });
+  (mf.shortcuts || []).forEach((sc) => {
+    const path = sc.url.split(/[?#]/)[0].replace(/^\//, '');
+    const target = path.endsWith('/') || path === '' ? join(path, 'index.html') : path;
+    if (!existsSync(join(root, target))) fail(`manifest shortcut 指向不存在的页面：${sc.url}`);
+  });
+}
+if (!existsSync(join(root, 'service-worker.js'))) fail('缺少 service-worker.js');
+else {
+  const sw = read('service-worker.js');
+  if (!/tile\.openstreetmap\.org/.test(sw) || !/NEVER_CACHE_HOSTS/.test(sw)) {
+    fail('Service Worker 必须显式排除 OpenStreetMap 瓦片（禁止离线囤积瓦片）');
+  }
+  if (!/self\.addEventListener\('fetch'/.test(sw)) fail('Service Worker 缺少 fetch 处理，无法安装为 PWA');
+  if (!/const VERSION = '[\d.]+'/.test(sw)) fail('Service Worker 缺少 VERSION 常量（缓存版本）');
+}
+// 每个页面都要能被安装为 PWA：manifest 与主题色声明齐全
+for (const f of htmlFiles) {
+  const html = read(f);
+  if (/redirect|页面已迁移/.test(html)) continue; // 旧路径跳转页不需要
+  if (!/rel="manifest"/.test(html)) fail(`${f} 缺少 manifest 声明`);
+  if (!/name="theme-color"/.test(html)) fail(`${f} 缺少 theme-color`);
+}
+
 if (errors.length) {
   console.error('上线前检查未通过：');
   errors.forEach((e) => console.error(` - ${e}`));

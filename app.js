@@ -1826,6 +1826,27 @@
     $('cityList').insertAdjacentHTML('beforeend', slice.map(cityEntryHtml).join(''));
     cityView.rendered += slice.length;
   }
+  function isMobileLayout() {
+    return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 980px)').matches;
+  }
+  function openCitySheet() {
+    if (!isMobileLayout()) return;
+    $('citySide').classList.add('open');
+    $('cityTrigger').setAttribute('aria-expanded', 'true');
+    document.body.classList.add('sheet-open');
+    setTimeout(() => $('citySearch').focus(), 30);
+  }
+  function closeCitySheet() {
+    $('citySide').classList.remove('open');
+    $('cityTrigger').setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('sheet-open');
+  }
+  function updateCityTrigger() {
+    const el = $('cityTriggerValue');
+    if (!el) return;
+    el.textContent = state.filter.city || state.filter.admin || t('randomAll');
+  }
+
   function renderCitySidebar() {
     const p = PROFILES[state.country];
     const q = ($('citySearch').value || '').trim().toLowerCase();
@@ -1837,6 +1858,7 @@
     appendCityChunk();
     const cityCount = cityView.entries.filter((e) => e.type === 'city').length + 1;
     $('cityCount').textContent = `${cityCount} ${t('cityUnit')}`;
+    updateCityTrigger();
   }
 
   // -----------------------------
@@ -2092,6 +2114,7 @@
     applyI18n();
     syncUrl();
     renderIdentity();
+    updateCityTrigger();
     renderBatchTable();
     renderDataSection();
   }
@@ -2147,6 +2170,7 @@
         state.refresh = 0;
         syncUrl();
         renderIdentity();
+        closeCitySheet();
         return;
       }
       const copyBtn = e.target.closest('.copy');
@@ -2161,8 +2185,13 @@
     $('megaBtn').addEventListener('click', () => ($('megaPanel').classList.contains('open') ? closeMega() : openMega()));
     $('megaClose').addEventListener('click', closeMega);
     $('megaSearch').addEventListener('input', renderMega);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMega(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMega(); closeCitySheet(); } });
     $('citySearch').addEventListener('input', () => renderCitySidebar());
+    $('cityTrigger').addEventListener('click', () => {
+      if ($('citySide').classList.contains('open')) closeCitySheet(); else openCitySheet();
+    });
+    $('cityClose').addEventListener('click', closeCitySheet);
+    window.addEventListener('resize', () => { if (!isMobileLayout()) closeCitySheet(); });
     $('cityList').addEventListener('scroll', (e) => {
       const el = e.currentTarget;
       if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120) appendCityChunk();
