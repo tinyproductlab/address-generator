@@ -1779,6 +1779,87 @@
     }
   }
   // <=620px 时国家面板是全屏浮层，需要锁背景滚动；此宽度以上它只是头部下拉，不锁。
+  /* ---------- 安装到主屏 ----------
+   * 浏览器自带的安装横幅每个域名只弹一次（安装或划掉后压制约 90 天），
+   * iOS Safari 更是从不触发 beforeinstallprompt。所以自备入口：
+   *   - Chrome/Edge 系：捕获 beforeinstallprompt，用它的原生弹窗
+   *   - iOS Safari：没有 API，只能给出「分享 → 添加到主屏幕」的步骤
+   * 头部小按钮长期可用，底部横幅只在未划掉时出现一次。 */
+  const INSTALL_DISMISS_KEY = 'tlb-install-dismissed';
+  let deferredPrompt = null;
+
+  function isStandalone() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches)
+      || window.navigator.standalone === true;
+  }
+  // iOS 上所有浏览器都是 WebKit 内核，没有一个支持 beforeinstallprompt，
+  // 所以不必区分 Safari / Chrome，统一走「分享 → 添加到主屏幕」。
+  function isIos() {
+    const ua = navigator.userAgent;
+    return /iPad|iPhone|iPod/.test(ua)
+      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1); // iPadOS 会伪装成 Mac
+  }
+  function installDismissed() {
+    try { return localStorage.getItem(INSTALL_DISMISS_KEY) === '1'; } catch { return false; }
+  }
+  function refreshInstallUi() {
+    const chip = $('installChip'); const bar = $('installBar');
+    if (!chip || !bar) return;
+    const available = !isStandalone() && (deferredPrompt !== null || isIos());
+    chip.hidden = !available;
+    if (bar.dataset.forced !== '1') bar.hidden = !(available && !installDismissed());
+    // iOS 没有一键安装的 API：正文直接换成「分享 → 添加到主屏幕」步骤，
+    // 主按钮也就没有"安装"可点，改成关闭。
+    const go = $('installGo'); const no = $('installDismiss');
+    const iosOnly = available && !deferredPrompt && isIos();
+    $('installBarDesc').textContent = t(iosOnly ? 'installIosSteps' : 'installDesc');
+    if (go) go.textContent = t(iosOnly ? 'close' : 'installNow');
+    if (no) no.hidden = iosOnly;
+  }
+  function hideInstallBar(remember) {
+    const bar = $('installBar');
+    if (bar) { delete bar.dataset.forced; bar.hidden = true; }
+    if (remember) { try { localStorage.setItem(INSTALL_DISMISS_KEY, '1'); } catch { /* ignore */ } }
+  }
+  async function triggerInstall() {
+    if (deferredPrompt) {
+      const evt = deferredPrompt;
+      deferredPrompt = null;            // 一个事件只能 prompt() 一次
+      hideInstallBar(false);
+      try {
+        await evt.prompt();
+        const res = await evt.userChoice;
+        if (res && res.outcome === 'accepted') { hideInstallBar(true); }
+      } catch { /* 用户取消或浏览器拒绝 */ }
+      refreshInstallUi();
+      return;
+    }
+    // iOS：没有 API 可调，把横幅展开显示步骤（用 toast 的话 1.5 秒就没了，读不完）
+    if (!isIos() || isStandalone()) return;   // 压根装不了就什么都不做，别弹出死横幅
+    const bar = $('installBar');
+    if (bar && bar.hidden) { bar.dataset.forced = '1'; bar.hidden = false; refreshInstallUi(); }
+    else hideInstallBar(true);
+  }
+  function initInstall() {
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();               // 阻止自带迷你横幅，改由我们的入口触发
+      deferredPrompt = e;
+      refreshInstallUi();
+    });
+    window.addEventListener('appinstalled', () => {
+      deferredPrompt = null;
+      hideInstallBar(true);
+      refreshInstallUi();
+    });
+    // Safari 14 之前的 MediaQueryList 没有 addEventListener
+    try { window.matchMedia('(display-mode: standalone)').addEventListener('change', refreshInstallUi); } catch { /* ignore */ }
+    const chip = $('installChip'); if (chip) chip.addEventListener('click', triggerInstall);
+    const go = $('installGo'); if (go) go.addEventListener('click', triggerInstall);
+    const no = $('installDismiss');
+    if (no) no.addEventListener('click', () => { delete $('installBar').dataset.forced; hideInstallBar(true); refreshInstallUi(); });
+    refreshInstallUi();
+  }
+
   function isMegaSheet() { return window.matchMedia('(max-width: 620px)').matches; }
   function openMega() {
     $('megaPanel').classList.add('open'); $('megaBtn').setAttribute('aria-expanded', 'true');
@@ -2116,6 +2197,7 @@
       }
       picker.value = lang;
     }
+    if ($('installBar')) refreshInstallUi();   // iOS 步骤文案随语言切换
   }
   function setLang(next) {
     const code = normalizeLocale(next) || DEFAULT_LOCALE;
@@ -2277,6 +2359,8 @@
       $('seedInput').addEventListener('change', applySeed);
       $('seedInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') applySeed(); });
     }
+
+    initInstall();
 
     $('dataVersion').textContent = `v${DATA_VERSION}`;
     $('year').textContent = String(new Date().getFullYear());

@@ -36,6 +36,7 @@
       <div class="country-picker">
         <button type="button" class="allbtn" id="megaBtn" aria-expanded="false" aria-controls="megaPanel"></button>
         <select class="allbtn lang" id="langSelect" aria-label="Language / 界面语言"></select>
+        <button type="button" class="allbtn install-chip" id="installChip" hidden><span class="install-chip-ico" aria-hidden="true">↓</span><span data-i18n="installBtn">安装</span></button>
       </div>
     </div>
   </div>
@@ -215,6 +216,18 @@
     <span><span data-i18n="fCopyright">浏览器本地生成 · 随机资料不代表真实个人</span> · <span id="dataVersion"></span></span>
   </div>
 </footer>
+
+<div class="install-bar" id="installBar" role="region" aria-labelledby="installBarTitle" hidden>
+  <img class="install-bar-icon" src="../assets/icon-192.png" alt="" width="44" height="44">
+  <div class="install-bar-text">
+    <strong id="installBarTitle" data-i18n="installTitle">把地址生成器装到主屏</strong>
+    <span id="installBarDesc" data-i18n="installDesc">安装后可离线使用，从主屏一键打开。</span>
+  </div>
+  <div class="install-bar-btns">
+    <button type="button" class="btn primary" id="installGo" data-i18n="installNow">立即安装</button>
+    <button type="button" class="btn" id="installDismiss" data-i18n="installLater">以后再说</button>
+  </div>
+</div>
 
 <div id="toast" role="status" aria-live="polite"></div>
 <script src="../i18n.js"></script>

@@ -27,6 +27,8 @@
   const T = {};
 
   T['zh-CN'] = {
+    installBtn: '安装', installTitle: '把地址生成器装到主屏', installDesc: '安装后可离线使用，从主屏一键打开。',
+    installNow: '立即安装', installLater: '以后再说', installIosSteps: '点浏览器底部的「分享」，再选「添加到主屏幕」',
     siteName: '小产品实验室 · 全球地址生成器',
     siteTagline: '随机生成符合不同国家格式习惯的地址与人物资料。',
     allCountries: '全部国家', countryCount: '个国家 / 地区', searchCountryPh: '搜索国家：日本 / Japan / JP / JPN', recentUsed: '最近使用', close: '关闭', noMatch: '没有匹配的国家',
@@ -66,6 +68,8 @@
   };
 
   T['zh-TW'] = {
+    installBtn: '安裝', installTitle: '把地址產生器裝到主畫面', installDesc: '安裝後可離線使用，從主畫面一鍵開啟。',
+    installNow: '立即安裝', installLater: '稍後再說', installIosSteps: '點瀏覽器底部的「分享」，再選「加入主畫面」',
     siteName: '小產品實驗室 · 全球地址產生器',
     siteTagline: '隨機產生符合不同國家格式習慣的地址與人物資料。',
     allCountries: '全部國家', countryCount: '個國家 / 地區', searchCountryPh: '搜尋國家：日本 / Japan / JP / JPN', recentUsed: '最近使用', close: '關閉', noMatch: '沒有符合的國家',
@@ -105,6 +109,8 @@
   };
 
   T.en = {
+    installBtn: 'Install', installTitle: 'Add the address generator to your home screen', installDesc: 'Works offline once installed, and opens in one tap.',
+    installNow: 'Install now', installLater: 'Not now', installIosSteps: 'Tap Share in the browser bar, then Add to Home Screen',
     siteName: 'TinyProductLab · Global Address Generator',
     siteTagline: 'Random addresses and person profiles that follow each country’s own formatting habits.',
     allCountries: 'All countries', countryCount: 'countries / regions', searchCountryPh: 'Search: Japan / 日本 / JP / JPN', recentUsed: 'Recently used', close: 'Close', noMatch: 'No matching country',
@@ -144,6 +150,8 @@
   };
 
   T.ja = {
+    installBtn: 'インストール', installTitle: '住所ジェネレーターをホーム画面に追加', installDesc: 'インストールするとオフラインでも使え、ホーム画面からすぐ開けます。',
+    installNow: '今すぐインストール', installLater: '後で', installIosSteps: 'ブラウザ下部の「共有」から「ホーム画面に追加」を選択',
     siteName: 'TinyProductLab · グローバル住所ジェネレーター',
     siteTagline: '各国の書式習慣に沿った住所と人物プロフィールをランダム生成します。',
     allCountries: 'すべての国', countryCount: 'の国 / 地域', searchCountryPh: '検索：日本 / Japan / JP / JPN', recentUsed: '最近使用', close: '閉じる', noMatch: '一致する国がありません',
@@ -183,6 +191,8 @@
   };
 
   T.ko = {
+    installBtn: '설치', installTitle: '주소 생성기를 홈 화면에 추가', installDesc: '설치하면 오프라인에서도 쓸 수 있고 홈 화면에서 바로 열립니다.',
+    installNow: '지금 설치', installLater: '나중에', installIosSteps: '브라우저 하단의 «공유»에서 «홈 화면에 추가»를 선택하세요',
     siteName: 'TinyProductLab · 글로벌 주소 생성기',
     siteTagline: '국가별 표기 방식에 맞는 주소와 인물 프로필을 무작위로 생성합니다.',
     allCountries: '전체 국가', countryCount: '개 국가 / 지역', searchCountryPh: '검색: 대한민국 / Korea / KR / KOR', recentUsed: '최근 사용', close: '닫기', noMatch: '일치하는 국가가 없습니다',
@@ -222,6 +232,8 @@
   };
 
   T.de = {
+    installBtn: 'Installieren', installTitle: 'Adressgenerator zum Startbildschirm hinzufügen', installDesc: 'Nach der Installation offline nutzbar und mit einem Tipp geöffnet.',
+    installNow: 'Jetzt installieren', installLater: 'Später', installIosSteps: 'Im Browser auf „Teilen“ tippen, dann „Zum Home-Bildschirm“',
     siteName: 'TinyProductLab · Globaler Adressgenerator',
     siteTagline: 'Zufällige Adressen und Personenprofile im Format des jeweiligen Landes.',
     allCountries: 'Alle Länder', countryCount: 'Länder / Regionen', searchCountryPh: 'Suche: Deutschland / Germany / DE / DEU', recentUsed: 'Zuletzt verwendet', close: 'Schließen', noMatch: 'Kein passendes Land',
@@ -261,6 +273,8 @@
   };
 
   T.fr = {
+    installBtn: 'Installer', installTitle: 'Ajouter le générateur d’adresses à l’écran d’accueil', installDesc: 'Fonctionne hors ligne après installation et s’ouvre en un geste.',
+    installNow: 'Installer', installLater: 'Plus tard', installIosSteps: 'Touchez « Partager » dans le navigateur, puis « Sur l’écran d’accueil »',
     siteName: 'TinyProductLab · Générateur d’adresses mondial',
     siteTagline: 'Adresses et profils de personnes générés au hasard, au format de chaque pays.',
     allCountries: 'Tous les pays', countryCount: 'pays / régions', searchCountryPh: 'Rechercher : France / FR / FRA', recentUsed: 'Récemment utilisés', close: 'Fermer', noMatch: 'Aucun pays correspondant',
@@ -300,6 +314,8 @@
   };
 
   T.es = {
+    installBtn: 'Instalar', installTitle: 'Añade el generador de direcciones a la pantalla de inicio', installDesc: 'Funciona sin conexión una vez instalado y se abre con un toque.',
+    installNow: 'Instalar ahora', installLater: 'Más tarde', installIosSteps: 'Pulsa «Compartir» en el navegador y luego «Añadir a inicio»',
     siteName: 'TinyProductLab · Generador global de direcciones',
     siteTagline: 'Direcciones y perfiles de personas aleatorios con el formato propio de cada país.',
     allCountries: 'Todos los países', countryCount: 'países / regiones', searchCountryPh: 'Buscar: España / Spain / ES / ESP', recentUsed: 'Usados recientemente', close: 'Cerrar', noMatch: 'Ningún país coincide',
@@ -339,6 +355,8 @@
   };
 
   T.pt = {
+    installBtn: 'Instalar', installTitle: 'Adicione o gerador de endereços à tela de início', installDesc: 'Funciona offline depois de instalado e abre com um toque.',
+    installNow: 'Instalar agora', installLater: 'Mais tarde', installIosSteps: 'Toque em «Compartilhar» no navegador e escolha «Adicionar à Tela de Início»',
     siteName: 'TinyProductLab · Gerador global de endereços',
     siteTagline: 'Endereços e perfis de pessoas aleatórios no formato de cada país.',
     allCountries: 'Todos os países', countryCount: 'países / regiões', searchCountryPh: 'Buscar: Brasil / Brazil / BR / BRA', recentUsed: 'Usados recentemente', close: 'Fechar', noMatch: 'Nenhum país corresponde',
@@ -378,6 +396,8 @@
   };
 
   T.it = {
+    installBtn: 'Installa', installTitle: 'Aggiungi il generatore di indirizzi alla schermata Home', installDesc: 'Dopo l’installazione funziona offline e si apre con un tocco.',
+    installNow: 'Installa ora', installLater: 'Più tardi', installIosSteps: 'Tocca «Condividi» nel browser, poi «Aggiungi a Home»',
     siteName: 'TinyProductLab · Generatore globale di indirizzi',
     siteTagline: 'Indirizzi e profili di persone casuali nel formato di ogni Paese.',
     allCountries: 'Tutti i Paesi', countryCount: 'Paesi / regioni', searchCountryPh: 'Cerca: Italia / Italy / IT / ITA', recentUsed: 'Usati di recente', close: 'Chiudi', noMatch: 'Nessun Paese corrispondente',
@@ -417,6 +437,8 @@
   };
 
   T.ru = {
+    installBtn: 'Установить', installTitle: 'Добавьте генератор адресов на главный экран', installDesc: 'После установки работает офлайн и открывается одним касанием.',
+    installNow: 'Установить', installLater: 'Позже', installIosSteps: 'Нажмите «Поделиться» в браузере, затем «На экран «Домой»»',
     siteName: 'TinyProductLab · Глобальный генератор адресов',
     siteTagline: 'Случайные адреса и профили людей в формате каждой страны.',
     allCountries: 'Все страны', countryCount: 'стран / регионов', searchCountryPh: 'Поиск: Россия / Russia / RU / RUS', recentUsed: 'Недавние', close: 'Закрыть', noMatch: 'Страна не найдена',
@@ -456,6 +478,8 @@
   };
 
   T.ar = {
+    installBtn: 'تثبيت', installTitle: 'أضف مُولِّد العناوين إلى الشاشة الرئيسية', installDesc: 'يعمل دون اتصال بعد التثبيت ويُفتح بلمسة واحدة.',
+    installNow: 'تثبيت الآن', installLater: 'لاحقًا', installIosSteps: 'اضغط «مشاركة» في المتصفح ثم «إضافة إلى الشاشة الرئيسية»',
     siteName: 'TinyProductLab · مُنشئ العناوين العالمي',
     siteTagline: 'عناوين وملفات أشخاص عشوائية بصيغة كل بلد.',
     allCountries: 'كل البلدان', countryCount: 'بلدًا / منطقة', searchCountryPh: 'البحث: مصر / Egypt / EG / EGY', recentUsed: 'المستخدمة حديثًا', close: 'إغلاق', noMatch: 'لا يوجد بلد مطابق',
@@ -495,6 +519,8 @@
   };
 
   T.hi = {
+    installBtn: 'इंस्टॉल करें', installTitle: 'पता जेनरेटर को होम स्क्रीन पर जोड़ें', installDesc: 'इंस्टॉल करने के बाद ऑफ़लाइन चलता है और एक टैप में खुलता है।',
+    installNow: 'अभी इंस्टॉल करें', installLater: 'बाद में', installIosSteps: 'ब्राउज़र में «शेयर» दबाएँ, फिर «होम स्क्रीन में जोड़ें» चुनें',
     siteName: 'TinyProductLab · ग्लोबल पता जेनरेटर',
     siteTagline: 'हर देश की अपनी लेखन शैली के अनुसार यादृच्छिक पते और व्यक्ति प्रोफ़ाइल।',
     allCountries: 'सभी देश', countryCount: 'देश / क्षेत्र', searchCountryPh: 'खोजें: भारत / India / IN / IND', recentUsed: 'हाल में उपयोग किए', close: 'बंद करें', noMatch: 'कोई देश नहीं मिला',
@@ -534,6 +560,8 @@
   };
 
   T.id = {
+    installBtn: 'Instal', installTitle: 'Tambahkan generator alamat ke layar utama', installDesc: 'Bisa dipakai offline setelah diinstal dan dibuka sekali sentuh.',
+    installNow: 'Instal sekarang', installLater: 'Nanti saja', installIosSteps: 'Ketuk «Bagikan» di browser, lalu pilih «Tambahkan ke Layar Utama»',
     siteName: 'TinyProductLab · Generator Alamat Global',
     siteTagline: 'Alamat dan profil orang acak sesuai format tiap negara.',
     allCountries: 'Semua negara', countryCount: 'negara / wilayah', searchCountryPh: 'Cari: Indonesia / ID / IDN', recentUsed: 'Baru dipakai', close: 'Tutup', noMatch: 'Tidak ada negara yang cocok',
@@ -573,6 +601,8 @@
   };
 
   T.th = {
+    installBtn: 'ติดตั้ง', installTitle: 'เพิ่มตัวสร้างที่อยู่ไปที่หน้าจอโฮม', installDesc: 'ติดตั้งแล้วใช้แบบออฟไลน์ได้ และเปิดได้ในแตะเดียว',
+    installNow: 'ติดตั้งเลย', installLater: 'ไว้ก่อน', installIosSteps: 'แตะ «แชร์» ในเบราว์เซอร์ แล้วเลือก «เพิ่มไปยังหน้าจอโฮม»',
     siteName: 'TinyProductLab · เครื่องมือสร้างที่อยู่ทั่วโลก',
     siteTagline: 'สร้างที่อยู่และโปรไฟล์บุคคลแบบสุ่มตามรูปแบบของแต่ละประเทศ',
     allCountries: 'ทุกประเทศ', countryCount: 'ประเทศ / เขตแดน', searchCountryPh: 'ค้นหา: ไทย / Thailand / TH / THA', recentUsed: 'ใช้ล่าสุด', close: 'ปิด', noMatch: 'ไม่พบประเทศที่ตรงกัน',
@@ -612,6 +642,8 @@
   };
 
   T.vi = {
+    installBtn: 'Cài đặt', installTitle: 'Thêm trình tạo địa chỉ vào màn hình chính', installDesc: 'Dùng được offline sau khi cài và mở chỉ với một lần chạm.',
+    installNow: 'Cài ngay', installLater: 'Để sau', installIosSteps: 'Nhấn «Chia sẻ» trên trình duyệt, rồi chọn «Thêm vào MH chính»',
     siteName: 'TinyProductLab · Trình tạo địa chỉ toàn cầu',
     siteTagline: 'Tạo ngẫu nhiên địa chỉ và hồ sơ nhân vật theo đúng định dạng của từng quốc gia.',
     allCountries: 'Tất cả quốc gia', countryCount: 'quốc gia / vùng', searchCountryPh: 'Tìm: Việt Nam / Vietnam / VN / VNM', recentUsed: 'Vừa dùng', close: 'Đóng', noMatch: 'Không có quốc gia phù hợp',

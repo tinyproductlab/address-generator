@@ -184,6 +184,37 @@ select.allbtn.lang { appearance: none; -webkit-appearance: none; min-width: 104p
 [dir="rtl"] .batch-table, [dir="rtl"] .map-meta { direction: ltr; text-align: left; }
 [dir="rtl"] select.allbtn.lang { background-position: left 9px center; padding-right: 10px; padding-left: 26px; }
 
+/* ---------- 安装到主屏 ---------- */
+/* 作者样式里的 display 会盖掉 UA 的 [hidden]{display:none}，必须显式兜住，
+   否则 hidden 属性形同虚设，横幅对所有人常驻。 */
+.install-chip[hidden], .install-bar[hidden], .install-bar-btns .btn[hidden] { display: none !important; }
+/* 头部国家面板在 .top（z-index:40）的层叠上下文里，实际绘制层级低于本横幅的 80，
+   所以全屏面板打开时必须让横幅让位，否则它会盖住底部两行国家。 */
+body.sheet-open .install-bar { display: none !important; }
+.install-chip { display: inline-flex; align-items: center; gap: 5px; font-weight: 700; border-color: var(--accent-ink); color: var(--accent-ink); }
+.install-chip-ico { display: inline-block; font-weight: 800; line-height: 1; }
+.install-bar {
+  position: fixed; z-index: 80; left: 50%; transform: translateX(-50%);
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  width: min(560px, calc(100% - 24px));
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--card); box-shadow: 0 16px 40px rgba(0,0,0,.18);
+}
+.install-bar-icon { flex: none; width: 44px; height: 44px; border-radius: 10px; }
+.install-bar-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.install-bar-text strong { font-size: 14px; }
+.install-bar-text span { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.install-bar-btns { flex: none; display: flex; flex-direction: column; gap: 6px; }
+.install-bar-btns .btn { min-height: 36px; white-space: nowrap; font-size: 13px; }
+
+@media (max-width: 620px) {
+  /* 手机上竖排：文字占满宽度，两个按钮横排等宽，指头够得着 */
+  .install-bar { flex-wrap: wrap; gap: 10px; }
+  .install-bar-btns { flex: 1 0 100%; flex-direction: row; }
+  .install-bar-btns .btn { flex: 1; min-height: 44px; }
+}
+
 /* ---------- 移动端城市入口（桌面隐藏） ---------- */
 .city-trigger { display: none; }
 .sheet-close { display: none; }
