@@ -77,6 +77,13 @@
     // 带内联标签（<b>/<code>/<a>）的段落。文案全部由本仓库维护，无用户输入。
     document.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     document.querySelectorAll('[data-i18n-alt]').forEach((el) => { el.alt = t(el.dataset.i18nAlt); });
+    // 标题由页面 h1 的同一个键组合而来，避免 <title> 与 <h1> 各说一套
+    // （例如泰语 title 写"ข้อกำหนดการใช้งาน"、h1 写"เงื่อนไขการใช้งาน"）
+    document.querySelectorAll('[data-i18n-title-of]').forEach((el) => {
+      const head = t(el.dataset.i18nTitleOf);
+      const brand = t('brandShort');
+      document.title = brand && brand !== 'brandShort' ? `${head} - ${brand}` : head;
+    });
     document.querySelectorAll('[data-i18n-title]').forEach((el) => {
       const v = t(el.dataset.i18nTitle);
       if (el.tagName === 'TITLE') document.title = v; else el.setAttribute('title', v);

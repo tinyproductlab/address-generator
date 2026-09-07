@@ -8,6 +8,7 @@
   const C = {};
 
   C['zh-CN'] = {
+    brandShort: "小产品实验室",
     uTitleTag: "关于 /u/ 个人主页地址 - 小产品实验室",
     uH1: "关于 /u/ 个人主页地址",
     uIntro: "你之所以看到这个页面，是因为点击了生成结果里的“个人主页”字段。",
@@ -57,6 +58,7 @@
   };
 
   C['zh-TW'] = {
+    brandShort: "小產品實驗室",
     uTitleTag: "關於 /u/ 個人主頁網址 - 小產品實驗室",
     uH1: "關於 /u/ 個人主頁網址",
     uIntro: "你之所以看到這個頁面，是因為點了產生結果裡的「個人主頁」欄位。",
@@ -106,6 +108,7 @@
   };
 
   C.en = {
+    brandShort: "TinyProductLab",
     uTitleTag: "About the /u/ homepage URL - TinyProductLab",
     uH1: "About the /u/ homepage URL",
     uIntro: "You are seeing this page because you clicked the “Personal homepage” field in a generated record.",
@@ -155,6 +158,7 @@
   };
 
   C.ja = {
+    brandShort: "TinyProductLab",
     uTitleTag: "/u/ の個人ホームページ URL について - TinyProductLab",
     uH1: "/u/ の個人ホームページ URL について",
     uIntro: "このページが表示されたのは、生成結果の「個人ホームページ」項目をクリックしたためです。",
@@ -204,6 +208,7 @@
   };
 
   C.ko = {
+    brandShort: "TinyProductLab",
     uTitleTag: "/u/ 개인 홈페이지 주소에 대하여 - TinyProductLab",
     uH1: "/u/ 개인 홈페이지 주소에 대하여",
     uIntro: "생성 결과의 「개인 홈페이지」 항목을 눌러서 이 페이지가 열렸습니다.",
@@ -253,6 +258,7 @@
   };
 
   C.de = {
+    brandShort: "TinyProductLab",
     uTitleTag: "Über die /u/-Homepage-Adresse - TinyProductLab",
     uH1: "Über die /u/-Homepage-Adresse",
     uIntro: "Sie sehen diese Seite, weil Sie im erzeugten Datensatz das Feld „Persönliche Homepage“ angeklickt haben.",
@@ -302,6 +308,7 @@
   };
 
   C.fr = {
+    brandShort: "TinyProductLab",
     uTitleTag: "À propos de l’adresse de page personnelle /u/ - TinyProductLab",
     uH1: "À propos de l’adresse de page personnelle /u/",
     uIntro: "Vous voyez cette page parce que vous avez cliqué sur le champ « Page personnelle » d’un enregistrement généré.",
@@ -351,6 +358,7 @@
   };
 
   C.es = {
+    brandShort: "TinyProductLab",
     uTitleTag: "Sobre la dirección de página personal /u/ - TinyProductLab",
     uH1: "Sobre la dirección de página personal /u/",
     uIntro: "Ves esta página porque hiciste clic en el campo «Página personal» de un registro generado.",
@@ -400,6 +408,7 @@
   };
 
   C.pt = {
+    brandShort: "TinyProductLab",
     uTitleTag: "Sobre o endereço de página pessoal /u/ - TinyProductLab",
     uH1: "Sobre o endereço de página pessoal /u/",
     uIntro: "Você está vendo esta página porque clicou no campo «Página pessoal» de um registro gerado.",
@@ -449,6 +458,7 @@
   };
 
   C.it = {
+    brandShort: "TinyProductLab",
     uTitleTag: "Sull’indirizzo della pagina personale /u/ - TinyProductLab",
     uH1: "Sull’indirizzo della pagina personale /u/",
     uIntro: "Vedi questa pagina perché hai fatto clic sul campo «Pagina personale» di un record generato.",
@@ -498,6 +508,7 @@
   };
 
   C.ru = {
+    brandShort: "TinyProductLab",
     uTitleTag: "Об адресе личной страницы /u/ - TinyProductLab",
     uH1: "Об адресе личной страницы /u/",
     uIntro: "Вы видите эту страницу, потому что нажали на поле «Личная страница» в сгенерированной записи.",
@@ -547,6 +558,7 @@
   };
 
   C.ar = {
+    brandShort: "TinyProductLab",
     uTitleTag: "عن عنوان الصفحة الشخصية /u/ - TinyProductLab",
     uH1: "عن عنوان الصفحة الشخصية /u/",
     uIntro: "تظهر لك هذه الصفحة لأنك نقرت حقل «الصفحة الشخصية» في سجل مُولَّد.",
@@ -596,6 +608,7 @@
   };
 
   C.hi = {
+    brandShort: "TinyProductLab",
     uTitleTag: "/u/ निजी होमपेज पते के बारे में - TinyProductLab",
     uH1: "/u/ निजी होमपेज पते के बारे में",
     uIntro: "आप यह पृष्ठ इसलिए देख रहे हैं क्योंकि आपने बने हुए रिकॉर्ड में «निजी होमपेज» फ़ील्ड पर क्लिक किया।",
@@ -645,6 +658,7 @@
   };
 
   C.id = {
+    brandShort: "TinyProductLab",
     uTitleTag: "Tentang alamat halaman pribadi /u/ - TinyProductLab",
     uH1: "Tentang alamat halaman pribadi /u/",
     uIntro: "Anda melihat halaman ini karena mengeklik kolom «Halaman pribadi» pada data yang dibuat.",
@@ -694,6 +708,7 @@
   };
 
   C.th = {
+    brandShort: "TinyProductLab",
     uTitleTag: "เกี่ยวกับที่อยู่หน้าส่วนตัว /u/ - TinyProductLab",
     uH1: "เกี่ยวกับที่อยู่หน้าส่วนตัว /u/",
     uIntro: "คุณเห็นหน้านี้เพราะคลิกช่อง «โฮมเพจส่วนตัว» ในข้อมูลที่สร้างขึ้น",
@@ -743,6 +758,7 @@
   };
 
   C.vi = {
+    brandShort: "TinyProductLab",
     uTitleTag: "Về địa chỉ trang cá nhân /u/ - TinyProductLab",
     uH1: "Về địa chỉ trang cá nhân /u/",
     uIntro: "Bạn thấy trang này vì đã nhấn vào trường «Trang cá nhân» trong bản ghi được tạo.",
