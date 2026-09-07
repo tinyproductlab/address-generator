@@ -1778,8 +1778,19 @@
       return `<button type="button" class="copt${active ? ' active' : ''}" data-country-btn="${p.code}" ${active ? 'aria-selected="true"' : ''}><span>${p.flag}</span><span class="cname">${safe(primary)}<span class="cmeta">${safe(secondary)}</span></span></button>`;
     }
   }
-  function openMega() { $('megaPanel').classList.add('open'); $('megaBtn').setAttribute('aria-expanded', 'true'); $('megaSearch').value = ''; renderMega(); setTimeout(() => $('megaSearch').focus(), 30); }
-  function closeMega() { $('megaPanel').classList.remove('open'); $('megaBtn').setAttribute('aria-expanded', 'false'); }
+  // <=620px 时国家面板是全屏浮层，需要锁背景滚动；此宽度以上它只是头部下拉，不锁。
+  function isMegaSheet() { return window.matchMedia('(max-width: 620px)').matches; }
+  function openMega() {
+    $('megaPanel').classList.add('open'); $('megaBtn').setAttribute('aria-expanded', 'true');
+    $('megaSearch').value = ''; renderMega();
+    if (isMegaSheet()) { document.body.classList.add('sheet-open'); $('megaGroups').scrollTop = 0; }
+    // 手机上自动聚焦会立刻弹出软键盘，遮住大半个国家列表，交给用户主动点搜索框
+    else setTimeout(() => $('megaSearch').focus(), 30);
+  }
+  function closeMega() {
+    $('megaPanel').classList.remove('open'); $('megaBtn').setAttribute('aria-expanded', 'false');
+    if (!$('citySide') || !$('citySide').classList.contains('open')) document.body.classList.remove('sheet-open');
+  }
 
   function setCountry(code) {
     if (!PROFILES[code]) return;
@@ -1834,12 +1845,12 @@
     $('citySide').classList.add('open');
     $('cityTrigger').setAttribute('aria-expanded', 'true');
     document.body.classList.add('sheet-open');
-    setTimeout(() => $('citySearch').focus(), 30);
+    // 同理：全屏城市面板不自动聚焦，避免软键盘一上来就吃掉列表高度
   }
   function closeCitySheet() {
     $('citySide').classList.remove('open');
     $('cityTrigger').setAttribute('aria-expanded', 'false');
-    document.body.classList.remove('sheet-open');
+    if (!$('megaPanel').classList.contains('open')) document.body.classList.remove('sheet-open');
   }
   function updateCityTrigger() {
     const el = $('cityTriggerValue');
@@ -2191,7 +2202,7 @@
       if ($('citySide').classList.contains('open')) closeCitySheet(); else openCitySheet();
     });
     $('cityClose').addEventListener('click', closeCitySheet);
-    window.addEventListener('resize', () => { if (!isMobileLayout()) closeCitySheet(); });
+    window.addEventListener('resize', () => { if (!isMobileLayout()) closeCitySheet(); if (!isMegaSheet()) document.body.classList.remove('sheet-open'); });
     $('cityList').addEventListener('scroll', (e) => {
       const el = e.currentTarget;
       if (el.scrollTop + el.clientHeight >= el.scrollHeight - 120) appendCityChunk();

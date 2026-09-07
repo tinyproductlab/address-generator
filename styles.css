@@ -231,9 +231,12 @@ select.allbtn.lang { appearance: none; -webkit-appearance: none; min-width: 104p
   .hero h1 { font-size: 21px; line-height: 1.3; }
   .hero .sub { font-size: 13px; }
   .footerin { grid-template-columns: 1fr; }
-  .mega-panel { position: fixed; inset: 0; top: 0; z-index: 60; }
-  .panelin { height: 100%; display: flex; flex-direction: column; padding: 12px calc(12px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left)); }
-  .mega-scroll { max-height: none; flex: 1; }
+  /* 头部的 backdrop-filter 会成为 fixed 子元素的包含块，全屏国家面板必须先解除它，
+     否则 inset:0 只会撑满头部（约 100px），国家网格溢出到正文下方被遮挡。 */
+  .top { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--card); }
+  .mega-panel { position: fixed; inset: 0; top: 0; z-index: 60; border-bottom: 0; box-shadow: none; }
+  .panelin { height: 100%; max-width: none; display: flex; flex-direction: column; padding: calc(12px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left)); }
+  .mega-scroll { max-height: none; flex: 1; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .mega-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .copt { min-height: 48px; }
 
