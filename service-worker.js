@@ -11,7 +11,7 @@
  * 这一条是硬要求：OpenStreetMap 的瓦片使用政策禁止批量下载与离线囤积，
  * 所以 SW 必须对 tile 服务直接放行到网络，绝不写进 Cache Storage。
  */
-const VERSION = '2026.09.07.1';
+const VERSION = '2026.09.07.2';
 const SHELL_CACHE = `addrgen-shell-${VERSION}`;
 const RUNTIME_CACHE = `addrgen-runtime-${VERSION}`;
 
@@ -26,7 +26,7 @@ const SHELL_ASSETS = [
   '/assets/favicon-32.png',
   '/assets/apple-touch-icon.png',
   '/assets/icon-192.png',
-  '/assets/logo/address-generator-logo.png'
+  '/assets/logo/address-generator-logo-104.png'
 ];
 
 // 绝不进缓存的主机：地图瓦片与地图库
