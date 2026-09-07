@@ -10,6 +10,7 @@
 
   const I18N = window.ADDRGEN_I18N;
   const COPY = window.ADDRGEN_PAGE_COPY;
+  const LEGAL = window.ADDRGEN_LEGAL_COPY;
   if (!I18N) return;
 
   const LOCALES = I18N.locales;
@@ -56,6 +57,8 @@
   // 短 UI 词沿用 i18n.js（隐私政策 / 使用条款 / 联系我们等已有 16 语言），
   // 长文案走 page-copy.js；同名时页面文案优先。
   function t(key) {
+    const legal = LEGAL ? lookup(LEGAL, key) : null;
+    if (legal != null) return legal;
     const page = COPY ? lookup(COPY, key) : null;
     if (page != null) return page;
     const ui = lookup(I18N.table, key);
@@ -65,7 +68,12 @@
   function apply() {
     document.documentElement.lang = lang;
     document.documentElement.dir = (I18N.rtl || []).includes(lang) ? 'rtl' : 'ltr';
-    document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      const v = t(el.dataset.i18n);
+      el.textContent = v;
+      // 译文为空的提示段落（中文界面下的"中文为准"说明）自动收起
+      if (el.classList.contains('legal-notice')) el.hidden = !v;
+    });
     // 带内联标签（<b>/<code>/<a>）的段落。文案全部由本仓库维护，无用户输入。
     document.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = t(el.dataset.i18nHtml); });
     document.querySelectorAll('[data-i18n-alt]').forEach((el) => { el.alt = t(el.dataset.i18nAlt); });

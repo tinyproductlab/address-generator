@@ -184,6 +184,15 @@ select.allbtn.lang { appearance: none; -webkit-appearance: none; min-width: 104p
 [dir="rtl"] .batch-table, [dir="rtl"] .map-meta { direction: ltr; text-align: left; }
 [dir="rtl"] select.allbtn.lang { background-position: left 9px center; padding-right: 10px; padding-left: 26px; }
 
+/* 法律页：非中文界面下的"中文版为准"提示；以及宽表格在手机上自己横滑 */
+.legal-notice {
+  margin: 0 0 14px; padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--line); background: var(--soft);
+  font-size: 12px; line-height: 1.6; color: var(--muted);
+}
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-scroll table { min-width: 520px; }
+
 /* RTL 正文里的代码片段（如 /u/）要做方向隔离，否则中性字符会被重排成 "/u /" */
 [dir="rtl"] code { direction: ltr; unicode-bidi: isolate; }
 
