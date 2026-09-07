@@ -184,6 +184,15 @@ select.allbtn.lang { appearance: none; -webkit-appearance: none; min-width: 104p
 [dir="rtl"] .batch-table, [dir="rtl"] .map-meta { direction: ltr; text-align: left; }
 [dir="rtl"] select.allbtn.lang { background-position: left 9px center; padding-right: 10px; padding-left: 26px; }
 
+/* RTL 正文里的代码片段（如 /u/）要做方向隔离，否则中性字符会被重排成 "/u /" */
+[dir="rtl"] code { direction: ltr; unicode-bidi: isolate; }
+
+/* 静态页（关于等）头部的语言选择器：顶到右侧，RTL 下自动换边 */
+.page-topbar .brandrow { align-items: center; }
+.page-lang { margin-left: auto; max-width: 148px; }
+[dir="rtl"] .page-lang { margin-left: 0; margin-right: auto; }
+@media (max-width: 620px) { .page-lang { max-width: 128px; } }
+
 /* ---------- 安装到主屏 ---------- */
 /* 作者样式里的 display 会盖掉 UA 的 [hidden]{display:none}，必须显式兜住，
    否则 hidden 属性形同虚设，横幅对所有人常驻。 */

@@ -52,6 +52,14 @@
   }
   let lang = DEFAULT_LOCALE;
   try { lang = detectLocale(); } catch { lang = DEFAULT_LOCALE; }
+  // ?lang= 是用户/外链的显式指定，必须落盘：否则从 /?lang=fr 进来点「关于与反馈」
+  // 这类静态页读不到 localStorage，语言就丢回中文。navigator 嗅探来的不写，
+  // 那只是猜测，不该固化成用户的选择。
+  try {
+    if (normalizeLocale(new URLSearchParams(location.search).get('lang'))) {
+      localStorage.setItem('tlb-lang', lang);
+    }
+  } catch { /* ignore */ }
   const isZh = () => lang === 'zh-CN' || lang === 'zh-TW';
   const t = (k) => {
     const table = I18N[lang] || {};
@@ -2184,6 +2192,17 @@
   // -----------------------------
   // i18n apply to static DOM
   // -----------------------------
+  // 指向静态页（关于 / 隐私 / 条款 / 来源）的链接带上当前语言，
+  // 双保险：localStorage 被浏览器策略禁掉时仍能把语言带过去。
+  function syncLangLinks() {
+    document.querySelectorAll('[data-keep-lang]').forEach((a) => {
+      try {
+        const u = new URL(a.getAttribute('href'), location.href);
+        u.searchParams.set('lang', lang);
+        a.setAttribute('href', u.pathname + u.search + u.hash);
+      } catch { /* ignore */ }
+    });
+  }
   function applyI18n() {
     document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
     document.querySelectorAll('[data-i18n-ph]').forEach((el) => { el.placeholder = t(el.dataset.i18nPh); });
@@ -2198,6 +2217,7 @@
       picker.value = lang;
     }
     if ($('installBar')) refreshInstallUi();   // iOS 步骤文案随语言切换
+    syncLangLinks();
   }
   function setLang(next) {
     const code = normalizeLocale(next) || DEFAULT_LOCALE;

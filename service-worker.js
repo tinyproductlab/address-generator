@@ -11,7 +11,7 @@
  * 这一条是硬要求：OpenStreetMap 的瓦片使用政策禁止批量下载与离线囤积，
  * 所以 SW 必须对 tile 服务直接放行到网络，绝不写进 Cache Storage。
  */
-const VERSION = '2026.09.07.4';
+const VERSION = '2026.09.08.1';
 const SHELL_CACHE = `addrgen-shell-${VERSION}`;
 const RUNTIME_CACHE = `addrgen-runtime-${VERSION}`;
 
