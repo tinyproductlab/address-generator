@@ -73,6 +73,18 @@
       const v = t(el.dataset.i18nTitle);
       if (el.tagName === 'TITLE') document.title = v; else el.setAttribute('title', v);
     });
+    // 「{c}地址与人物资料生成器」这类模板：国家名交给 Intl.DisplayNames 出，
+    // 16 种语言都能拿到正确的本地化国名，不必手写 16×N 条翻译。
+    document.querySelectorAll('[data-i18n-tpl]').forEach((el) => {
+      let out = t(el.dataset.i18nTpl);
+      const region = el.dataset.i18nRegion;
+      if (region) {
+        let name = region;
+        try { name = new Intl.DisplayNames([lang], { type: 'region' }).of(region) || region; } catch { /* ignore */ }
+        out = out.replace('{c}', name);
+      }
+      el.textContent = out;
+    });
     const sel = document.getElementById('pageLang');
     if (sel) {
       if (!sel.options.length) {
