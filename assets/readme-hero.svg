@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">全球地址与人物资料生成器</title>
+  <desc id="desc">选择国家或城市，一键生成可以直接复制的地址与人物资料。</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12243b"/>
+      <stop offset="1" stop-color="#091422"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#263f63"/>
+      <stop offset="1" stop-color="#142943"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".35"/>
+    </filter>
+    <filter id="blur"><feGaussianBlur stdDeviation="28"/></filter>
+  </defs>
+  <rect width="1200" height="560" rx="24" fill="url(#bg)"/>
+  <circle cx="1010" cy="80" r="210" fill="#3678ed" opacity=".14" filter="url(#blur)"/>
+  <circle cx="1030" cy="450" r="150" fill="#8160ee" opacity=".12" filter="url(#blur)"/>
+
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif">
+    <rect x="68" y="60" width="38" height="38" rx="10" fill="#fff"/>
+    <rect x="77" y="69" width="20" height="20" rx="5" fill="#2f6fdd"/>
+    <path d="M81 74h12v12H81z" fill="#e8f1ff" opacity=".9"/>
+    <path d="M84 71h6v5h-6z" fill="#9ec2ff"/>
+    <text x="120" y="86" fill="#dbe8f7" font-size="18" font-weight="700">小产品实验室 · 地址生成器</text>
+
+    <text x="68" y="190" fill="#8fb6ff" font-size="15" font-weight="700">浏览器本地运行 · 无需注册</text>
+    <circle cx="55" cy="184" r="5" fill="#68d2a9"/>
+    <text x="68" y="265" fill="#f6f8fc" font-size="47" font-weight="800" letter-spacing="-2">全球地址与人物资料</text>
+    <text x="68" y="323" fill="#76a5ff" font-size="47" font-weight="800" letter-spacing="-2">一键生成</text>
+    <text x="68" y="370" fill="#aabbd0" font-size="17">249 个国家 / 地区 · 16 种界面语言 · 支持批量导出</text>
+    <rect x="68" y="410" width="142" height="46" rx="9" fill="#3478f4"/>
+    <text x="92" y="440" fill="#fff" font-size="15" font-weight="700">立即使用  →</text>
+    <rect x="224" y="410" width="142" height="46" rx="9" fill="#172c49" stroke="#3e5f88"/>
+    <text x="251" y="440" fill="#d9e8fb" font-size="15" font-weight="700">批量生成  ↗</text>
+
+    <g transform="translate(630 90) rotate(-3 240 195)" filter="url(#shadow)">
+      <rect width="490" height="382" rx="18" fill="url(#card)" stroke="#496887"/>
+      <text x="24" y="33" fill="#7893b3" font-size="11">● ● ●</text>
+      <text x="220" y="33" fill="#819ab8" font-size="11">生成结果</text>
+      <text x="450" y="35" fill="#68d2a9" font-size="18">✓</text>
+      <rect x="20" y="54" width="450" height="62" rx="10" fill="#172d4a" stroke="#3b5878"/>
+      <rect x="34" y="68" width="35" height="35" rx="9" fill="#315b99"/>
+      <text x="46" y="92" fill="#d8e7ff" font-size="16" font-weight="800">M</text>
+      <text x="83" y="82" fill="#f4f7fc" font-size="14" font-weight="700">Misaki Sato</text>
+      <text x="83" y="101" fill="#91a9c5" font-size="10">日本 · Tokyo</text>
+      <text x="445" y="90" fill="#8db7ff" font-size="16">⧉</text>
+      <rect x="20" y="128" width="450" height="94" rx="10" fill="#0e1c30" stroke="#3a5878"/>
+      <text x="34" y="151" fill="#8ea8c5" font-size="10">本地完整地址</text>
+      <text x="34" y="177" fill="#f4f7fc" font-size="15" font-weight="700">〒160-6421</text>
+      <text x="34" y="199" fill="#f4f7fc" font-size="14" font-weight="700">東京都新宿区新宿4丁目5-10</text>
+      <text x="445" y="199" fill="#8db7ff" font-size="16">⧉</text>
+      <rect x="20" y="234" width="218" height="70" rx="10" fill="#0e1c30" stroke="#3a5878"/>
+      <text x="34" y="257" fill="#8ea8c5" font-size="10">电话</text>
+      <text x="34" y="282" fill="#f4f7fc" font-size="14" font-weight="700">090-4795-9280</text>
+      <rect x="252" y="234" width="218" height="70" rx="10" fill="#0e1c30" stroke="#3a5878"/>
+      <text x="266" y="257" fill="#8ea8c5" font-size="10">邮箱</text>
+      <text x="266" y="282" fill="#f4f7fc" font-size="12" font-weight="700">misaki.sato@outlook.com</text>
+      <text x="20" y="345" fill="#68d2a9" font-size="11">● 本地生成</text>
+      <text x="370" y="345" fill="#7f98b5" font-size="10">Seed: checkout-001</text>
+    </g>
+    <rect x="1020" y="60" width="125" height="34" rx="17" fill="#1b3555" stroke="#4b6d91"/>
+    <text x="1039" y="82" fill="#dce9f9" font-size="11" font-weight="700">🇯🇵 Japan · JP</text>
+    <rect x="605" y="462" width="106" height="34" rx="17" fill="#1b3555" stroke="#4b6d91"/>
+    <text x="625" y="484" fill="#bcebd8" font-size="11" font-weight="700">⚡ 即时生成</text>
+  </g>
+</svg>
