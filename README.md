@@ -18,7 +18,9 @@
 </div>
 
 <p align="center">
-  <img src="assets/readme-hero.svg" alt="全球地址与人物资料生成器宣传图" width="100%">
+  <a href="https://addressgen.tinylabpro.com/">
+    <img src="assets/readme-hero.svg" alt="点击打开全球地址与人物资料生成器" width="100%">
+  </a>
 </p>
 
 ## 这是什么？
