@@ -95,6 +95,7 @@ COUNTRIES.forEach((c) => {
 const today = new Date().toISOString().slice(0, 10);
 const urls = [
   { loc: `${ORIGIN}/`, freq: 'daily', pri: '1.0' },
+  { loc: `${ORIGIN}/promo/`, freq: 'monthly', pri: '0.8' },
   ...COUNTRIES.map((c) => ({ loc: `${ORIGIN}/${c.slug}/`, freq: 'weekly', pri: '0.9' })),
   // Cloudflare Pages 会把 /privacy.html 308 到 /privacy，
   // sitemap 里必须直接写重定向后的地址 —— 指向跳转的 URL 会浪费抓取预算，

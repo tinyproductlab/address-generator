@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>全球地址与人物资料生成器｜小产品实验室</title>
+<meta name="description" content="一款无需注册、浏览器本地运行的全球地址与人物资料生成器，支持 249 个国家和地区、16 种界面语言、城市筛选、批量导出与 PWA。">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://addressgen.tinylabpro.com/promo/">
+<meta property="og:title" content="全球地址与人物资料生成器｜小产品实验室">
+<meta property="og:description" content="选择国家，立即生成符合当地格式的地址、姓名、联系方式和开发资料。浏览器本地运行，无需注册。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://addressgen.tinylabpro.com/promo/">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="theme-color" content="#0d1524">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" href="../assets/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="nav-shell">
+    <a class="brand" href="../" aria-label="返回全球地址生成器">
+      <img src="../assets/logo/address-generator-logo-104.png" alt="" width="32" height="32">
+      <span>地址生成器</span>
+    </a>
+    <nav class="nav-links" aria-label="页面导航">
+      <a href="#features">功能</a>
+      <a href="#preview">预览</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+    <a class="nav-cta" href="../">打开生成器 <span aria-hidden="true">↗</span></a>
+  </div>
+</header>
+
+<main>
+  <section class="hero section-shell">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="status-dot"></span> 浏览器本地运行 · 无需注册</div>
+      <h1>全球地址与人物资料，<em>一键生成</em></h1>
+      <p class="hero-lede">面向开发、QA、国际化和表单演示的轻量工具。选择一个国家或城市，立即得到一份格式自然、字段完整、可以直接复制的资料。</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="../">开始生成 <span aria-hidden="true">→</span></a>
+        <a class="button button-quiet" href="../#batch">批量生成 <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="trust-row" aria-label="产品特点">
+        <span>✓ 249 个国家 / 地区</span>
+        <span>✓ 16 种界面语言</span>
+        <span>✓ 可离线使用</span>
+      </div>
+    </div>
+    <div class="hero-art" aria-label="地址资料卡片预览">
+      <div class="glow glow-one"></div>
+      <div class="glow glow-two"></div>
+      <div class="floating-pill pill-country"><span>🇯🇵</span> Japan <b>JP</b></div>
+      <div class="profile-window">
+        <div class="window-top"><span class="window-dots"><i></i><i></i><i></i></span><span>生成结果</span><span class="window-check">✓</span></div>
+        <div class="profile-heading"><span class="avatar">M</span><div><strong>Misaki Sato</strong><small>日本 · Tokyo</small></div><span class="copy-mark">⧉</span></div>
+        <div class="preview-fields">
+          <div class="preview-field field-wide"><small>本地完整地址</small><strong>〒160-6421<br>東京都新宿区新宿4丁目5-10</strong><span>⧉</span></div>
+          <div class="preview-field"><small>电话</small><strong>090-4795-9280</strong><span>⧉</span></div>
+          <div class="preview-field"><small>邮箱</small><strong>misaki.sato@outlook.com</strong><span>⧉</span></div>
+        </div>
+        <div class="window-footer"><span><b></b> 本地生成</span><span>Seed: checkout-001</span></div>
+      </div>
+      <div class="floating-pill pill-local"><span>⚡</span> 即时生成</div>
+    </div>
+  </section>
+
+  <section class="stats section-shell" aria-label="产品数据">
+    <div><strong>249</strong><span>国家 / 地区</span></div>
+    <div><strong>16</strong><span>界面语言</span></div>
+    <div><strong>500</strong><span>最多批量条数</span></div>
+    <div><strong>0</strong><span>注册与上传</span></div>
+  </section>
+
+  <section class="country-section section-shell" id="preview">
+    <div class="section-intro"><span class="section-kicker">从选择开始</span><h2>常用国家，打开就能用</h2><p>不用在复杂菜单里寻找。先从常用国家开始，也可以随时搜索完整的国家和地区列表。</p></div>
+    <div class="country-layout">
+      <div class="country-list" role="list" aria-label="常用国家">
+        <button class="country-choice active" data-country="日本" data-flag="🇯🇵"><span>🇯🇵</span><b>日本</b><small>Tokyo · Osaka · Kyoto</small><i>→</i></button>
+        <button class="country-choice" data-country="美国" data-flag="🇺🇸"><span>🇺🇸</span><b>美国</b><small>New York · California · Texas</small><i>→</i></button>
+        <button class="country-choice" data-country="英国" data-flag="🇬🇧"><span>🇬🇧</span><b>英国</b><small>London · Manchester · Edinburgh</small><i>→</i></button>
+        <button class="country-choice" data-country="中国" data-flag="🇨🇳"><span>🇨🇳</span><b>中国</b><small>北京 · 上海 · 深圳 · 杭州</small><i>→</i></button>
+        <button class="country-choice" data-country="德国" data-flag="🇩🇪"><span>🇩🇪</span><b>德国</b><small>Berlin · Munich · Hamburg</small><i>→</i></button>
+        <button class="country-choice" data-country="加拿大" data-flag="🇨🇦"><span>🇨🇦</span><b>加拿大</b><small>Toronto · Vancouver · Montreal</small><i>→</i></button>
+      </div>
+      <div class="country-demo">
+        <div class="demo-label"><span class="live-dot"></span> 当前预览</div>
+        <div class="demo-country"><span id="demoFlag">🇯🇵</span><div><small>已选择国家</small><strong id="demoCountry">日本</strong></div><span class="demo-code">JP</span></div>
+        <div class="demo-address"><small>地址与联系方式</small><strong id="demoAddress">東京都新宿区新宿4丁目5-10</strong><span>〒160-6421 · 090-4795-9280</span></div>
+        <a class="demo-link" href="../">用这个国家开始生成 <span>→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature-section section-shell" id="features">
+    <div class="section-intro centered"><span class="section-kicker">为实际工作准备</span><h2>从一份地址，到一套完整资料</h2><p>常用字段集中在一张结果卡里，逐项复制或一次性导出，减少重复填写。</p></div>
+    <div class="feature-grid">
+      <article class="feature-card feature-large"><div class="feature-icon icon-blue">✦</div><h3>真实地名与本地格式</h3><p>地址会随国家和城市变化，包含当地常见的街道、行政区、邮编、电话和姓名格式。</p><div class="feature-lines"><span>Street / City / Region</span><span>Postal code · Phone · Timezone</span></div></article>
+      <article class="feature-card"><div class="feature-icon icon-purple">⌁</div><h3>完整人物资料</h3><p>姓名、生日、职业、公司、邮箱、用户名和设备资料一次生成。</p></article>
+      <article class="feature-card"><div class="feature-icon icon-green">↗</div><h3>复制与导出</h3><p>单项复制、复制全部，或批量导出 CSV、JSON、JSONL 和 TXT。</p></article>
+      <article class="feature-card"><div class="feature-icon icon-orange">◌</div><h3>数据留在浏览器</h3><p>不要求注册，生成和保存都在当前设备完成；适合隐私敏感的工作流。</p></article>
+    </div>
+  </section>
+
+  <section class="workflow section-shell">
+    <div class="workflow-copy"><span class="section-kicker">三步即可开始</span><h2>从空白表单到可用资料，只需几秒</h2><p>把时间留给真正的开发和验证工作。打开页面、选择范围、复制结果。</p><a class="button button-primary" href="../">立即打开 <span aria-hidden="true">→</span></a></div>
+    <div class="steps"><div class="step"><span>01</span><div><strong>选择国家或城市</strong><p>从常用国家开始，或搜索 249 个国家和地区。</p></div></div><div class="step"><span>02</span><div><strong>生成完整资料</strong><p>地址、人物、联系方式和账号资料同步出现。</p></div></div><div class="step"><span>03</span><div><strong>复制、保存或导出</strong><p>按字段复制，也可以批量导出给测试流程使用。</p></div></div></div>
+  </section>
+
+  <section class="faq-section section-shell" id="faq">
+    <div class="section-intro"><span class="section-kicker">常见问题</span><h2>开始前，先了解这几件事</h2></div>
+    <div class="faq-grid"><details open><summary>需要注册账号吗？</summary><p>不需要。打开页面即可生成，常用的保存和语言设置保存在当前浏览器中。</p></details><details><summary>生成的数据会上传到服务器吗？</summary><p>生成逻辑在浏览器中运行，资料默认留在当前设备。地图显示只使用国家或城市级位置，不定位具体住宅。</p></details><details><summary>可以用于真实账户或支付吗？</summary><p>请将结果用于开发、演示、QA 和表单格式验证。真实账户、订单或支付场景请使用你本人合法且准确的信息，并遵守对应平台规则。</p></details></div>
+  </section>
+
+  <section class="final-cta section-shell"><div><span class="section-kicker">准备好了？</span><h2>打开地址生成器，马上得到第一份结果</h2><p>免费、无需注册、适合手机，也可以安装到主屏离线使用。</p></div><a class="button button-light" href="../">开始生成 <span aria-hidden="true">→</span></a></section>
+</main>
+
+<footer class="site-footer"><div class="footer-shell"><div class="footer-brand"><img src="../assets/logo/address-generator-logo-104.png" alt="" width="28" height="28"><span>小产品实验室 · 地址生成器</span></div><div class="footer-links"><a href="../">生成器</a><a href="../#batch">批量生成</a><a href="../about.html">关于与反馈</a><a href="https://tinylabpro.com/" rel="noopener">小产品实验室</a></div><span class="footer-note">浏览器本地生成 · 随机资料不代表真实个人</span></div></footer>
+<script src="script.js"></script>
+</body>
+</html>
