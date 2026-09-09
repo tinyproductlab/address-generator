@@ -55,8 +55,6 @@ function countryPage(c) {
   html = html.replace(/<meta property="og:title" content="[^"]*">/, `<meta property="og:title" content="${title}">`);
   html = html.replace(/<meta property="og:url" content="[^"]*">/, `<meta property="og:url" content="${url}">`);
   html = html.replace(/"url":"[^"]*"/, `"url":"${url}"`);
-  // 宣传区只放在根首页；国家专页保持聚焦于对应国家的生成器。
-  html = html.replace(/<!-- HOME_PROMO_START -->[\s\S]*?<!-- HOME_PROMO_END -->\n?/, '');
   // 当前国家 + H1
   html = html.replace('<body>', `<body data-country="${c.code}">`);
   html = html.replace(/<h1 id="pageTitle">[^<]*<\/h1>/, `<h1 id="pageTitle">${c.zh}地址与人物资料生成器</h1>`);
