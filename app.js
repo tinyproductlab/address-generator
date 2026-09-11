@@ -1657,8 +1657,11 @@
     const cn = countryName(p);
 
     const titleText = tpl('pageTitleTpl', { c: cn });
-    $('pageTitle').textContent = titleText;
-    document.title = `${titleText} - ${t('siteName')}`;
+    // H1 固定为全球定位，副标题显示当前国家
+    $('pageTitle').textContent = t('globalTitle');
+    const sub = $('countrySubtitle');
+    if (sub) sub.textContent = tpl('countrySubTpl', { c: cn });
+    document.title = `${t('globalTitle')} - ${t('siteName')}`;
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute('content', tpl('descTpl', { c: cn }));
 

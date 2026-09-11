@@ -12,6 +12,10 @@
 <meta property="og:description" content="打开即生成：真实地名与本地地址格式 + 随机人物、联系方式、银行卡与账号资料，全部字段直出。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://addressgen.tinylabpro.com/th-address-generator/">
+<meta property="og:image" content="https://addressgen.tinylabpro.com/assets/favicon-32.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="全球地址与人物资料生成器 - 小产品实验室">
+<meta name="twitter:description" content="249 个国家 / 地区的真实地名与地址格式 + 随机姓名、电话、邮箱、银行卡与账号资料，浏览器本地生成，可批量导出。">
 <link rel="manifest" href="../manifest.webmanifest">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1f2127" media="(prefers-color-scheme: dark)">
@@ -55,6 +59,7 @@
   <section class="hero">
     <div>
       <h1 id="pageTitle">泰国地址与人物资料生成器</h1>
+      <p class="sub" id="countrySubtitle">当前：日本地址与人物资料</p>
       <p class="sub" data-i18n="pageSub">选择国家或城市后，地址、人物、联系方式、银行卡与账号资料同步生成。</p>
     </div>
     <div class="actions">
@@ -100,7 +105,7 @@
   </section>
 
   <section class="section" id="batch">
-    <h2 data-i18n="batchTitle">批量生成</h2>
+    <h2 data-i18n="batchTitle">批量生成全球地址数据</h2>
     <div class="batch-controls">
       <div class="ctrl-group">
         <span class="ctrl-label" data-i18n="batchCount">数量</span>
@@ -157,20 +162,60 @@
     <div class="data-cols">
       <div>
         <div class="data-head">
-          <h2 data-i18n="savedTitle">已保存</h2>
+          <h2 data-i18n="savedTitle">已保存的地址与人物资料</h2>
           <button type="button" class="mini" id="savedToggle" aria-expanded="true"></button>
         </div>
         <div id="savedList" class="data-list"></div>
       </div>
       <div>
         <div class="data-head">
-          <h2 data-i18n="recentTitle">最近生成</h2>
+          <h2 data-i18n="recentTitle">最近生成的全球地址</h2>
           <button type="button" class="mini" id="recentToggle" aria-expanded="false"></button>
         </div>
         <div id="recentList" class="data-list collapsed"></div>
       </div>
     </div>
     <button type="button" class="btn danger" id="clearDataBtn" data-i18n="clearData">清空本地数据</button>
+  </section>
+
+  <section class="section" style="max-width: 860px; margin: 0 auto; padding: 0 16px;">
+    <h2 style="font-size: 1.4rem; margin-bottom: 12px;">全球地址生成器怎么用</h2>
+    <p>全球地址生成器支持 249 个国家和地区的地址与人物资料随机生成。打开页面后，点击右上角的国家选择器，从列表中选择目标国家或地区，页面会立即按照当地的地址格式、姓名习惯、电话区号和邮编规则生成一套完整的人物档案。每次点击「重新生成全部」都会产生新的随机数据。</p>
+    <p>如果需要可复现的数据，在 Seed 输入框中填写任意字符串，相同的 Seed 会产生完全相同的结果，便于开发测试和 QA 回归。选择城市后，地址会定位到该城市的真实街区范围，地图卡片会显示区域位置（非精确住宅定位，仅用于展示所在城市的大致区域）。</p>
+
+    <h2 style="font-size: 1.4rem; margin: 24px 0 12px;">支持的数据字段</h2>
+    <p>每个生成结果包含六组资料：基本资料（姓名、性别、出生日期、身高体重、血型等）、地址与联系方式（完整地址、城市、邮编、电话、邮箱）、银行卡（卡号、有效期、CVV，仅符合格式校验，不可用于真实交易）、工作资料（公司、职位、行业）、账号与技术资料（用户名、密码、UUID、IP 地址等）以及其他人物档案。所有字段均符合所选国家的本地格式习惯，例如日本的邮编格式为 〒000-0000，美国的电话格式为 (000) 000-0000。</p>
+
+    <h2 style="font-size: 1.4rem; margin: 24px 0 12px;">批量生成与导出</h2>
+    <p>在批量生成区域，可选择 10、20、50、100 条或自定义数量（最多 500 条），勾选需要的字段后点击「生成批量数据」。生成后可一键复制全部，或导出为 CSV、JSON、JSONL、TXT 四种格式，方便导入数据库、填充测试表单或进行国际化测试。批量生成同样支持 Seed 复现。</p>
+
+    <h2 style="font-size: 1.4rem; margin: 24px 0 12px;">数据与隐私</h2>
+    <p>所有地址和人物资料均在浏览器本地生成，不上传任何服务器。已保存和最近生成的数据只存储在本机浏览器的 localStorage 中，清除浏览器数据或点击「清空本地数据」即可删除。生成的银行卡号仅通过 Luhn 算法格式校验，不对应任何真实账户，严禁用于非法用途。</p>
+
+    <h2 style="font-size: 1.4rem; margin: 24px 0 12px;">适用场景</h2>
+    <p>全球地址生成器适用于软件开发与测试（填充注册表单、验证地址校验逻辑、国际化多语言测试）、UI/UX 设计（制作人物头像与资料占位符）、电商与物流测试（模拟不同国家的收货地址格式）、教育与演示（展示各国地址格式差异）等场景。不建议用于注册真实服务或绕过任何平台的身份验证。</p>
+
+    <h2 style="font-size: 1.4rem; margin: 24px 0 12px;">常见问题</h2>
+    <details style="margin-bottom: 8px;">
+      <summary style="cursor: pointer; font-weight: 600;">生成的地址是真实的吗？</summary>
+      <p>地址中的城市、街道名称来自真实的地理数据，但具体门牌号是随机生成的，不对应任何真实住户。地图卡片仅展示城市级别的区域位置，不是精确的住宅定位。</p>
+    </details>
+    <details style="margin-bottom: 8px;">
+      <summary style="cursor: pointer; font-weight: 600;">支持多少个国家和地区？</summary>
+      <p>目前支持 249 个国家和地区，覆盖亚洲、欧洲、北美洲、南美洲、非洲、大洋洲的主要国家和地区，每个国家都有独立的地址格式、姓名库和电话区号。</p>
+    </details>
+    <details style="margin-bottom: 8px;">
+      <summary style="cursor: pointer; font-weight: 600;">可以离线使用吗？</summary>
+      <p>可以。将页面安装到桌面或手机主屏后（PWA），断网状态下仍可正常生成地址和人物资料。数据完全在本地处理，不依赖网络连接。</p>
+    </details>
+    <details style="margin-bottom: 8px;">
+      <summary style="cursor: pointer; font-weight: 600;">生成的银行卡号能用吗？</summary>
+      <p>不能。生成的银行卡号仅符合发卡行标识（BIN）和 Luhn 校验格式，不对应任何真实银行账户，无法用于支付或交易，仅供开发测试使用。</p>
+    </details>
+    <details style="margin-bottom: 8px;">
+      <summary style="cursor: pointer; font-weight: 600;">数据会保存到服务器吗？</summary>
+      <p>不会。所有生成和保存操作都在浏览器本地完成，数据存储在 localStorage 中。我们没有后端服务器，也无法访问你的任何生成记录。</p>
+    </details>
   </section>
 </main>
 
