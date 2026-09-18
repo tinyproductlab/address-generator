@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const DATA_VERSION = '2026.09.05.1';
+  const DATA_VERSION = '2026.09.18.2';
   const SITE = {
     origin: 'https://addressgen.tinylabpro.com',
     name: '小产品实验室 · 全球地址生成器',
@@ -493,7 +493,7 @@
       house: (r) => String(r.int(1, 140)),
       postal: (r, admin, pre) => `${pre ? pre + r.digits(2) : r.digits(5)}`,
       phone: (r) => `+39 3${r.digits(2)} ${r.digits(7)}`,
-      localFormat: (p) => [`Via ${p.street.replace(/^Via |^Corso |^Via /, '')} ${p.house}`, `${p.postal} ${p.city} (${p.adminCode || p.admin})`, 'Italia'],
+      localFormat: (p) => [`${p.street} ${p.house}`, `${p.postal} ${p.city} (${p.adminCode || p.admin})`, 'Italia'],
       intlFormat: (p) => [`${p.street} ${p.house}, ${p.postal} ${p.city}, Italy`],
       last: ['Rossi', 'Russo', 'Ferrari', 'Esposito', 'Bianchi', 'Romano'],
       male: ['Marco', 'Luca', 'Alessandro', 'Davide', 'Francesco'],
@@ -994,6 +994,29 @@
     AR: { 'Buenos Aires': 'C1', 'Córdoba': 'X5', Rosario: 'S2' },
     TR: { 'İstanbul': '34', Ankara: '06', 'İzmir': '35' }
   };
+
+  // 已核对的城市级完整邮编候选值（仅用于测试资料）。
+  // 它们保证“城市 + 邮编”的组合合理；街道与门牌仍会随机生成，绝不表示真实投递地址。
+  // 没有列入此表的国家继续只生成当地格式，不伪造精确投递编码。
+  const CITY_POSTAL_POOLS = {
+    JP: {
+      '新宿区': ['160-0022', '160-0023'], '渋谷区': ['150-0001', '150-0043'], '千代田区': ['100-0005', '100-0004'], '世田谷区': ['154-0004', '154-0024'], '八王子市': ['192-0083', '192-0046'],
+      '大阪市': ['530-0001', '542-0085'], '堺市': ['590-0076', '590-0952'], '豊中市': ['560-0021', '560-0082'], '京都市': ['600-8009', '604-8005'], '宇治市': ['611-0021', '611-0042'],
+      '札幌市': ['060-0042', '064-0820'], '函館市': ['040-0011', '040-0064'], '旭川市': ['070-0031', '070-0034'], '福岡市': ['810-0001', '812-0011'], '北九州市': ['802-0002', '806-0021'], '横浜市': ['220-0011', '231-0023'], '川崎市': ['210-0007', '211-0063']
+    },
+    US: {
+      'Los Angeles': ['90012', '90017'], 'San Francisco': ['94103', '94105'], 'San Diego': ['92101', '92103'], Sacramento: ['95814', '95816'], 'New York': ['10001', '10003'], Buffalo: ['14202', '14203'], Albany: ['12207', '12210'],
+      Austin: ['78701', '78702'], Dallas: ['75201', '75204'], Houston: ['77002', '77006'], Miami: ['33130', '33132'], Orlando: ['32801', '32803'], Tampa: ['33602', '33606'], Seattle: ['98101', '98109'], Tacoma: ['98402', '98403'], Chicago: ['60601', '60611'], Springfield: ['62701', '62704']
+    },
+    GB: { London: ['SW1A 1AA', 'EC1A 1BB'], Manchester: ['M1 1AE', 'M2 5DB'], Birmingham: ['B1 1TB', 'B3 1AQ'], Leeds: ['LS1 4DY', 'LS2 7UE'], Edinburgh: ['EH1 1BQ', 'EH2 2ER'], Glasgow: ['G1 1AB', 'G2 3JD'], Cardiff: ['CF10 1EP', 'CF10 2AF'], Swansea: ['SA1 3SN', 'SA1 1NE'] },
+    DE: { Berlin: ['10115', '10117'], 'München': ['80331', '80538'], 'Nürnberg': ['90402', '90403'], Augsburg: ['86150', '86152'], Hamburg: ['20095', '20354'], Frankfurt: ['60311', '60313'], Wiesbaden: ['65183', '65185'], 'Köln': ['50667', '50674'], 'Düsseldorf': ['40213', '40217'] },
+    CA: { Toronto: ['M5V 2T6', 'M5H 2N2'], Ottawa: ['K1P 5A4', 'K1N 5W8'], Vancouver: ['V6B 1A1', 'V6C 1A1'], Victoria: ['V8W 1P6', 'V8W 1N6'], Montreal: ['H2Y 1C6', 'H2X 1Y4'], 'Quebec City': ['G1R 4P5', 'G1K 3Y9'], Calgary: ['T2P 1J9', 'T2G 0B4'], Edmonton: ['T5J 0N3', 'T5K 2B6'] },
+    AU: { Sydney: ['2000', '2001'], Newcastle: ['2300', '2302'], Melbourne: ['3000', '3004'], Geelong: ['3220', '3221'], Brisbane: ['4000', '4001'], 'Gold Coast': ['4217', '4220'], Perth: ['6000', '6005'] },
+    CN: { '朝阳区': ['100020', '100102'], '海淀区': ['100080', '100086'], '东城区': ['100005', '100010'], '西城区': ['100033', '100037'], '浦东新区': ['200120', '200135'], '徐汇区': ['200030', '200032'], '静安区': ['200040', '200041'], '黄浦区': ['200001', '200010'], '深圳市': ['518000', '518052'], '广州市': ['510000', '510620'], '珠海市': ['519000', '519070'], '佛山市': ['528000', '528200'], '杭州市': ['310000', '310012'], '宁波市': ['315000', '315100'], '南京市': ['210000', '210018'], '苏州市': ['215000', '215021'] },
+    KR: { '마포구': ['04048', '04056'], '강남구': ['06133', '06236'], '종로구': ['03154', '03186'], '성동구': ['04750', '04794'], '해운대구': ['48095', '48104'], '중구': ['48930', '48938'], '연수구': ['21984', '22004'], '부평구': ['21390', '21405'] },
+    SG: { 'Downtown Core': ['018956', '048581'], 'River Valley': ['179098', '238255'], Orchard: ['238855', '238859'], Tampines: ['529509', '529786'], Bedok: ['460216', '469285'], 'Jurong East': ['609601', '609731'], Clementi: ['120315', '129962'], Woodlands: ['730900', '738099'], Yishun: ['760930', '768894'] },
+    FR: { Paris: ['75001', '75009'], Versailles: ['78000', '78008'], 'Boulogne-Billancourt': ['92100'], Marseille: ['13001', '13006'], Nice: ['06000', '06100'], Cannes: ['06400'], Lyon: ['69001', '69002'], Grenoble: ['38000', '38100'], Annecy: ['74000'], Toulouse: ['31000', '31500'], Montpellier: ['34000', '34070'] }
+  };
   // 官方同步文件只覆盖菲律宾的 Barangay 名称与城市级邮编。
   // 街道和门牌始终保留为本地虚构数据，避免生成现实住址。
   const PH_OFFICIAL = globalThis.ADDRGEN_PH_OFFICIAL || null;
@@ -1008,6 +1031,12 @@
     const map = POSTAL_PREFIX[code];
     if (!map) return '';
     return map[city] || map[admin] || '';
+  }
+
+  function postalFor(profile, rng, place) {
+    const cityPool = CITY_POSTAL_POOLS[profile.code]?.[place.city];
+    if (cityPool?.length) return rng.pick(cityPool);
+    return profile.postal(rng, place.admin, postalPrefix(profile.code, place.city, place.admin.name));
   }
 
   const QUICK = ['US', 'JP', 'GB', 'DE', 'CA', 'AU', 'CN', 'KR', 'SG', 'FR'];
@@ -1515,7 +1544,7 @@
     const parts = {
       house: p.house(rng), street: rng.pick(place.streets || p.streets), district: place.district, city: place.city,
       admin: place.admin.name, adminCode: place.admin.code || '',
-      postal: p.postal(rng, place.admin, postalPrefix(p.code, place.city, place.admin.name))
+      postal: postalFor(p, rng, place)
     };
     const localLines = p.localFormat(parts);
     const intlLines = p.intlFormat(parts);
@@ -2410,7 +2439,7 @@
   }
   if (typeof globalThis !== 'undefined') {
     globalThis.ADDRGEN = {
-      DATA_VERSION, SITE, PROFILES, CARD_BRANDS, CARD_WEIGHTS, CARD_WEIGHTS_DEFAULT,
+      DATA_VERSION, SITE, PROFILES, CITY_POSTAL_POOLS, CARD_BRANDS, CARD_WEIGHTS, CARD_WEIGHTS_DEFAULT,
       EMAIL_DOMAINS, EMAIL_WEIGHTS, HEIGHT_RULES, SeededRandom,
       luhnCheckDigit, luhnValid, looksTemplated, groupPan, generatePan, generateCard,
       bodyMetrics, buildEmail, buildHomepage, emailLocalPart, asciiSlug,

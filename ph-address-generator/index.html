@@ -9,13 +9,13 @@
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://addressgen.tinylabpro.com/ph-address-generator/">
 <meta property="og:title" content="菲律宾地址与人物资料生成器 - 随机菲律宾地址｜小产品实验室">
-<meta property="og:description" content="打开即生成：真实地名与本地地址格式 + 随机人物、联系方式、银行卡与账号资料，全部字段直出。">
+<meta property="og:description" content="打开即生成：城市级地名与本地地址格式 + 随机人物、联系方式、银行卡与账号资料，全部字段直出。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://addressgen.tinylabpro.com/ph-address-generator/">
 <meta property="og:image" content="https://addressgen.tinylabpro.com/assets/favicon-32.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="全球地址与人物资料生成器 - 小产品实验室">
-<meta name="twitter:description" content="249 个国家 / 地区的真实地名与地址格式 + 随机姓名、电话、邮箱、银行卡与账号资料，浏览器本地生成，可批量导出。">
+<meta name="twitter:description" content="249 个国家 / 地区的地址格式、城市级地名与随机测试人物资料，浏览器本地生成，可批量导出。">
 <link rel="manifest" href="../manifest.webmanifest">
 <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1f2127" media="(prefers-color-scheme: dark)">
@@ -61,6 +61,7 @@
       <h1 id="pageTitle">菲律宾地址与人物资料生成器</h1>
       <p class="sub" id="countrySubtitle">当前：日本地址与人物资料</p>
       <p class="sub" data-i18n="pageSub">选择国家或城市后，地址、人物、联系方式、银行卡与账号资料同步生成。</p>
+      <p class="data-note" data-i18n="dataNotice">虚构测试资料：城市、地址格式与部分城市级邮编已核对；街道和门牌随机生成，不用于投递、身份验证或注册真实服务。</p>
     </div>
     <div class="actions">
       <div class="actions-btns">
@@ -184,7 +185,7 @@
     <p>如果需要可复现的数据，在 Seed 输入框中填写任意字符串，相同的 Seed 会产生完全相同的结果，便于开发测试和 QA 回归。选择城市后，地址会定位到该城市的真实街区范围，地图卡片会显示区域位置（非精确住宅定位，仅用于展示所在城市的大致区域）。</p>
 
     <h2 style="font-size: 1.4rem; margin: 24px 0 12px;">支持的数据字段</h2>
-    <p>每个生成结果包含六组资料：基本资料（姓名、性别、出生日期、身高体重、血型等）、地址与联系方式（完整地址、城市、邮编、电话、邮箱）、银行卡（卡号、有效期、CVV，仅符合格式校验，不可用于真实交易）、工作资料（公司、职位、行业）、账号与技术资料（用户名、密码、UUID、IP 地址等）以及其他人物档案。所有字段均符合所选国家的本地格式习惯，例如日本的邮编格式为 〒000-0000，美国的电话格式为 (000) 000-0000。</p>
+    <p>每个生成结果包含六组资料：基本资料（姓名、性别、出生日期、身高体重、血型等）、地址与联系方式（完整地址、城市、邮编、电话、邮箱）、银行卡（卡号、有效期、CVV，仅符合格式校验，不可用于真实交易）、工作资料（公司、职位、行业）、账号与技术资料（用户名、密码、UUID、IP 地址等）以及其他人物档案。城市、地址格式与常用国家的部分城市级邮编经过核对；街道和门牌仍为随机组合，因此不代表可投递或可验证的真实地址。</p>
 
     <h2 style="font-size: 1.4rem; margin: 24px 0 12px;">批量生成与导出</h2>
     <p>在批量生成区域，可选择 10、20、50、100 条或自定义数量（最多 500 条），勾选需要的字段后点击「生成批量数据」。生成后可一键复制全部，或导出为 CSV、JSON、JSONL、TXT 四种格式，方便导入数据库、填充测试表单或进行国际化测试。批量生成同样支持 Seed 复现。</p>
@@ -198,7 +199,7 @@
     <h2 style="font-size: 1.4rem; margin: 24px 0 12px;">常见问题</h2>
     <details style="margin-bottom: 8px;">
       <summary style="cursor: pointer; font-weight: 600;">生成的地址是真实的吗？</summary>
-      <p>地址中的城市、街道名称来自真实的地理数据，但具体门牌号是随机生成的，不对应任何真实住户。地图卡片仅展示城市级别的区域位置，不是精确的住宅定位。</p>
+      <p>城市与部分街道名称来自公开地理资料，常用国家会使用城市级完整邮编候选值；具体街道、门牌和邮编之间不保证一一对应。它们是虚构测试资料，不对应真实住户，也不用于投递、身份验证或注册真实服务。地图卡片仅展示城市级别的区域位置，不是精确住宅定位。</p>
     </details>
     <details style="margin-bottom: 8px;">
       <summary style="cursor: pointer; font-weight: 600;">支持多少个国家和地区？</summary>

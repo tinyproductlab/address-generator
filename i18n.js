@@ -33,7 +33,7 @@
     siteTagline: '随机生成符合不同国家格式习惯的地址与人物资料。',
     allCountries: '全部国家', countryCount: '个国家 / 地区', searchCountryPh: '搜索国家：日本 / Japan / JP / JPN', recentUsed: '最近使用', close: '关闭', noMatch: '没有匹配的国家',
     regenerate: '↻ 重新生成全部', copyAll: '复制全部', save: '保存', exportJson: '导出',
-    globalTitle: '全球地址与人物资料生成器', countrySubTpl: '当前：{c}地址与人物资料', pageTitleTpl: '{c}地址与人物资料生成器', pageSub: '选择国家或城市后，地址、人物、联系方式、银行卡与账号资料同步生成。',
+    globalTitle: '全球地址与人物资料生成器', countrySubTpl: '当前：{c}地址与人物资料', pageTitleTpl: '{c}地址与人物资料生成器', pageSub: '选择国家或城市后，地址、人物、联系方式、银行卡与账号资料同步生成。', dataNotice: '虚构测试资料：城市、地址格式与部分城市级邮编已核对；街道和门牌随机生成，不用于投递、身份验证或注册真实服务。',
     seedLabel: 'Seed', seedPh: '可复现，如 checkout-001',
     cityTitle: '城市 / 地区', randomAll: '全国随机', searchCityPh: '搜索当前国家城市 / 地区', cityUnit: '个入口', cityChoose: '选择城市',
     cardBasic: '基本资料', cardAddress: '地址与联系方式', cardCard: '银行卡', cardWork: '工作资料', cardAccount: '账号与技术资料', cardExtra: '其他人物档案', cardMap: '区域地图',
@@ -115,7 +115,7 @@
     siteTagline: 'Random addresses and person profiles that follow each country’s own formatting habits.',
     allCountries: 'All countries', countryCount: 'countries / regions', searchCountryPh: 'Search: Japan / 日本 / JP / JPN', recentUsed: 'Recently used', close: 'Close', noMatch: 'No matching country',
     regenerate: '↻ Regenerate all', copyAll: 'Copy all', save: 'Save', exportJson: 'Export',
-    globalTitle: 'Global Address & Person Profile Generator', countrySubTpl: 'Current: {c} address & profile', pageTitleTpl: '{c} Address & Person Profile Generator', pageSub: 'Pick a country or city and the address, person, contact, card and account details update together.',
+    globalTitle: 'Global Address & Person Profile Generator', countrySubTpl: 'Current: {c} address & profile', pageTitleTpl: '{c} Address & Person Profile Generator', pageSub: 'Pick a country or city and the address, person, contact, card and account details update together.', dataNotice: 'Fictional test data: cities, address formats and selected city-level postal codes are checked. Streets and house numbers are generated randomly and must not be used for delivery, identity checks or real-service registration.',
     seedLabel: 'Seed', seedPh: 'Reproducible, e.g. checkout-001',
     cityTitle: 'City / region', randomAll: 'Random nationwide', searchCityPh: 'Search cities / regions in this country', cityUnit: 'entries', cityChoose: 'Choose city',
     cardBasic: 'Basic profile', cardAddress: 'Address & contact', cardCard: 'Payment card', cardWork: 'Work profile', cardAccount: 'Account & device', cardExtra: 'Other profile fields', cardMap: 'Area map',
@@ -682,5 +682,9 @@
     secQ1: 'Tên vật nuôi đầu tiên của bạn là gì?', secQ2: 'Tên giáo viên tiểu học của bạn là gì?', secQ3: 'Thành phố đầu tiên bạn đi du lịch là gì?'
   };
 
+  // 新增的安全说明在尚未单独翻译的界面中先回退为英文，避免出现空白文案。
+  Object.keys(T).forEach((code) => {
+    if (!T[code].dataNotice) T[code].dataNotice = T.en.dataNotice;
+  });
   root.ADDRGEN_I18N = { locales: LOCALES, rtl: RTL, table: T, fallback: 'en' };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

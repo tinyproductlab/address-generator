@@ -149,6 +149,7 @@ select.allbtn.lang { appearance: none; -webkit-appearance: none; min-width: 104p
 .qr { width: 120px; height: 120px; border-radius: 12px; border: 1px solid var(--line); background: #fff; object-fit: contain; padding: 4px; }
 .contact { font-size: 12px; line-height: 1.8; color: var(--muted); }
 .contact .footnote { display: block; font-size: 11px; margin-top: 4px; }
+.data-note { margin: 10px 0 0; max-width: 760px; color: var(--muted); font-size: .86rem; line-height: 1.55; }
 .copyright { max-width: 1380px; margin: auto; padding: 14px 18px 22px; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 
 /* ---------- Toast ---------- */

@@ -302,13 +302,13 @@ test('发布前占位符已替换：反馈邮箱与公众号二维码', () => {
 test('邮编与所选城市关联：同一城市的邮编前缀稳定', () => {
   const cases = [
     ['JP', '東京都', '新宿区', /^160-\d{4}$/],
-    ['JP', '大阪府', '大阪市', /^530-\d{4}$/],
+    ['JP', '大阪府', '大阪市', /^(530-0001|542-0085)$/],
     ['US', 'California', 'San Francisco', /^941\d{2}$/],
     ['US', 'Texas', 'Houston', /^770\d{2}$/],
     ['CN', '广东省', '深圳市', /^518\d{3}$/],
     ['DE', 'Bayern', 'München', /^80\d{3}$/],
     ['FR', 'Île-de-France', 'Paris', /^75\d{3}$/],
-    ['GB', 'England', 'Manchester', /^M1 \d[A-Z]{2}$/],
+    ['GB', 'England', 'Manchester', /^(M1 1AE|M2 5DB)$/],
     ['TW', '臺北市', '大安區', /^106\d{2}$/],
     ['BR', 'São Paulo', 'Santos', /^110\d{2}-\d{3}$/]
   ];
@@ -318,6 +318,24 @@ test('邮编与所选城市关联：同一城市的邮编前缀稳定', () => {
     for (let i = 0; i < 40; i += 1) {
       const id = G.generateIdentity(`postal-${code}-${i}`);
       assert.match(id.address.postal, re, `${code}/${city} 邮编 ${id.address.postal} 与城市不匹配`);
+    }
+  }
+  G.state.filter = { admin: null, city: null };
+  G.state.country = 'JP';
+});
+
+test('重点国家使用城市级完整邮编候选池，不再随机拼接后缀', () => {
+  const cases = [
+    ['JP', '東京都', '新宿区'], ['US', 'California', 'San Francisco'], ['GB', 'England', 'Manchester'],
+    ['DE', 'Berlin', 'Berlin'], ['CA', 'Ontario', 'Toronto'], ['AU', 'New South Wales', 'Sydney'],
+    ['CN', '广东省', '深圳市'], ['KR', '서울특별시', '강남구'], ['SG', 'Central Region', 'Orchard'], ['FR', 'Île-de-France', 'Paris']
+  ];
+  for (const [code, admin, city] of cases) {
+    G.state.country = code;
+    G.state.filter = { admin, city };
+    const pool = G.CITY_POSTAL_POOLS[code][city];
+    for (let i = 0; i < 30; i += 1) {
+      assert.ok(pool.includes(G.generateIdentity(`pool-${code}-${i}`).address.postal), `${code}/${city} 未使用完整邮编候选池`);
     }
   }
   G.state.filter = { admin: null, city: null };
