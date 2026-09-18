@@ -1,0 +1,35 @@
+name: Sync Philippines geography
+
+on:
+  schedule:
+    - cron: '17 3 1 * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    # Token 未配置时跳过，不制造失败通知；配置后按月自动运行。
+    if: ${{ secrets.PSGC_API_TOKEN != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 同步官方行政区数据
+        env:
+          PSGC_API_TOKEN: ${{ secrets.PSGC_API_TOKEN }}
+        run: node scripts/sync-ph-psgc.mjs
+      - name: 提交更新
+        run: |
+          if git diff --quiet -- data/ph-official.js; then
+            echo "No geographic changes."
+            exit 0
+          fi
+          git config user.name "tinyproductlab-bot"
+          git config user.email "bot@tinylabpro.com"
+          git add data/ph-official.js
+          git commit -m "data: sync Philippines PSGC"
+          git push

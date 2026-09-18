@@ -678,12 +678,13 @@
       searchHint: 'Metro Manila、Cebu',
       admins: [
         { name: 'Metro Manila', cities: ['Makati', 'Quezon City', 'Taguig'], districts: ['San Antonio Village', 'Barangay Poblacion', 'BGC'] },
-        { name: 'Central Visayas', cities: ['Cebu City'], districts: ['Lahug', 'Mandaue'] },
+        { name: 'Central Visayas', cities: ['Cebu City', 'Mandaue City'], districts: ['Lahug', 'Capitol Site'] },
         { name: 'Davao Region', cities: ['Davao City'], districts: ['Matina', 'Bajada'] }
       ],
-      streets: ['Rizal Street', 'Bonifacio Drive', 'Mabini Street', 'Delaware Street'],
+      streets: ['Rizal Street', 'Bonifacio Drive', 'Mabini Street', 'Roxas Boulevard'],
       house: (r) => `${r.int(1, 250)}`,
-      postal: (r, admin, pre) => `${pre || r.pick(['12', '16', '11', '60'])}${r.digits(2)}`,
+      // 菲律宾邮编必须与城市绑定；不再在城市正确时随机拼后两位。
+      postal: (r, admin, pre) => pre || '1000',
       phone: (r) => `+63 9${r.digits(2)} ${r.digits(3)} ${r.digits(4)}`,
       localFormat: (p) => [`${p.house} ${p.street}, ${p.district}`, `${p.city}, ${p.admin} ${p.postal}`],
       intlFormat: (p) => [`${p.house} ${p.street}, ${p.district}, ${p.city}, ${p.admin} ${p.postal}, Philippines`],
@@ -891,6 +892,7 @@
       'Quezon City': { streets: ['Katipunan Avenue', 'Timog Avenue'], districts: ['Diliman', 'Cubao'] },
       Taguig: { streets: ['32nd Street', 'McKinley Parkway'], districts: ['Bonifacio Global City', 'Bagumbayan'] },
       'Cebu City': { streets: ['Osmeña Boulevard', 'Salinas Drive'], districts: ['Lahug', 'Capitol Site'] },
+      'Mandaue City': { streets: ['A. S. Fortuna Street', 'Hernan Cortes Street'], districts: ['Tipolo', 'Alang-Alang'] },
       'Davao City': { streets: ['J.P. Laurel Avenue', 'Quimpo Boulevard'], districts: ['Matina', 'Bajada'] }
     },
     TR: {
@@ -988,10 +990,20 @@
     MY: { 'Kuala Lumpur': '50', 'Shah Alam': '40', 'Petaling Jaya': '46', 'Subang Jaya': '47', 'George Town': '10', Butterworth: '13', 'Johor Bahru': '80' },
     RU: { 'Москва': '10', 'Санкт-Петербург': '19', 'Химки': '141', 'Балашиха': '143' },
     TH: { Bangkok: '10', 'Chiang Mai': '50', Phuket: '83', Pattaya: '20' },
-    PH: { Makati: '12', 'Quezon City': '11', Taguig: '16', 'Cebu City': '60', 'Davao City': '80' },
+    PH: { Makati: '1200', 'Quezon City': '1100', Taguig: '1630', 'Cebu City': '6000', 'Mandaue City': '6014', 'Davao City': '8000' },
     AR: { 'Buenos Aires': 'C1', 'Córdoba': 'X5', Rosario: 'S2' },
     TR: { 'İstanbul': '34', Ankara: '06', 'İzmir': '35' }
   };
+  // 官方同步文件只覆盖菲律宾的 Barangay 名称与城市级邮编。
+  // 街道和门牌始终保留为本地虚构数据，避免生成现实住址。
+  const PH_OFFICIAL = globalThis.ADDRGEN_PH_OFFICIAL || null;
+  if (PH_OFFICIAL?.cities) {
+    Object.entries(PH_OFFICIAL.cities).forEach(([city, info]) => {
+      if (!CITY_DATA.PH?.[city]) return;
+      if (Array.isArray(info.barangays) && info.barangays.length) CITY_DATA.PH[city].districts = info.barangays;
+      if (/^\d{4}$/.test(String(info.postal || ''))) POSTAL_PREFIX.PH[city] = String(info.postal);
+    });
+  }
   function postalPrefix(code, city, admin) {
     const map = POSTAL_PREFIX[code];
     if (!map) return '';
