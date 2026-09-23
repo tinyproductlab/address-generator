@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 
 export function registerAddressLookup(app: FastifyInstance) {
-  app.get('/api/address/reverse', { logLevel: 'silent' }, async (request, reply) => {
+  app.get('/api/address/reverse', { logLevel: 'silent', config: { cors: { origin: 'https://addressgen.tinylabpro.com', credentials: false, methods: ['GET'] } } }, async (request, reply) => {
     const query = request.query as Record<string, unknown>;
     const target = new URL('http://address-geocoder:8787/api/reverse');
     for (const key of ['lat', 'lon', 'lang']) {

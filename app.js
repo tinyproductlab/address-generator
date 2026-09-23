@@ -2216,7 +2216,7 @@
     const timeout = setTimeout(() => coordinateController?.abort(), 12000);
     try {
       const params = new URLSearchParams({ lat: point[0], lon: point[1], lang });
-      const response = await fetch(`/api/reverse?${params}`, { signal: coordinateController.signal, cache: 'no-store' });
+      const response = await fetch(`https://account.tinylabpro.com/api/address/reverse?${params}`, { credentials: 'omit', signal: coordinateController.signal, cache: 'no-store' });
       if (!response.ok) throw new Error('unavailable');
       const data = await response.json();
       if (request !== coordinateRequest) return;

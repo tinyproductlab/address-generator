@@ -1,6 +1,6 @@
 # 经纬度查询接口部署
 
-需要 Node.js 22+。静态网站通过同源 `/api/reverse` 查询，本服务仅监听本机 8787 端口。
+需要 Node.js 22+。静态网站通过 `https://account.tinylabpro.com/api/address/reverse` 查询，本服务仅监听本机 8787 端口。
 
 配置环境变量后运行 `node server/reverse.mjs`，生产环境交给 systemd 等进程管理器运行：
 
@@ -31,6 +31,6 @@ location = /api/reverse {
 
 服务器 `ubuntu@129.213.55.197`，目录 `/opt/address-geocoder`，Docker 容器 `address-geocoder`，与账户 API 在 `unmark_default` 网络通信。只运行一个实例，128MB 内存限制。使用 Photon 公共服务 `https://photon.komoot.io/reverse`，无需账号。遵守 https://github.com/komoot/photon#demo-server 的合理用量要求，不保证可用性；量大时替换为自建或商业供应商。
 
-请求链：网站 `/api/reverse` → Cloudflare Pages Function → `account.tinylabpro.com/api/address/reverse` → 内网查询容器 → Photon。只转发 lat、lon、lang，不转发用户 Cookie 或认证信息。`_routes.json` 限定函数只处理查询路径。
+请求链：网页 → `account.tinylabpro.com/api/address/reverse` → 内网查询容器 → Photon。只转发 lat、lon、lang，不转发用户 Cookie 或认证信息。该 GET 路由单独允许地址生成器正式域名的跨域访问，不改变账号接口的跨域规则。
 
 `account-route.ts` 部署为账户服务 `src/address-route.ts`，在 server.ts 中注册。原 server.ts 备份于 `backups/address-20260923/server.ts`，原 API 镜像 `tinylab-account-api:before-address-20260923`。随机生成不依赖该后端；接口故障不影响免税州生成。
