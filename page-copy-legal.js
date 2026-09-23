@@ -1670,5 +1670,12 @@
     srcB7: "«đúng định dạng» không có nghĩa là địa chỉ thật sự tồn tại hay giao hàng tới đó được."
   };
 
+  for (const [code, copy] of Object.entries(L)) {
+    const note = code === 'zh-CN'
+      ? '经纬度查询由您主动点击触发：输入坐标和界面语言会经 Cloudflare 与本站后端转发给 Photon（OpenStreetMap 数据）查询附近地址，结果在后端内存缓存最长 24 小时。基础设施可能产生网络访问日志；请勿提交敏感位置。查询结果独立展示，不改变生成资料，也不保证精确到门牌。'
+      : 'Manual coordinate lookup sends the entered coordinates and language through Cloudflare and our backend to Photon (OpenStreetMap data). Results are cached in backend memory for up to 24 hours. Infrastructure may retain access logs; do not submit sensitive locations. Nearby results are separate from generated profiles and may not resolve to a house number.';
+    copy.privPMap += '<br><br>' + note;
+    copy.srcPMap += '<br><br>' + note;
+  }
   root.ADDRGEN_LEGAL_COPY = L;
 })(typeof globalThis !== 'undefined' ? globalThis : window);

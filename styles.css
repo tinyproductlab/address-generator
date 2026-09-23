@@ -319,3 +319,12 @@ body.sheet-open .install-bar { display: none !important; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
 }
+
+.tax-free-control { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 16px; font-size: 13px; }
+.tax-free-control[hidden] { display: none; }
+.tax-free-control small { width: 100%; opacity: .7; }
+.coordinate-form { display: grid; gap: 10px; padding: 14px 0; }
+.coordinate-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.coordinate-controls input { flex: 1 1 220px; min-width: 0; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: transparent; color: inherit; }
+.coordinate-form small { opacity: .75; }
+#coordinateResult { overflow-wrap: anywhere; }

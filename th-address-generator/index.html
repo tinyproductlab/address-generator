@@ -91,6 +91,7 @@
         </div>
         <input class="search" id="citySearch" data-i18n-ph="searchCityPh" data-i18n-aria="cityTitle" aria-label="搜索城市">
       </div>
+      <label id="taxFreeControl" class="tax-free-control" hidden><input type="checkbox" id="taxFreeOnly"><span data-i18n="taxFilter">免税州 · DE / MT / OR</span><small data-i18n="taxNote">无一般销售税，不代表所有税种免税。</small></label>
       <div class="citylist" id="cityList" role="listbox" data-i18n-aria="cityTitle" aria-label="城市列表"></div>
     </aside>
 
@@ -101,7 +102,13 @@
       <article class="card"><div class="cardhead"><span data-i18n="cardWork">工作资料</span><span class="tag" data-i18n="tagPerson">人物</span></div><div class="rows" id="work"></div></article>
       <article class="card wide"><div class="cardhead"><span data-i18n="cardAccount">账号与技术资料</span><span class="tag" data-i18n="tagPerson">人物</span></div><div class="rows" id="account"></div></article>
       <article class="card"><div class="cardhead"><span data-i18n="cardExtra">其他人物档案</span><span class="tag" data-i18n="tagPerson">人物</span></div><div class="rows" id="extraProfile"></div></article>
-      <article class="card wide" id="mapCard"><div class="cardhead"><span data-i18n="cardMap">区域地图</span><span class="tag warn" data-i18n="mapTag">区域位置 · 非精确住宅定位</span></div><div class="rows map-rows"><div class="map-meta" id="mapMeta"></div><div id="mapBox" class="map-box" role="img"></div></div></article>
+      <article class="card wide" id="mapCard"><div class="cardhead"><span data-i18n="cardMap">区域地图</span><span class="tag warn" data-i18n="mapTag">区域位置 · 非精确住宅定位</span></div><div class="rows map-rows"><form id="coordinateForm" class="coordinate-form">
+<label for="coordinateInput" data-i18n="coordinateLabel">经纬度查询（纬度在前）</label>
+<div class="coordinate-controls"><input id="coordinateInput" type="text" placeholder="45.53676, -94.653826" required maxlength="100" autocomplete="off"><button class="btn primary" id="coordinateSubmit" type="submit" data-i18n="coordinateSearch">查询位置</button><button class="btn" id="coordinateReset" type="button" data-i18n="coordinateReset">返回生成区域</button></div>
+<small data-i18n="coordinateNote">查询会将坐标发送至地图服务；附近地址独立展示，不改变随机资料。</small>
+<div id="coordinateResult" role="status" aria-live="polite"></div>
+<small>© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a></small>
+</form><div class="map-meta" id="mapMeta"></div><div id="mapBox" class="map-box" role="img"></div></div></article>
     </div>
   </section>
 

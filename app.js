@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const DATA_VERSION = '2026.09.18.2';
+  const DATA_VERSION = '2026.09.23.1';
   const SITE = {
     origin: 'https://addressgen.tinylabpro.com',
     name: '小产品实验室 · 全球地址生成器',
@@ -1495,15 +1495,41 @@
   function romanOf(part, map) { return Array.isArray(part) ? part[1] : (map ? (map[part] || part) : part); }
   function localOf(part) { return Array.isArray(part) ? part[0] : part; }
 
+  const TAX_FREE_CODES = new Set(["DE", "MT", "OR"]);
+  PROFILES.US.admins.push({"name": "Delaware", "code": "DE", "cities": ["Wilmington", "Dover", "Newark"]});
+  CITY_DATA.US["Wilmington"] = {"postals": ["19801"], "districts": ["New Castle County"]};
+  CITY_COORDS.US["Wilmington"] = [39.7391, -75.5398];
+  CITY_DATA.US["Dover"] = {"postals": ["19901"], "districts": ["Kent County"]};
+  CITY_COORDS.US["Dover"] = [39.1582, -75.5244];
+  CITY_DATA.US["Newark"] = {"postals": ["19711"], "districts": ["New Castle County"]};
+  CITY_COORDS.US["Newark"] = [39.6837, -75.7497];
+  PROFILES.US.admins.push({"name": "Montana", "code": "MT", "cities": ["Billings", "Missoula", "Helena"]});
+  CITY_DATA.US["Billings"] = {"postals": ["59101"], "districts": ["Yellowstone County"]};
+  CITY_COORDS.US["Billings"] = [45.7833, -108.5007];
+  CITY_DATA.US["Missoula"] = {"postals": ["59801"], "districts": ["Missoula County"]};
+  CITY_COORDS.US["Missoula"] = [46.8721, -113.994];
+  CITY_DATA.US["Helena"] = {"postals": ["59601"], "districts": ["Lewis and Clark County"]};
+  CITY_COORDS.US["Helena"] = [46.5891, -112.0391];
+  PROFILES.US.admins.push({"name": "Oregon", "code": "OR", "cities": ["Portland", "Salem", "Eugene"]});
+  CITY_DATA.US["Portland"] = {"postals": ["97201"], "districts": ["Multnomah County"]};
+  CITY_COORDS.US["Portland"] = [45.5152, -122.6784];
+  CITY_DATA.US["Salem"] = {"postals": ["97301"], "districts": ["Marion County"]};
+  CITY_COORDS.US["Salem"] = [44.9429, -123.0351];
+  CITY_DATA.US["Eugene"] = {"postals": ["97401"], "districts": ["Lane County"]};
+  CITY_COORDS.US["Eugene"] = [44.0521, -123.0868];
+
+  Object.assign(PROFILES.US.admins.find(a => a.code === 'DE'), { tz: 'America/New_York' });
+  Object.assign(PROFILES.US.admins.find(a => a.code === 'MT'), { tz: 'America/Denver' });
+  Object.assign(PROFILES.US.admins.find(a => a.code === 'OR'), { tz: 'America/Los_Angeles' });
   function pickPlace(profile, rng) {
-    let admins = profile.admins;
+    let admins = profile.admins.filter((a) => !state.taxFreeOnly || profile.code !== "US" || TAX_FREE_CODES.has(a.code));
     const f = state.filter;
     if (f.city) {
-      admins = profile.admins.filter((a) => a.cities.includes(f.city));
+      admins = admins.filter((a) => a.cities.includes(f.city));
     } else if (f.admin) {
-      admins = profile.admins.filter((a) => a.name === f.admin);
+      admins = admins.filter((a) => a.name === f.admin);
     }
-    if (!admins.length) admins = profile.admins;
+    if (!admins.length) admins = profile.admins.filter((a) => !state.taxFreeOnly || profile.code !== "US" || TAX_FREE_CODES.has(a.code));
     const admin = rng.pick(admins);
     let cityPool = admin.cities;
     if (f.city && admin.cities.includes(f.city)) cityPool = [f.city];
@@ -1512,7 +1538,7 @@
     const cityInfo = (CITY_DATA[profile.code] || {})[city] || {};
     const districts = (cityInfo.districts && cityInfo.districts.length) ? cityInfo.districts : null;
     const streets = (cityInfo.streets && cityInfo.streets.length) ? cityInfo.streets : profile.streets;
-    return { admin, city, streets, district: districts ? rng.pick(districts) : '' };
+    return { admin, city, streets, postals: cityInfo.postals, district: districts ? rng.pick(districts) : '' };
   }
 
   function generateIdentity(seedKey) {
@@ -1544,7 +1570,7 @@
     const parts = {
       house: p.house(rng), street: rng.pick(place.streets || p.streets), district: place.district, city: place.city,
       admin: place.admin.name, adminCode: place.admin.code || '',
-      postal: postalFor(p, rng, place)
+      postal: place.postals ? rng.pick(place.postals) : postalFor(p, rng, place)
     };
     const localLines = p.localFormat(parts);
     const intlLines = p.intlFormat(parts);
@@ -1626,7 +1652,7 @@
       account: {
         username, password, uuid,
         website: buildHomepage(rng, rFirst, rLast), os, ua,
-        locale: p.locale, timezone: p.tz, language: p.langCode,
+        locale: p.locale, timezone: place.admin.tz || p.tz, language: p.langCode,
         screen, deviceKey
       },
       extra: {
@@ -1675,6 +1701,7 @@
     qs.set('country', p.pageSlug);
     if (lang !== DEFAULT_LOCALE) qs.set('lang', lang);
     if (state.seed) qs.set('seed', state.seed);
+    if (state.country === 'US' && state.taxFreeOnly) qs.set('taxFree', '1');
     if (state.filter.city) qs.set('city', state.filter.city);
     else if (state.filter.admin) qs.set('region', state.filter.admin);
     try { history.replaceState(null, '', `${location.pathname}?${qs.toString()}`); } catch { /* ignore */ }
@@ -1928,6 +1955,7 @@
   function setCountry(code) {
     if (!PROFILES[code]) return;
     state.country = code;
+    state.taxFreeOnly = false;
     state.filter = { admin: null, city: null };
     state.refresh = 0;
     closeMega();
@@ -1947,7 +1975,7 @@
 
   function cityEntries(profile, q) {
     const entries = [];
-    profile.admins.forEach((a) => {
+    profile.admins.filter((a) => !state.taxFreeOnly || profile.code !== "US" || TAX_FREE_CODES.has(a.code)).forEach((a) => {
       const adminHit = a.name.toLowerCase().includes(q);
       const cities = a.cities.filter((c) => !q || adminHit || `${a.name} ${c}`.toLowerCase().includes(q));
       if (!cities.length && !adminHit) return;
@@ -1993,12 +2021,14 @@
 
   function renderCitySidebar() {
     const p = PROFILES[state.country];
+    $("taxFreeControl").hidden = state.country !== "US";
+    $("taxFreeOnly").checked = !!state.taxFreeOnly;
     const q = ($('citySearch').value || '').trim().toLowerCase();
     const list = $('cityList');
     const anyFilter = !state.filter.admin && !state.filter.city;
     cityView.entries = cityEntries(p, q);
     cityView.rendered = 0;
-    list.innerHTML = `<button type="button" class="city all${anyFilter ? ' active' : ''}" data-city-btn="|" ${anyFilter ? 'aria-selected="true"' : ''}>${safe(t('randomAll'))}</button>`;
+    list.innerHTML = `<button type="button" class="city all${anyFilter ? ' active' : ''}" data-city-btn="|" ${anyFilter ? 'aria-selected="true"' : ''}>${safe(t(state.taxFreeOnly && state.country === "US" ? "taxRandom" : "randomAll"))}</button>`;
     appendCityChunk();
     const cityCount = cityView.entries.filter((e) => e.type === 'city').length + 1;
     $('cityCount').textContent = `${cityCount} ${t('cityUnit')}`;
@@ -2160,6 +2190,44 @@
     defaultZoom: 10, maxZoom: 15
   };
   const mapState = { map: null, marker: null, observerStarted: false, pending: null, loadStarted: false, failed: false };
+  let coordinatePoint = null;
+  let coordinateRequest = 0;
+  let coordinateController = null;
+  function parseCoordinates(value) {
+    const cleaned = String(value).trim().replace(/^[(（]\s*|\s*[)）]$/g, '');
+    const match = cleaned.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+))(?:\s*[,，]\s*|\s+)([+-]?(?:\d+(?:\.\d*)?|\.\d+))$/);
+    if (!match) return null;
+    const point = [Number(match[1]), Number(match[2])];
+    return Math.abs(point[0]) <= 90 && Math.abs(point[1]) <= 180 ? point : null;
+  }
+  async function queryCoordinates(event) {
+    event.preventDefault();
+    const request = ++coordinateRequest;
+    coordinateController?.abort();
+    const result = $('coordinateResult');
+    const point = parseCoordinates($('coordinateInput').value);
+    $('coordinateSubmit').disabled = false;
+    if (!point) { result.textContent = t('coordinateInvalid'); return; }
+    coordinatePoint = point;
+    updateMap();
+    result.textContent = t('coordinateLoading');
+    $('coordinateSubmit').disabled = true;
+    coordinateController = new AbortController();
+    const timeout = setTimeout(() => coordinateController?.abort(), 12000);
+    try {
+      const params = new URLSearchParams({ lat: point[0], lon: point[1], lang });
+      const response = await fetch(`/api/reverse?${params}`, { signal: coordinateController.signal, cache: 'no-store' });
+      if (!response.ok) throw new Error('unavailable');
+      const data = await response.json();
+      if (request !== coordinateRequest) return;
+      result.textContent = data.display_name ? `${t('coordinateFound')}: ${data.display_name}` : t('coordinateEmpty');
+    } catch {
+      if (request === coordinateRequest) result.textContent = t('coordinateUnavailable');
+    } finally {
+      clearTimeout(timeout);
+      if (request === coordinateRequest) $('coordinateSubmit').disabled = false;
+    }
+  }
   function mapCenterFor(p) {
     const cities = CITY_COORDS[p.code] || {};
     const f = state.filter;
@@ -2170,12 +2238,12 @@
     return null;
   }
   function precisionLabel(precision) {
-    const keys = { 'city-center': 'precCity', 'region-center': 'precRegion', 'country-center': 'precCountry' };
+    const keys = { 'city-center': 'precCity', 'region-center': 'precRegion', 'country-center': 'precCountry', 'input-coordinate': 'coordinatePoint' };
     return keys[precision] ? t(keys[precision]) : precision;
   }
   function updateMap() {
     const p = PROFILES[state.country];
-    const center = mapCenterFor(p);
+    const center = coordinatePoint ? { latlng: coordinatePoint, precision: "input-coordinate", label: t("coordinatePoint") } : mapCenterFor(p);
     const meta = $('mapMeta');
     if (!center) {
       meta.innerHTML = safe(t('mapNoCoord'));
@@ -2183,8 +2251,8 @@
       return;
     }
     const [lat, lng] = center.latlng;
-    const placeText = [countryName(p), state.identity ? state.identity.address.city : '', center.label].filter((v, i, a) => v && a.indexOf(v) === i).join(' / ');
-    meta.innerHTML = `<b>${safe(placeText)}</b><br>${safe(t('mapTz'))}: ${safe(p.tz)}<br>${safe(t('mapCenter'))}: ${lat.toFixed(2)}, ${lng.toFixed(2)} · ${safe(precisionLabel(center.precision))}`;
+    const placeText = coordinatePoint ? t('coordinatePoint') : [countryName(p), state.identity ? state.identity.address.city : '', center.label].filter((v, i, a) => v && a.indexOf(v) === i).join(' / ');
+    meta.innerHTML = `<b>${safe(placeText)}</b><br>${coordinatePoint ? '' : `${safe(t('mapTz'))}: ${safe(state.identity?.account.timezone || p.tz)}<br>`}${safe(t(coordinatePoint ? 'coordinatePoint' : 'mapCenter'))}: ${lat.toFixed(6)}, ${lng.toFixed(6)} · ${safe(precisionLabel(center.precision))} <button type="button" class="copy" data-copy="${lat}, ${lng}">${safe(t('copy'))}</button>`;
     $('mapBox').setAttribute('aria-label', `${placeText} map`);
     if (mapState.map) {
       applyMap(lat, lng, p);
@@ -2225,7 +2293,7 @@
     mapState.map.setView([lat, lng], MAP_CONFIG.defaultZoom);
     if (mapState.marker) mapState.marker.remove();
     mapState.marker = L.circleMarker([lat, lng], { radius: 12, color: '#2563eb', fillOpacity: 0.25 }).addTo(mapState.map)
-      .bindTooltip(countryName(p), { permanent: false });
+      .bindTooltip(coordinatePoint ? t("coordinatePoint") : countryName(p), { permanent: false });
   }
   function mapFailed() {
     if (mapState.map || mapState.failed) return;
@@ -2301,7 +2369,9 @@
     } else if (region && p.admins.some((a) => a.name === region)) {
       filter.admin = region;
     }
-    return { country, seed, filter };
+    const taxFreeOnly = country === 'US' && qs.get('taxFree') === '1';
+    if (taxFreeOnly && filter.admin && !p.admins.some((a) => a.name === filter.admin && TAX_FREE_CODES.has(a.code))) { filter.admin = null; filter.city = null; }
+    return { country, seed, filter, taxFreeOnly };
   }
 
   function init() {
@@ -2310,6 +2380,7 @@
     state.country = initial.country;
     state.seed = initial.seed;
     state.filter = initial.filter;
+    state.taxFreeOnly = initial.taxFreeOnly;
     applyI18n();
     const seedInput = $('seedInput');
     if (seedInput) seedInput.value = state.seed;
@@ -2343,6 +2414,15 @@
     $('megaClose').addEventListener('click', closeMega);
     $('megaSearch').addEventListener('input', renderMega);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMega(); closeCitySheet(); } });
+    $('taxFreeOnly').addEventListener('change', (e) => {
+      state.taxFreeOnly = e.target.checked; state.filter = { admin: null, city: null };
+      $('citySearch').value = ''; state.refresh = 0; syncUrl(); renderIdentity();
+    });
+    $('coordinateForm').addEventListener('submit', queryCoordinates);
+    $('coordinateReset').addEventListener('click', () => {
+      coordinateRequest++; coordinateController?.abort(); coordinatePoint = null;
+      $('coordinateResult').textContent = ''; $('coordinateSubmit').disabled = false; updateMap();
+    });
     $('citySearch').addEventListener('input', () => renderCitySidebar());
     $('cityTrigger').addEventListener('click', () => {
       if ($('citySide').classList.contains('open')) closeCitySheet(); else openCitySheet();
@@ -2443,7 +2523,7 @@
       EMAIL_DOMAINS, EMAIL_WEIGHTS, HEIGHT_RULES, SeededRandom,
       luhnCheckDigit, luhnValid, looksTemplated, groupPan, generatePan, generateCard,
       bodyMetrics, buildEmail, buildHomepage, emailLocalPart, asciiSlug,
-      generateIdentity, flatten, state, setLocaleForTest(code) { lang = normalizeLocale(code) || DEFAULT_LOCALE; }
+      parseCoordinates, CITY_COORDS, TAX_FREE_CODES, generateIdentity, flatten, state, setLocaleForTest(code) { lang = normalizeLocale(code) || DEFAULT_LOCALE; }
     };
   }
 })();

@@ -11,7 +11,7 @@
  * 这一条是硬要求：OpenStreetMap 的瓦片使用政策禁止批量下载与离线囤积，
  * 所以 SW 必须对 tile 服务直接放行到网络，绝不写进 Cache Storage。
  */
-const VERSION = '2026.09.18.2';
+const VERSION = '2026.09.23.2';
 const SHELL_CACHE = `addrgen-shell-${VERSION}`;
 const RUNTIME_CACHE = `addrgen-runtime-${VERSION}`;
 
@@ -65,6 +65,7 @@ self.addEventListener('message', (event) => {
 });
 
 function shouldBypass(url) {
+  if (url.pathname.startsWith('/api/')) return true;
   if (url.origin !== self.location.origin) return true;      // 跨域一律放行，不缓存
   if (NEVER_CACHE_HOSTS.includes(url.hostname)) return true;
   return false;
