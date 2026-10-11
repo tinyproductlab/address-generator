@@ -58,6 +58,7 @@ function countryPage(c) {
   // 当前国家 + H1
   html = html.replace('<body>', `<body data-country="${c.code}">`);
   html = html.replace(/<h1 id="pageTitle">[^<]*<\/h1>/, `<h1 id="pageTitle">${c.zh}地址与人物资料生成器</h1>`);
+  html = html.replace(/<p class="sub" id="countrySubtitle">[^<]*<\/p>/, `<p class="sub" id="countrySubtitle">当前：${c.zh}地址与人物资料</p>`);
   return html;
 }
 

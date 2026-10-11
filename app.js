@@ -6,6 +6,7 @@
   'use strict';
 
   const DATA_VERSION = '2026.10.11.1';
+  const DEFAULT_COUNTRY = 'US';
   const SITE = {
     origin: 'https://addressgen.tinylabpro.com',
     name: '小产品实验室 · 全球地址生成器',
@@ -1446,7 +1447,7 @@
   // State + storage
   // -----------------------------
   const state = {
-    country: 'JP', filter: { admin: null, city: null }, refresh: 0, seed: '',
+    country: DEFAULT_COUNTRY, filter: { admin: null, city: null }, refresh: 0, seed: '',
     identity: null, batch: [], batchCount: 10, batchSeed: '', batchCase: 'camel',
     saved: [], recent: [], recentCountries: []
   };
@@ -2387,7 +2388,7 @@
     const fromBody = document.body.dataset.country;
     const hash = location.hash.replace('#', '');
     const slug = qs.get('country');
-    let country = 'JP';
+    let country = DEFAULT_COUNTRY;
     if (fromBody && PROFILES[fromBody]) country = fromBody;
     else if (profileBySlug[hash]) country = profileBySlug[hash].code;
     else if (slug && profileBySlug[slug]) country = profileBySlug[slug].code;
