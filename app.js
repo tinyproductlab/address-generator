@@ -5,7 +5,7 @@
 (() => {
   'use strict';
 
-  const DATA_VERSION = '2026.09.23.1';
+  const DATA_VERSION = '2026.10.11.1';
   const SITE = {
     origin: 'https://addressgen.tinylabpro.com',
     name: '小产品实验室 · 全球地址生成器',
@@ -694,6 +694,31 @@
       jobs: ['Software Developer', 'Customer Support Specialist', 'Accountant', 'Teacher', 'Virtual Assistant'],
       companies: ['Halimbawa Corp', 'Manila Tech Hub', 'Test Systems PH', 'Bayanihan Studio']
     },
+    IN: {
+      code: 'IN', alpha3: 'IND', slug: 'in-address', flag: '🇮🇳', nameZh: '印度', nameEn: 'India', nativeName: 'भारत / India',
+      continent: '亚洲', locale: 'en-IN', currency: 'INR', tz: 'Asia/Kolkata', langCode: 'hi', salary: [300000, 2400000],
+      searchHint: 'New Delhi、Mumbai、Bengaluru、Chennai、Kolkata、Hyderabad',
+      admins: [
+        { name: 'Delhi', code: 'DL', cities: ['New Delhi', 'Delhi'] },
+        { name: 'Maharashtra', code: 'MH', cities: ['Mumbai'] },
+        { name: 'Karnataka', code: 'KA', cities: ['Bengaluru'] },
+        { name: 'Tamil Nadu', code: 'TN', cities: ['Chennai'] },
+        { name: 'West Bengal', code: 'WB', cities: ['Kolkata'] },
+        { name: 'Telangana', code: 'TS', cities: ['Hyderabad'] }
+      ],
+      streets: ['Lotus Lane', 'Saffron Avenue', 'Garden Road'],
+      house: (r) => `${r.int(1, 350)}${r.bool() ? '/' + r.int(1, 20) : ''}`,
+      // 支持的城市由 postalFor 选取完整 PIN；未核对的城市不编造邮编。
+      postal: () => '',
+      phone: (r) => `+91 ${r.int(6, 9)}${r.digits(4)} ${r.digits(5)}`,
+      localFormat: (p) => [`${p.house}, ${p.street}`, `${p.city}, ${p.admin} ${p.postal}`, 'India'],
+      intlFormat: (p) => [`${p.house}, ${p.street}, ${p.city}, ${p.admin} ${p.postal}, India`],
+      last: ['Sharma', 'Patel', 'Rao', 'Singh', 'Das', 'Iyer', 'Reddy'],
+      male: ['Aarav', 'Arjun', 'Rohan', 'Aditya', 'Vikram'],
+      female: ['Ananya', 'Priya', 'Kavya', 'Aditi', 'Meera'],
+      jobs: ['Software Engineer', 'Teacher', 'Accountant', 'Designer', 'Data Analyst'],
+      companies: ['Lotus Digital Studio', 'Saffron Systems Pvt Ltd', 'Garden Analytics', 'Monsoon Labs']
+    },
     AR: {
       code: 'AR', alpha3: 'ARG', slug: 'ar-address', flag: '🇦🇷', nameZh: '阿根廷', nameEn: 'Argentina', nativeName: 'Argentina',
       continent: '南美洲', locale: 'es-AR', currency: 'ARS', tz: 'America/Argentina/Buenos_Aires', langCode: 'es', salary: [2400000, 18000000],
@@ -1015,7 +1040,13 @@
     CN: { '朝阳区': ['100020', '100102'], '海淀区': ['100080', '100086'], '东城区': ['100005', '100010'], '西城区': ['100033', '100037'], '浦东新区': ['200120', '200135'], '徐汇区': ['200030', '200032'], '静安区': ['200040', '200041'], '黄浦区': ['200001', '200010'], '深圳市': ['518000', '518052'], '广州市': ['510000', '510620'], '珠海市': ['519000', '519070'], '佛山市': ['528000', '528200'], '杭州市': ['310000', '310012'], '宁波市': ['315000', '315100'], '南京市': ['210000', '210018'], '苏州市': ['215000', '215021'] },
     KR: { '마포구': ['04048', '04056'], '강남구': ['06133', '06236'], '종로구': ['03154', '03186'], '성동구': ['04750', '04794'], '해운대구': ['48095', '48104'], '중구': ['48930', '48938'], '연수구': ['21984', '22004'], '부평구': ['21390', '21405'] },
     SG: { 'Downtown Core': ['018956', '048581'], 'River Valley': ['179098', '238255'], Orchard: ['238855', '238859'], Tampines: ['529509', '529786'], Bedok: ['460216', '469285'], 'Jurong East': ['609601', '609731'], Clementi: ['120315', '129962'], Woodlands: ['730900', '738099'], Yishun: ['760930', '768894'] },
-    FR: { Paris: ['75001', '75009'], Versailles: ['78000', '78008'], 'Boulogne-Billancourt': ['92100'], Marseille: ['13001', '13006'], Nice: ['06000', '06100'], Cannes: ['06400'], Lyon: ['69001', '69002'], Grenoble: ['38000', '38100'], Annecy: ['74000'], Toulouse: ['31000', '31500'], Montpellier: ['34000', '34070'] }
+    FR: { Paris: ['75001', '75009'], Versailles: ['78000', '78008'], 'Boulogne-Billancourt': ['92100'], Marseille: ['13001', '13006'], Nice: ['06000', '06100'], Cannes: ['06400'], Lyon: ['69001', '69002'], Grenoble: ['38000', '38100'], Annecy: ['74000'], Toulouse: ['31000', '31500'], Montpellier: ['34000', '34070'] },
+    // India Post 城市级 PIN，来源记录见 data/india-postal-sources.json。
+    IN: {
+      'New Delhi': ['110001', '110003'], Delhi: ['110006', '110054'],
+      Mumbai: ['400001', '400014'], Bengaluru: ['560001', '560004'],
+      Chennai: ['600001', '600002'], Kolkata: ['700001', '700010'], Hyderabad: ['500001', '500002']
+    }
   };
   // 官方同步文件只覆盖菲律宾的 Barangay 名称与城市级邮编。
   // 街道和门牌始终保留为本地虚构数据，避免生成现实住址。
@@ -1049,11 +1080,15 @@
     SG: [1.29, 103.85], FR: [48.86, 2.35], IT: [41.90, 12.50], ES: [40.42, -3.70],
     NL: [52.37, 4.90], BR: [-15.79, -47.88], TW: [25.03, 121.57], HK: [22.32, 114.17],
     MY: [3.14, 101.69], RU: [55.76, 37.62], TH: [13.76, 100.50], PH: [14.60, 120.98],
-    AR: [-34.60, -58.38], TR: [39.93, 32.86]
+    AR: [-34.60, -58.38], TR: [39.93, 32.86], IN: [28.61, 77.21]
   };
 
   // ---- 城市中心坐标（city-center 精度；缺失则 fallback 国家中心）----
   const CITY_COORDS = {
+    IN: {
+      'New Delhi': [28.61, 77.21], Delhi: [28.65, 77.23], Mumbai: [19.08, 72.88],
+      Bengaluru: [12.97, 77.59], Chennai: [13.08, 80.27], Kolkata: [22.57, 88.36], Hyderabad: [17.39, 78.49]
+    },
     US: { 'New York': [40.71, -74.01], 'Los Angeles': [34.05, -118.24], 'San Francisco': [37.77, -122.42], 'San Diego': [32.72, -117.16], 'Sacramento': [38.58, -121.49], 'Chicago': [41.88, -87.63], 'Austin': [30.27, -97.74], 'Dallas': [32.78, -96.80], 'Houston': [29.76, -95.37], 'Miami': [25.76, -80.19], 'Orlando': [28.54, -81.38], 'Tampa': [27.95, -82.46], 'Seattle': [47.61, -122.33], 'Tacoma': [47.25, -122.44], 'Buffalo': [42.89, -78.88], 'Albany': [42.65, -73.75], 'Springfield': [39.80, -89.65] },
     JP: { '新宿区': [35.69, 139.70], '渋谷区': [35.66, 139.70], '千代田区': [35.69, 139.75], '世田谷区': [35.65, 139.65], '八王子市': [35.66, 139.34], '大阪市': [34.69, 135.50], '堺市': [34.58, 135.48], '豊中市': [34.78, 135.44], '京都市': [35.01, 135.77], '宇治市': [34.89, 135.80], '札幌市': [43.06, 141.35], '函館市': [41.77, 140.73], '旭川市': [43.76, 142.35], '福岡市': [33.59, 130.40], '北九州市': [33.88, 130.88], '横浜市': [35.44, 139.64], '川崎市': [35.53, 139.70] },
     GB: { 'London': [51.51, -0.13], 'Manchester': [53.48, -2.24], 'Birmingham': [52.48, -1.90], 'Leeds': [53.80, -1.55], 'Edinburgh': [55.95, -3.19], 'Glasgow': [55.86, -4.25], 'Cardiff': [51.48, -3.18], 'Swansea': [51.62, -3.94] },

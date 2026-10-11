@@ -342,6 +342,89 @@ test('重点国家使用城市级完整邮编候选池，不再随机拼接后�
   G.state.country = 'JP';
 });
 
+const indiaCities = {
+  'New Delhi': { region: 'Delhi', postals: ['110001', '110003'] },
+  Delhi: { region: 'Delhi', postals: ['110006', '110054'] },
+  Mumbai: { region: 'Maharashtra', postals: ['400001', '400014'] },
+  Bengaluru: { region: 'Karnataka', postals: ['560001', '560004'] },
+  Chennai: { region: 'Tamil Nadu', postals: ['600001', '600002'] },
+  Kolkata: { region: 'West Bengal', postals: ['700001', '700010'] },
+  Hyderabad: { region: 'Telangana', postals: ['500001', '500002'] }
+};
+
+test('印度按邦和首都辖区分组，保留全部七个城市及邮编来源', () => {
+  const p = G.PROFILES.IN;
+  assert.equal(p.alpha3, 'IND');
+  assert.notEqual(p.coverage, 'generic-safe');
+  assert.equal(p.admins.length, 6);
+  const cities = p.admins.flatMap((a) => a.cities.map((city) => [city, a.name]));
+  assert.equal(cities.length, 7);
+  assert.deepEqual(Object.fromEntries(cities), Object.fromEntries(Object.entries(indiaCities).map(([city, info]) => [city, info.region])));
+  const sources = JSON.parse(readFileSync(join(root, 'data/india-postal-sources.json'), 'utf8'));
+  for (const [city, info] of Object.entries(indiaCities)) {
+    assert.deepEqual(G.CITY_POSTAL_POOLS.IN[city], info.postals);
+    assert.equal(sources.cities[city].region, info.region);
+    assert.deepEqual(sources.cities[city].postals, info.postals);
+    assert.ok(sources.cities[city].sourceUrls.every((url) => new URL(url).hostname === 'www.indiapost.gov.in'));
+    assert.equal(G.CITY_COORDS.IN[city].length, 2, `${city} 应有自己的城市参考坐标`);
+  }
+});
+
+test('印度固定城市生成：城市、邦、六位 PIN 和地址/导出保持一致', (t) => {
+  const previous = { country: G.state.country, filter: G.state.filter, batchCase: G.state.batchCase };
+  t.after(() => Object.assign(G.state, previous));
+  G.state.country = 'IN';
+  G.state.batchCase = 'camel';
+  for (const [city, info] of Object.entries(indiaCities)) {
+    G.state.filter = { admin: info.region, city };
+    const seen = new Set();
+    for (let i = 0; i < 50; i += 1) {
+      const id = G.generateIdentity(`india-fixed-${city}-${i}`);
+      const a = id.address;
+      assert.equal(a.city, city);
+      assert.equal(a.region, info.region);
+      assert.match(a.postal, /^[1-9]\d{5}$/);
+      assert.ok(info.postals.includes(a.postal), `${city} 不能配上其他城市的邮编 ${a.postal}`);
+      seen.add(a.postal);
+      for (const format of [a.local, a.international]) {
+        assert.ok(format.includes(city) && format.includes(info.region) && format.includes(a.postal));
+      }
+      const exported = G.flatten(id, ['address', 'city', 'postal']);
+      assert.equal(exported.city, city);
+      assert.equal(exported.postalCode, a.postal);
+      assert.ok(exported.address.includes(a.postal));
+    }
+    assert.equal(seen.size, info.postals.length, `${city} 应能使用所有已核对的邮编`);
+  }
+});
+
+test('印度全国随机及按邦筛选都生成匹配邮编，Seed 仍可复现', (t) => {
+  const previous = { country: G.state.country, filter: G.state.filter };
+  t.after(() => Object.assign(G.state, previous));
+  G.state.country = 'IN';
+  G.state.filter = { admin: null, city: null };
+  const seen = new Set();
+  for (let i = 0; i < 200; i += 1) {
+    const a = G.generateIdentity(`india-random-${i}`).address;
+    const expected = indiaCities[a.city];
+    assert.ok(expected, `出现未知城市 ${a.city}`);
+    assert.equal(a.region, expected.region);
+    assert.ok(expected.postals.includes(a.postal));
+    seen.add(a.city);
+  }
+  assert.equal(seen.size, 7);
+  for (const admin of G.PROFILES.IN.admins) {
+    G.state.filter = { admin: admin.name, city: null };
+    for (let i = 0; i < 30; i += 1) {
+      const a = G.generateIdentity(`india-region-${i}`).address;
+      assert.equal(a.region, admin.name);
+      assert.ok(admin.cities.includes(a.city));
+      assert.ok(indiaCities[a.city].postals.includes(a.postal));
+    }
+    assert.deepEqual(G.generateIdentity('india-repeat'), G.generateIdentity('india-repeat'));
+  }
+});
+
 test('街道与区县按城市绑定，不跨城市错配', () => {
   const tokyo = new Set(['西新宿', '歌舞伎町', '新宿', '北新宿']);
   G.state.country = 'JP';

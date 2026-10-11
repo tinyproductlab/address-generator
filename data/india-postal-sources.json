@@ -1,0 +1,43 @@
+{
+  "country": "IN",
+  "reviewedAt": "2026-10-11",
+  "precision": "city",
+  "note": "City/PIN pairs from India Post public directories. Streets and house numbers remain synthetic; these are not verified delivery addresses.",
+  "cities": {
+    "New Delhi": {
+      "region": "Delhi",
+      "postals": ["110001", "110003"],
+      "sourceUrls": ["https://www.indiapost.gov.in/api/documents/file/1002tzw2l62v3h3bt3kaqe369dy01fk80sj5w3hhe336ads08gln0cnrq062gz"]
+    },
+    "Delhi": {
+      "region": "Delhi",
+      "postals": ["110006", "110054"],
+      "sourceUrls": ["https://www.indiapost.gov.in/sites/PostalCircles/Delhi/Pages/CPIO.aspx", "https://www.indiapost.gov.in/sites/PostalCircles/Delhi/Pages/aaos.aspx"]
+    },
+    "Mumbai": {
+      "region": "Maharashtra",
+      "postals": ["400001", "400014"],
+      "sourceUrls": ["https://www.indiapost.gov.in/sites/PostalCircles/Maharashtra/Pages/CPIO.aspx"]
+    },
+    "Bengaluru": {
+      "region": "Karnataka",
+      "postals": ["560001", "560004"],
+      "sourceUrls": ["https://www.indiapost.gov.in/sites/PostalCircles/Karnataka/Pages/CPIO.aspx"]
+    },
+    "Chennai": {
+      "region": "Tamil Nadu",
+      "postals": ["600001", "600002"],
+      "sourceUrls": ["https://www.indiapost.gov.in/sites/PostalCircles/Tamilnadu/Pages/CPIO.aspx"]
+    },
+    "Kolkata": {
+      "region": "West Bengal",
+      "postals": ["700001", "700010"],
+      "sourceUrls": ["https://www.indiapost.gov.in/VAS/DOP_PDFFiles/FunctionalPOs.pdf"]
+    },
+    "Hyderabad": {
+      "region": "Telangana",
+      "postals": ["500001", "500002"],
+      "sourceUrls": ["https://www.indiapost.gov.in/sites/PostalCircles/Telangana/Pages/cpio.aspx"]
+    }
+  }
+}
