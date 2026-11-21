@@ -1600,7 +1600,8 @@
     const birth = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     birth.setDate(birth.getDate() - rng.int(0, 364));
     birth.setFullYear(birth.getFullYear() - ageYears);
-    const dob = `${birth.getFullYear()}-${String(birth.getMonth() + 1).padStart(2, '0')}-${String(birth.getDate()).padStart(2, '0')}`;
+    const dateString = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const dob = dateString(birth);
     const body = bodyMetrics(rng, genderKey);
 
     const parts = {
@@ -1671,7 +1672,13 @@
         // The SSA never assigns 900-series SSNs. NANPA reserves 555-01xx for fictional use.
         testSsn: `900-${usRng.digits(2)}-${usRng.digits(4)}`,
         fax: `${phone.split(' 555-')[0]} 555-01${usRng.digits(2)}`,
-        monthlySalary: Number((salary / 12).toFixed(2))
+        monthlySalary: Number((salary / 12).toFixed(2)),
+        testPassportNumber: `TEST-US-${usRng.hex(8).toUpperCase()}`,
+        passportIssuedOn: dateString(today),
+        passportExpiresOn: dateString(new Date(
+          today.getFullYear() + 10, today.getMonth(),
+          today.getMonth() === 1 ? Math.min(today.getDate(), 28) : today.getDate()
+        ))
       }
       : null;
 
@@ -1790,7 +1797,7 @@
       row(t('fTitle'), v.title),
       row(t('fDob'), id.dob),
       row(t('fAge'), id.age),
-      id.usFields ? row(t('fTestSsn'), id.usFields.testSsn) : '',
+      ...(id.usFields ? US_DOCUMENT_FIELDS.map(([key, label]) => row(t(label), id.usFields[key])) : []),
       row(t('fHeight'), v.height),
       row(t('fWeight'), v.weight),
       row(t('fBlood'), id.extra.blood),
@@ -2100,8 +2107,14 @@
   // -----------------------------
   // Batch
   // -----------------------------
+  const US_DOCUMENT_FIELDS = [
+    ['testSsn', 'fTestSsn'],
+    ['testPassportNumber', 'fTestPassportNumber'],
+    ['passportIssuedOn', 'fPassportIssuedOn'],
+    ['passportExpiresOn', 'fPassportExpiresOn']
+  ];
   const US_BATCH_FIELDS = [
-    ['testSsn', 'fTestSsn'], ['fax', 'fFax'], ['monthlySalary', 'fMonthlySalary']
+    ...US_DOCUMENT_FIELDS, ['fax', 'fFax'], ['monthlySalary', 'fMonthlySalary']
   ];
   function batchFields() {
     return Array.from(document.querySelectorAll('.batch-field:checked:not(:disabled)')).map((el) => el.value);
@@ -2216,7 +2229,7 @@
       `${t('fNameRoman')}: ${id.nameRoman}`,
       `${t('fGender')}: ${v.gender}`,
       `${t('fDob')}: ${id.dob} (${t('fAge')}: ${id.age})`,
-      ...(id.usFields ? [`${t('fTestSsn')}: ${id.usFields.testSsn}`] : []),
+      ...(id.usFields ? US_DOCUMENT_FIELDS.map(([key, label]) => `${t(label)}: ${id.usFields[key]}`) : []),
       `${t('fTitle')}: ${v.title}`,
       `${t('fHeight')}: ${v.height}`,
       `${t('fWeight')}: ${v.weight}`,
