@@ -50,7 +50,7 @@
     termsHCard: '银行卡字段的明确限制',
     termsPCard: '银行卡资料仅为“外观型”随机数据：不来自任何真实持卡人或真实 BIN 数据库，不对应任何真实账户，且所有卡号都无法通过常规银行卡号校验。本站不提供卡号有效性校验、余额查询、支付验证，也不接受用户输入真实卡号进行补全、推导或识别。',
     termsHNoField: '不提供的字段',
-    termsPNoField: '本站不生成身份证号、护照号、社保号 / SSN、税号、银行账户、IBAN、routing number、实名验证答案或生物识别信息。我们不以“字段越多越好”为目标。',
+    termsPNoField: '本站不生成身份证号、护照号、税号、银行账户、IBAN、routing number、实名验证答案或生物识别信息。我们不以“字段越多越好”为目标。',
     termsHSrc: '数据来源与许可',
     termsPSrc: '公开数据源按其许可证使用，详见<a href="sources.html">数据来源</a>页面。',
     termsHDisc: '免责声明',
@@ -91,7 +91,7 @@
     srcB3: '邮编优先与地区关联，无法可靠映射时按该国格式规则生成，不声称可真实投递；',
     srcB4: '邮箱使用主流服务商域名形式，但不验证账号存在性、不发信；',
     srcB5: '银行卡只按公开编号结构生成外观数据，全部 Luhn-invalid；',
-    srcB6: '不生成身份证、护照、社保号、银行账户、IBAN 等敏感字段；',
+    srcB6: '不生成身份证、护照、银行账户、IBAN 等敏感字段；',
     srcB7: '“格式合规”不代表地址真实存在或可投递。'
   };
 
@@ -133,7 +133,7 @@
     termsHCard: "金融卡欄位的明確限制",
     termsPCard: "金融卡資料僅為「外觀型」隨機資料：不來自任何真實持卡人或真實 BIN 資料庫，不對應任何真實帳戶，且所有卡號都無法通過常規卡號檢查。本站不提供卡號有效性驗證、餘額查詢、支付驗證，也不接受使用者輸入真實卡號進行補全、推導或識別。",
     termsHNoField: "不提供的欄位",
-    termsPNoField: "本站不產生身分證號、護照號、社會安全號 / SSN、稅號、銀行帳戶、IBAN、routing number、實名驗證答案或生物辨識資訊。我們不以「欄位越多越好」為目標。",
+    termsPNoField: "本站不產生身分證號、護照號、稅號、銀行帳戶、IBAN、routing number、實名驗證答案或生物辨識資訊。我們不以「欄位越多越好」為目標。",
     termsHSrc: "資料來源與授權",
     termsPSrc: "公開資料源按其授權條款使用，詳見<a href=\"sources.html\">資料來源</a>頁面。",
     termsHDisc: "免責聲明",
@@ -196,7 +196,7 @@
     srcB3: "郵遞區號優先與地區關聯，無法可靠對應時按該國格式規則產生，不聲稱可真實投遞；",
     srcB4: "電子郵件使用主流服務商網域形式，但不驗證帳號存在性、不寄信；",
     srcB5: "金融卡只依公開編號結構產生外觀資料，全部 Luhn-invalid；",
-    srcB6: "不產生身分證、護照、社會安全號、銀行帳戶、IBAN 等敏感欄位；",
+    srcB6: "不產生身分證、護照、銀行帳戶、IBAN 等敏感欄位；",
     srcB7: "「格式合規」不代表地址真實存在或可投遞。"
   };
 
@@ -238,7 +238,7 @@
     termsHCard: "Explicit limits on the payment card field",
     termsPCard: "Payment card data is purely “surface-level” random data: it comes from no real cardholder or real BIN database, corresponds to no real account, and every number fails ordinary card-number validation. This site offers no card validity check, balance lookup or payment verification, and does not accept real card numbers from users for completion, inference or identification.",
     termsHNoField: "Fields we do not provide",
-    termsPNoField: "This site does not generate national ID numbers, passport numbers, social security numbers / SSNs, tax IDs, bank accounts, IBANs, routing numbers, identity-verification answers or biometric data. “More fields” is not our goal.",
+    termsPNoField: "This site does not generate national ID numbers, passport numbers, tax IDs, bank accounts, IBANs, routing numbers, identity-verification answers or biometric data. “More fields” is not our goal.",
     termsHSrc: "Data sources and licensing",
     termsPSrc: "Public data sources are used under their respective licences; see the <a href=\"sources.html\">data sources</a> page.",
     termsHDisc: "Disclaimer",
@@ -301,7 +301,7 @@
     srcB3: "Postal codes are tied to the region where possible; where no reliable mapping exists they follow the country’s format rules, with no claim of real deliverability;",
     srcB4: "Emails use mainstream provider domain shapes but are never checked for existence and no mail is sent;",
     srcB5: "Payment cards reproduce only the published numbering structure and are all Luhn-invalid;",
-    srcB6: "No sensitive fields such as national ID, passport, social security number, bank account or IBAN are generated;",
+    srcB6: "No sensitive fields such as national ID, passport, bank account or IBAN are generated;",
     srcB7: "“Format-valid” does not mean the address really exists or can be delivered to."
   };
 
@@ -343,7 +343,7 @@
     termsHCard: "カード項目に関する明確な制限",
     termsPCard: "カード情報は「見た目だけ」のランダムデータです。実在のカード名義人や実際の BIN データベースに由来せず、実在の口座に対応せず、すべての番号は通常のカード番号検証を通りません。当サイトは番号の有効性検証・残高照会・決済認証を提供せず、実在のカード番号を入力して補完・推測・識別することも受け付けません。",
     termsHNoField: "提供しない項目",
-    termsPNoField: "当サイトは身分証番号、パスポート番号、社会保障番号 / SSN、納税者番号、銀行口座、IBAN、routing number、本人確認の答え、生体情報を生成しません。「項目が多いほど良い」ことを目標にしていません。",
+    termsPNoField: "当サイトは身分証番号、パスポート番号、納税者番号、銀行口座、IBAN、routing number、本人確認の答え、生体情報を生成しません。「項目が多いほど良い」ことを目標にしていません。",
     termsHSrc: "データ出典とライセンス",
     termsPSrc: "公開データはそれぞれのライセンスに従って利用しています。詳しくは<a href=\"sources.html\">データ出典</a>のページをご覧ください。",
     termsHDisc: "免責事項",
@@ -406,7 +406,7 @@
     srcB3: "郵便番号は可能な限り地域に対応させ、確実に対応づけられない場合はその国の書式規則に従って生成します。実際に配達できるとは主張しません。",
     srcB4: "メールは主要プロバイダーのドメイン形式を使いますが、アカウントの存在確認はせず、送信もしません。",
     srcB5: "カードは公開された番号構造に沿った見た目のデータのみで、すべて Luhn-invalid。",
-    srcB6: "身分証・パスポート・社会保障番号・銀行口座・IBAN などの機微な項目は生成しません。",
+    srcB6: "身分証・パスポート・銀行口座・IBAN などの機微な項目は生成しません。",
     srcB7: "「書式が正しい」ことは、住所が実在する、あるいは配達できることを意味しません。"
   };
 
@@ -448,7 +448,7 @@
     termsHCard: "결제 카드 항목의 명확한 한계",
     termsPCard: "결제 카드 정보는 「겉모습만」의 무작위 데이터입니다. 실제 카드 소지자나 실제 BIN 데이터베이스에서 온 것이 아니고, 어떤 실제 계좌에도 대응하지 않으며, 모든 번호는 일반적인 카드번호 검증을 통과하지 못합니다. 이 사이트는 번호 유효성 검증, 잔액 조회, 결제 인증을 제공하지 않고, 사용자가 실제 카드번호를 입력해 보완·추론·식별하는 것도 받지 않습니다.",
     termsHNoField: "제공하지 않는 항목",
-    termsPNoField: "이 사이트는 주민등록번호 등 신분증 번호, 여권 번호, 사회보장번호 / SSN, 납세자 번호, 은행 계좌, IBAN, routing number, 실명 인증 답변, 생체 정보를 만들지 않습니다. 「항목이 많을수록 좋다」를 목표로 삼지 않습니다.",
+    termsPNoField: "이 사이트는 주민등록번호 등 신분증 번호, 여권 번호, 납세자 번호, 은행 계좌, IBAN, routing number, 실명 인증 답변, 생체 정보를 만들지 않습니다. 「항목이 많을수록 좋다」를 목표로 삼지 않습니다.",
     termsHSrc: "데이터 출처와 라이선스",
     termsPSrc: "공개 데이터는 각자의 라이선스에 따라 사용합니다. 자세한 내용은 <a href=\"sources.html\">데이터 출처</a> 페이지를 보세요.",
     termsHDisc: "면책 조항",
@@ -511,7 +511,7 @@
     srcB3: "우편번호는 되도록 지역과 연결하고, 믿을 만하게 대응할 수 없으면 그 나라의 형식 규칙에 따라 만들며 실제 배송이 된다고 주장하지 않습니다.",
     srcB4: "이메일은 주요 제공업체의 도메인 형태를 쓰지만 계정 존재를 확인하지 않고 메일도 보내지 않습니다.",
     srcB5: "결제 카드는 공개된 번호 구조만 재현하며 전부 Luhn-invalid.",
-    srcB6: "신분증, 여권, 사회보장번호, 은행 계좌, IBAN 같은 민감한 항목은 만들지 않습니다.",
+    srcB6: "신분증, 여권, 은행 계좌, IBAN 같은 민감한 항목은 만들지 않습니다.",
     srcB7: "「형식이 맞다」는 것이 주소가 실제로 있거나 배송 가능하다는 뜻은 아닙니다."
   };
 
@@ -553,7 +553,7 @@
     termsHCard: "Ausdrückliche Grenzen des Zahlungskartenfelds",
     termsPCard: "Kartendaten sind reine „oberflächliche“ Zufallsdaten: Sie stammen von keinem echten Karteninhaber und keiner echten BIN-Datenbank, entsprechen keinem echten Konto, und jede Nummer scheitert an der üblichen Kartennummernprüfung. Diese Seite bietet keine Gültigkeitsprüfung, Saldoabfrage oder Zahlungsverifikation und nimmt auch keine echten Kartennummern von Nutzern an, um sie zu vervollständigen, herzuleiten oder zu identifizieren.",
     termsHNoField: "Felder, die wir nicht anbieten",
-    termsPNoField: "Diese Seite erzeugt keine Ausweisnummern, Passnummern, Sozialversicherungsnummern / SSN, Steuernummern, Bankkonten, IBANs, Routing Numbers, Antworten zur Identitätsprüfung oder biometrischen Daten. „Mehr Felder“ ist nicht unser Ziel.",
+    termsPNoField: "Diese Seite erzeugt keine Ausweisnummern, Passnummern, Steuernummern, Bankkonten, IBANs, Routing Numbers, Antworten zur Identitätsprüfung oder biometrischen Daten. „Mehr Felder“ ist nicht unser Ziel.",
     termsHSrc: "Datenquellen und Lizenzen",
     termsPSrc: "Öffentliche Datenquellen werden gemäß ihren Lizenzen genutzt; siehe die Seite <a href=\"sources.html\">Datenquellen</a>.",
     termsHDisc: "Haftungsausschluss",
@@ -616,7 +616,7 @@
     srcB3: "Postleitzahlen werden möglichst an die Region gebunden; fehlt eine verlässliche Zuordnung, folgen sie den Formatregeln des Landes — ohne Anspruch auf echte Zustellbarkeit;",
     srcB4: "E-Mail-Adressen nutzen Domainformen verbreiteter Anbieter, werden aber nicht auf Existenz geprüft, und es wird keine Mail versendet;",
     srcB5: "Zahlungskarten bilden nur die veröffentlichte Nummernstruktur nach und sind alle Luhn-invalid;",
-    srcB6: "Sensible Felder wie Ausweisnummer, Pass, Sozialversicherungsnummer, Bankkonto oder IBAN werden nicht erzeugt;",
+    srcB6: "Sensible Felder wie Ausweisnummer, Pass, Bankkonto oder IBAN werden nicht erzeugt;",
     srcB7: "„Formal gültig“ heißt nicht, dass die Adresse wirklich existiert oder zustellbar ist."
   };
 
@@ -658,7 +658,7 @@
     termsHCard: "Limites explicites du champ carte de paiement",
     termsPCard: "Les données de carte sont purement des valeurs aléatoires « d’apparence » : elles ne proviennent d’aucun porteur réel ni d’aucune base BIN réelle, ne correspondent à aucun compte réel, et tous les numéros échouent au contrôle habituel. Ce site ne propose ni vérification de validité, ni consultation de solde, ni vérification de paiement, et n’accepte pas de vrais numéros saisis par les utilisateurs pour les compléter, les déduire ou les identifier.",
     termsHNoField: "Champs que nous ne fournissons pas",
-    termsPNoField: "Ce site ne génère ni numéros de pièce d’identité, ni numéros de passeport, ni numéros de sécurité sociale / SSN, ni identifiants fiscaux, ni comptes bancaires, ni IBAN, ni routing numbers, ni réponses de vérification d’identité, ni données biométriques. « Plus de champs » n’est pas notre objectif.",
+    termsPNoField: "Ce site ne génère ni numéros de pièce d’identité, ni numéros de passeport, ni identifiants fiscaux, ni comptes bancaires, ni IBAN, ni routing numbers, ni réponses de vérification d’identité, ni données biométriques. « Plus de champs » n’est pas notre objectif.",
     termsHSrc: "Sources de données et licences",
     termsPSrc: "Les sources publiques sont utilisées selon leurs licences respectives ; voir la page <a href=\"sources.html\">sources de données</a>.",
     termsHDisc: "Avertissement",
@@ -721,7 +721,7 @@
     srcB3: "les codes postaux sont liés à la région quand c’est possible ; à défaut de correspondance fiable, ils suivent les règles de format du pays, sans prétendre à une livraison réelle ;",
     srcB4: "les e-mails reprennent la forme des domaines des grands fournisseurs, sans vérification d’existence et sans envoi de message ;",
     srcB5: "les cartes ne reproduisent que la structure de numérotation publiée et sont toutes Luhn-invalid ;",
-    srcB6: "aucun champ sensible — pièce d’identité, passeport, numéro de sécurité sociale, compte bancaire, IBAN — n’est généré ;",
+    srcB6: "aucun champ sensible — pièce d’identité, passeport, compte bancaire, IBAN — n’est généré ;",
     srcB7: "« conforme au format » ne signifie pas que l’adresse existe vraiment ni qu’elle est livrable."
   };
 
@@ -763,7 +763,7 @@
     termsHCard: "Límites explícitos del campo de tarjeta",
     termsPCard: "Los datos de tarjeta son puramente aleatorios y «de apariencia»: no provienen de ningún titular real ni de ninguna base BIN real, no corresponden a ninguna cuenta real y todos los números fallan la validación habitual. Este sitio no ofrece comprobación de validez, consulta de saldo ni verificación de pago, y tampoco acepta números reales introducidos por el usuario para completarlos, deducirlos o identificarlos.",
     termsHNoField: "Campos que no ofrecemos",
-    termsPNoField: "Este sitio no genera números de documento de identidad, de pasaporte, de seguridad social / SSN, identificadores fiscales, cuentas bancarias, IBAN, routing numbers, respuestas de verificación de identidad ni datos biométricos. «Más campos» no es nuestro objetivo.",
+    termsPNoField: "Este sitio no genera números de documento de identidad, de pasaporte, identificadores fiscales, cuentas bancarias, IBAN, routing numbers, respuestas de verificación de identidad ni datos biométricos. «Más campos» no es nuestro objetivo.",
     termsHSrc: "Fuentes de datos y licencias",
     termsPSrc: "Las fuentes públicas se usan conforme a sus licencias; véase la página de <a href=\"sources.html\">fuentes de datos</a>.",
     termsHDisc: "Descargo de responsabilidad",
@@ -826,7 +826,7 @@
     srcB3: "los códigos postales se vinculan a la región cuando es posible; si no hay una correspondencia fiable, siguen las reglas de formato del país, sin afirmar que sean entregables;",
     srcB4: "los correos usan la forma de dominio de proveedores habituales, sin comprobar la existencia de la cuenta y sin enviar nada;",
     srcB5: "las tarjetas solo reproducen la estructura de numeración publicada y todas son Luhn-invalid;",
-    srcB6: "no se generan campos sensibles como documento de identidad, pasaporte, número de seguridad social, cuenta bancaria o IBAN;",
+    srcB6: "no se generan campos sensibles como documento de identidad, pasaporte, cuenta bancaria o IBAN;",
     srcB7: "«formato válido» no significa que la dirección exista de verdad ni que se pueda entregar en ella."
   };
 
@@ -868,7 +868,7 @@
     termsHCard: "Limites explícitos do campo de cartão",
     termsPCard: "Os dados de cartão são puramente aleatórios e «de aparência»: não vêm de nenhum portador real nem de nenhuma base BIN real, não correspondem a nenhuma conta real, e todos os números falham na verificação comum. Este site não oferece checagem de validade, consulta de saldo ou verificação de pagamento, e também não aceita números reais digitados por usuários para completar, deduzir ou identificar.",
     termsHNoField: "Campos que não oferecemos",
-    termsPNoField: "Este site não gera números de documento de identidade, de passaporte, de seguridade social / SSN, identificações fiscais, contas bancárias, IBAN, routing numbers, respostas de verificação de identidade nem dados biométricos. «Mais campos» não é o nosso objetivo.",
+    termsPNoField: "Este site não gera números de documento de identidade, de passaporte, identificações fiscais, contas bancárias, IBAN, routing numbers, respostas de verificação de identidade nem dados biométricos. «Mais campos» não é o nosso objetivo.",
     termsHSrc: "Fontes de dados e licenças",
     termsPSrc: "As fontes públicas são usadas conforme suas licenças; veja a página de <a href=\"sources.html\">fontes de dados</a>.",
     termsHDisc: "Isenção de responsabilidade",
@@ -931,7 +931,7 @@
     srcB3: "os códigos postais são ligados à região quando possível; sem uma correspondência confiável, seguem as regras de formato do país, sem afirmar que sejam entregáveis;",
     srcB4: "os e-mails usam a forma de domínio de provedores comuns, sem checar a existência da conta e sem enviar nada;",
     srcB5: "os cartões só reproduzem a estrutura de numeração publicada e são todos Luhn-invalid;",
-    srcB6: "não se geram campos sensíveis como documento de identidade, passaporte, número de seguridade social, conta bancária ou IBAN;",
+    srcB6: "não se geram campos sensíveis como documento de identidade, passaporte, conta bancária ou IBAN;",
     srcB7: "«formato válido» não significa que o endereço exista de fato nem que possa receber entregas."
   };
 
@@ -973,7 +973,7 @@
     termsHCard: "Limiti espliciti del campo carta",
     termsPCard: "I dati della carta sono puramente casuali e «di facciata»: non provengono da alcun titolare reale né da alcun database BIN reale, non corrispondono ad alcun conto reale e ogni numero non supera la normale validazione. Questo sito non offre verifica di validità, consultazione del saldo o verifica del pagamento, e non accetta numeri reali inseriti dagli utenti per completarli, dedurli o identificarli.",
     termsHNoField: "Campi che non forniamo",
-    termsPNoField: "Questo sito non genera numeri di documento d’identità, di passaporto, di previdenza sociale / SSN, codici fiscali, conti bancari, IBAN, routing number, risposte di verifica dell’identità o dati biometrici. «Più campi» non è il nostro obiettivo.",
+    termsPNoField: "Questo sito non genera numeri di documento d’identità, di passaporto, codici fiscali, conti bancari, IBAN, routing number, risposte di verifica dell’identità o dati biometrici. «Più campi» non è il nostro obiettivo.",
     termsHSrc: "Fonti dei dati e licenze",
     termsPSrc: "Le fonti pubbliche sono usate secondo le rispettive licenze; vedi la pagina <a href=\"sources.html\">fonti dei dati</a>.",
     termsHDisc: "Esclusione di responsabilità",
@@ -1036,7 +1036,7 @@
     srcB3: "i codici postali sono legati alla regione quando possibile; senza una corrispondenza affidabile seguono le regole di formato del paese, senza pretendere che siano recapitabili;",
     srcB4: "le e-mail usano la forma dei domini dei provider più diffusi, senza verificare l’esistenza dell’account e senza inviare nulla;",
     srcB5: "le carte riproducono solo la struttura di numerazione pubblicata e sono tutte Luhn-invalid;",
-    srcB6: "non vengono generati campi sensibili come documento d’identità, passaporto, numero di previdenza sociale, conto bancario o IBAN;",
+    srcB6: "non vengono generati campi sensibili come documento d’identità, passaporto, conto bancario o IBAN;",
     srcB7: "«formato valido» non significa che l’indirizzo esista davvero o che sia recapitabile."
   };
 
@@ -1078,7 +1078,7 @@
     termsHCard: "Прямые ограничения поля платёжной карты",
     termsPCard: "Данные карты — исключительно случайные «внешние» значения: они не происходят ни от реального держателя, ни от реальной базы BIN, не соответствуют реальному счёту, и любой номер не проходит обычную проверку. Сайт не предоставляет проверку действительности номера, запрос баланса или подтверждение платежа и не принимает от пользователей настоящие номера карт для дополнения, вывода или распознавания.",
     termsHNoField: "Поля, которых мы не предоставляем",
-    termsPNoField: "Сайт не создаёт номера удостоверений личности, паспортов, социального страхования / SSN, налоговые номера, банковские счета, IBAN, routing number, ответы для подтверждения личности и биометрические данные. «Чем больше полей, тем лучше» — не наша цель.",
+    termsPNoField: "Сайт не создаёт номера удостоверений личности, паспортов, налоговые номера, банковские счета, IBAN, routing number, ответы для подтверждения личности и биометрические данные. «Чем больше полей, тем лучше» — не наша цель.",
     termsHSrc: "Источники данных и лицензии",
     termsPSrc: "Открытые источники используются согласно их лицензиям; см. страницу <a href=\"sources.html\">источники данных</a>.",
     termsHDisc: "Отказ от ответственности",
@@ -1141,7 +1141,7 @@
     srcB3: "почтовые индексы по возможности привязаны к региону; при отсутствии надёжного соответствия они следуют правилам формата страны — без утверждений о реальной доставке;",
     srcB4: "адреса почты используют форму доменов распространённых провайдеров, но существование аккаунта не проверяется и письма не отправляются;",
     srcB5: "карты воспроизводят только опубликованную структуру нумерации и все Luhn-invalid;",
-    srcB6: "чувствительные поля — удостоверение личности, паспорт, номер социального страхования, банковский счёт, IBAN — не создаются;",
+    srcB6: "чувствительные поля — удостоверение личности, паспорт, банковский счёт, IBAN — не создаются;",
     srcB7: "«формат верен» не значит, что адрес действительно существует или что по нему возможна доставка."
   };
 
@@ -1183,7 +1183,7 @@
     termsHCard: "حدود صريحة لحقل بطاقة الدفع",
     termsPCard: "بيانات البطاقة قيم عشوائية «شكليّة» بحتة: لا تأتي من حامل بطاقة حقيقي ولا من قاعدة BIN حقيقية، ولا تقابل أي حساب حقيقي، وكل رقم لا يمرّ من التحقق المعتاد. ولا يوفّر الموقع فحص صلاحية الرقم ولا استعلام الرصيد ولا تأكيد الدفع، ولا يقبل من المستخدمين أرقام بطاقات حقيقية لإكمالها أو استنتاجها أو التعرّف عليها.",
     termsHNoField: "حقول لا نوفّرها",
-    termsPNoField: "لا يُولِّد الموقع أرقام الهوية الوطنية ولا جوازات السفر ولا أرقام الضمان الاجتماعي / SSN ولا الأرقام الضريبية ولا الحسابات المصرفية ولا IBAN ولا routing number ولا أجوبة التحقق من الهوية ولا البيانات الحيوية. و«كثرة الحقول» ليست هدفنا.",
+    termsPNoField: "لا يُولِّد الموقع أرقام الهوية الوطنية ولا جوازات السفر ولا الأرقام الضريبية ولا الحسابات المصرفية ولا IBAN ولا routing number ولا أجوبة التحقق من الهوية ولا البيانات الحيوية. و«كثرة الحقول» ليست هدفنا.",
     termsHSrc: "مصادر البيانات والتراخيص",
     termsPSrc: "تُستخدم المصادر العامة وفق تراخيصها؛ راجع صفحة <a href=\"sources.html\">مصادر البيانات</a>.",
     termsHDisc: "إخلاء المسؤولية",
@@ -1246,7 +1246,7 @@
     srcB3: "تُربَط الرموز البريدية بالمنطقة قدر الإمكان، وإذا تعذّر ربط موثوق اتُّبعت قواعد صيغة الدولة دون ادّعاء إمكان التوصيل فعلًا؛",
     srcB4: "يستخدم البريد صيغة نطاقات المزوّدين المعروفين دون التحقق من وجود الحساب ودون إرسال أي رسالة؛",
     srcB5: "تُحاكي البطاقات هيكل الترقيم المنشور فقط وكلها Luhn-invalid؛",
-    srcB6: "لا تُولَّد الحقول الحسّاسة كالهوية وجواز السفر ورقم الضمان الاجتماعي والحساب المصرفي وIBAN؛",
+    srcB6: "لا تُولَّد الحقول الحسّاسة كالهوية وجواز السفر والحساب المصرفي وIBAN؛",
     srcB7: "«صحة الصيغة» لا تعني أن العنوان موجود فعلًا أو أن التوصيل إليه ممكن."
   };
 
@@ -1288,7 +1288,7 @@
     termsHCard: "भुगतान कार्ड फ़ील्ड की स्पष्ट सीमाएँ",
     termsPCard: "कार्ड की जानकारी पूरी तरह «दिखावटी» बेतरतीब डेटा है: यह किसी असली कार्डधारक या असली BIN डेटाबेस से नहीं आती, किसी असली खाते से मेल नहीं खाती, और हर नंबर आम कार्ड नंबर जाँच में विफल होता है। यह साइट नंबर की वैधता जाँच, शेष पूछताछ या भुगतान सत्यापन नहीं देती, और उपयोगकर्ताओं से असली कार्ड नंबर लेकर उन्हें पूरा करना, अनुमान लगाना या पहचानना भी स्वीकार नहीं करती।",
     termsHNoField: "जो फ़ील्ड हम नहीं देते",
-    termsPNoField: "यह साइट पहचान-पत्र संख्या, पासपोर्ट संख्या, सामाजिक सुरक्षा संख्या / SSN, कर पहचान, बैंक खाते, IBAN, routing number, पहचान सत्यापन के उत्तर या बायोमेट्रिक डेटा नहीं बनाती। «जितने अधिक फ़ील्ड, उतना अच्छा» हमारा लक्ष्य नहीं है।",
+    termsPNoField: "यह साइट पहचान-पत्र संख्या, पासपोर्ट संख्या, कर पहचान, बैंक खाते, IBAN, routing number, पहचान सत्यापन के उत्तर या बायोमेट्रिक डेटा नहीं बनाती। «जितने अधिक फ़ील्ड, उतना अच्छा» हमारा लक्ष्य नहीं है।",
     termsHSrc: "डेटा स्रोत और लाइसेंस",
     termsPSrc: "सार्वजनिक स्रोत अपने-अपने लाइसेंस के अनुसार इस्तेमाल होते हैं; देखें <a href=\"sources.html\">डेटा स्रोत</a> पृष्ठ।",
     termsHDisc: "अस्वीकरण",
@@ -1351,7 +1351,7 @@
     srcB3: "पिन कोड जहाँ संभव हो क्षेत्र से जुड़े होते हैं; भरोसेमंद मेल न होने पर वे उस देश के प्रारूप नियमों का पालन करते हैं, असली डिलीवरी का दावा किए बिना;",
     srcB4: "ईमेल प्रचलित सेवाओं के डोमेन रूप लेते हैं, पर खाते की मौजूदगी नहीं जाँची जाती और कोई मेल नहीं भेजा जाता;",
     srcB5: "कार्ड केवल प्रकाशित नंबर संरचना की नक़ल करते हैं और सभी Luhn-invalid हैं;",
-    srcB6: "पहचान-पत्र, पासपोर्ट, सामाजिक सुरक्षा संख्या, बैंक खाता, IBAN जैसे संवेदनशील फ़ील्ड नहीं बनाए जाते;",
+    srcB6: "पहचान-पत्र, पासपोर्ट, बैंक खाता, IBAN जैसे संवेदनशील फ़ील्ड नहीं बनाए जाते;",
     srcB7: "«प्रारूप सही है» का अर्थ यह नहीं कि पता वास्तव में मौजूद है या वहाँ डिलीवरी हो सकती है।"
   };
 
@@ -1393,7 +1393,7 @@
     termsHCard: "Batas tegas kolom kartu pembayaran",
     termsPCard: "Data kartu murni nilai acak «tampak luar»: tidak berasal dari pemegang kartu nyata mana pun atau basis data BIN nyata, tidak berkaitan dengan rekening nyata, dan setiap nomor gagal pemeriksaan yang biasa. Situs ini tidak menyediakan pemeriksaan keabsahan nomor, cek saldo, atau verifikasi pembayaran, dan juga tidak menerima nomor kartu asli dari pengguna untuk dilengkapi, disimpulkan, atau dikenali.",
     termsHNoField: "Kolom yang tidak kami sediakan",
-    termsPNoField: "Situs ini tidak membuat nomor identitas nasional, nomor paspor, nomor jaminan sosial / SSN, identitas pajak, rekening bank, IBAN, routing number, jawaban verifikasi identitas, atau data biometrik. «Semakin banyak kolom semakin baik» bukan tujuan kami.",
+    termsPNoField: "Situs ini tidak membuat nomor identitas nasional, nomor paspor, identitas pajak, rekening bank, IBAN, routing number, jawaban verifikasi identitas, atau data biometrik. «Semakin banyak kolom semakin baik» bukan tujuan kami.",
     termsHSrc: "Sumber data dan lisensi",
     termsPSrc: "Sumber terbuka dipakai sesuai lisensinya masing-masing; lihat halaman <a href=\"sources.html\">sumber data</a>.",
     termsHDisc: "Penafian",
@@ -1456,7 +1456,7 @@
     srcB3: "kode pos dikaitkan dengan wilayah bila memungkinkan; tanpa padanan yang tepercaya, ia mengikuti aturan format negaranya, tanpa mengaku benar-benar bisa dikirimi;",
     srcB4: "email memakai bentuk domain penyedia besar, tetapi keberadaan akun tak diperiksa dan tak ada surat yang dikirim;",
     srcB5: "kartu hanya menirukan struktur penomoran yang dipublikasikan dan semuanya Luhn-invalid;",
-    srcB6: "kolom sensitif seperti KTP, paspor, nomor jaminan sosial, rekening bank, atau IBAN tidak dibuat;",
+    srcB6: "kolom sensitif seperti KTP, paspor, rekening bank, atau IBAN tidak dibuat;",
     srcB7: "«formatnya sah» tidak berarti alamatnya sungguh ada atau bisa dikirimi."
   };
 
@@ -1498,7 +1498,7 @@
     termsHCard: "ข้อจำกัดที่ชัดเจนของช่องบัตรชำระเงิน",
     termsPCard: "ข้อมูลบัตรเป็นค่าที่สุ่มขึ้นแบบ «ตามรูปลักษณ์» ล้วน ๆ ไม่ได้มาจากผู้ถือบัตรจริงหรือฐานข้อมูล BIN จริงใด ๆ ไม่ตรงกับบัญชีจริงใด ๆ และทุกหมายเลขไม่ผ่านการตรวจหมายเลขบัตรตามปกติ เว็บนี้ไม่มีบริการตรวจความถูกต้องของหมายเลข สอบยอดเงิน หรือยืนยันการชำระเงิน และไม่รับหมายเลขบัตรจริงจากผู้ใช้เพื่อเติมให้ครบ อนุมาน หรือระบุตัว",
     termsHNoField: "ช่องที่เราไม่ให้",
-    termsPNoField: "เว็บนี้ไม่สร้างเลขบัตรประชาชน เลขหนังสือเดินทาง เลขประกันสังคม / SSN เลขผู้เสียภาษี บัญชีธนาคาร IBAN routing number คำตอบยืนยันตัวตน หรือข้อมูลชีวมิติ เราไม่ได้ตั้งเป้าว่า «ยิ่งมีช่องมากยิ่งดี»",
+    termsPNoField: "เว็บนี้ไม่สร้างเลขบัตรประชาชน เลขหนังสือเดินทาง เลขผู้เสียภาษี บัญชีธนาคาร IBAN routing number คำตอบยืนยันตัวตน หรือข้อมูลชีวมิติ เราไม่ได้ตั้งเป้าว่า «ยิ่งมีช่องมากยิ่งดี»",
     termsHSrc: "แหล่งข้อมูลและสัญญาอนุญาต",
     termsPSrc: "แหล่งข้อมูลเปิดใช้ตามสัญญาอนุญาตของแต่ละแหล่ง ดูที่หน้า<a href=\"sources.html\">แหล่งข้อมูล</a>",
     termsHDisc: "ข้อจำกัดความรับผิด",
@@ -1561,7 +1561,7 @@
     srcB3: "รหัสไปรษณีย์ผูกกับพื้นที่เมื่อทำได้ หากจับคู่อย่างเชื่อถือได้ไม่ได้ก็สร้างตามกฎรูปแบบของประเทศนั้น โดยไม่อ้างว่าส่งของถึงได้จริง",
     srcB4: "อีเมลใช้รูปแบบโดเมนของผู้ให้บริการหลัก แต่ไม่ตรวจว่าบัญชีมีอยู่และไม่ส่งเมล",
     srcB5: "บัตรทำเลียนแบบเพียงโครงสร้างเลขที่เผยแพร่ และทั้งหมดเป็น Luhn-invalid",
-    srcB6: "ไม่สร้างช่องข้อมูลอ่อนไหว เช่น บัตรประชาชน หนังสือเดินทาง เลขประกันสังคม บัญชีธนาคาร หรือ IBAN",
+    srcB6: "ไม่สร้างช่องข้อมูลอ่อนไหว เช่น บัตรประชาชน หนังสือเดินทาง บัญชีธนาคาร หรือ IBAN",
     srcB7: "«รูปแบบถูกต้อง» ไม่ได้หมายความว่าที่อยู่นั้นมีอยู่จริงหรือส่งของถึงได้"
   };
 
@@ -1603,7 +1603,7 @@
     termsHCard: "Giới hạn rõ ràng của trường thẻ thanh toán",
     termsPCard: "Dữ liệu thẻ thuần là giá trị ngẫu nhiên «bề ngoài»: không đến từ chủ thẻ thật nào hay cơ sở dữ liệu BIN thật nào, không ứng với tài khoản thật nào, và mọi số đều không vượt qua kiểm tra thông thường. Trang này không cung cấp kiểm tra tính hợp lệ của số thẻ, tra số dư hay xác thực thanh toán, và cũng không nhận số thẻ thật do người dùng nhập để hoàn thiện, suy ra hay nhận dạng.",
     termsHNoField: "Những trường chúng tôi không cung cấp",
-    termsPNoField: "Trang này không tạo số CMND/CCCD, số hộ chiếu, số an sinh xã hội / SSN, mã số thuế, tài khoản ngân hàng, IBAN, routing number, câu trả lời xác thực danh tính hay dữ liệu sinh trắc. «Càng nhiều trường càng tốt» không phải mục tiêu của chúng tôi.",
+    termsPNoField: "Trang này không tạo số CMND/CCCD, số hộ chiếu, mã số thuế, tài khoản ngân hàng, IBAN, routing number, câu trả lời xác thực danh tính hay dữ liệu sinh trắc. «Càng nhiều trường càng tốt» không phải mục tiêu của chúng tôi.",
     termsHSrc: "Nguồn dữ liệu và giấy phép",
     termsPSrc: "Các nguồn công khai được dùng theo giấy phép riêng của chúng; xem trang <a href=\"sources.html\">nguồn dữ liệu</a>.",
     termsHDisc: "Tuyên bố miễn trách",
@@ -1666,7 +1666,7 @@
     srcB3: "mã bưu chính được gắn với vùng khi có thể; khi không có tương ứng đáng tin thì theo quy tắc định dạng của nước đó, không hề khẳng định là giao được thật;",
     srcB4: "email dùng dạng tên miền của các nhà cung cấp phổ biến, nhưng không kiểm tra tài khoản có tồn tại và không gửi thư nào;",
     srcB5: "thẻ chỉ mô phỏng cấu trúc số đã công bố và tất cả đều Luhn-invalid;",
-    srcB6: "không tạo các trường nhạy cảm như CMND/CCCD, hộ chiếu, số an sinh xã hội, tài khoản ngân hàng hay IBAN;",
+    srcB6: "không tạo các trường nhạy cảm như CMND/CCCD, hộ chiếu, tài khoản ngân hàng hay IBAN;",
     srcB7: "«đúng định dạng» không có nghĩa là địa chỉ thật sự tồn tại hay giao hàng tới đó được."
   };
 

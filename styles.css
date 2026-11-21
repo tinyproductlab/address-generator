@@ -328,3 +328,6 @@ body.sheet-open .install-bar { display: none !important; }
 .coordinate-controls input { flex: 1 1 220px; min-width: 0; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: transparent; color: inherit; }
 .coordinate-form small { opacity: .75; }
 #coordinateResult { overflow-wrap: anywhere; }
+
+.chip[data-us-batch-field][hidden] { display: none; }
+.v.temp-mail { grid-column: 2 / -1; }

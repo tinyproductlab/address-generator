@@ -1665,7 +1665,18 @@
       if (!interestKeys.includes(key)) interestKeys.push(key);
     }
 
+    const usRng = new SeededRandom(`${seedKey}|US|extra`);
+    const usFields = p.code === 'US'
+      ? {
+        // The SSA never assigns 900-series SSNs. NANPA reserves 555-01xx for fictional use.
+        testSsn: `900-${usRng.digits(2)}-${usRng.digits(4)}`,
+        fax: `${phone.split(' 555-')[0]} 555-01${usRng.digits(2)}`,
+        monthlySalary: Number((salary / 12).toFixed(2))
+      }
+      : null;
+
     return {
+      ...(usFields && { usFields }),
       seedKey,
       genderKey, titleKey: genderKey === 'male' ? 'tMr' : genderKey === 'female' ? 'tMs' : 'tMx',
       nameLocal, nameRoman, dob, age: ageYears,
@@ -1719,6 +1730,9 @@
       industry: t(id.work.industryKey),
       employment: t(id.work.employmentKey),
       education: t(id.work.educationKey),
+      monthlySalary: id.usFields && new Intl.NumberFormat(lang, {
+        style: 'currency', currency: id.work.currency
+      }).format(id.usFields.monthlySalary),
       device: t(id.account.deviceKey),
       cardProduct: t(id.card.productKey),
       country: `${countryName(p)} / ${id.address.countryNative} (${id.address.countryCode})`
@@ -1776,6 +1790,7 @@
       row(t('fTitle'), v.title),
       row(t('fDob'), id.dob),
       row(t('fAge'), id.age),
+      id.usFields ? row(t('fTestSsn'), id.usFields.testSsn) : '',
       row(t('fHeight'), v.height),
       row(t('fWeight'), v.weight),
       row(t('fBlood'), id.extra.blood),
@@ -1794,7 +1809,9 @@
       row(t('fCountry'), v.country),
       row(t('fTimezone'), id.account.timezone),
       row(t('fPhone'), id.phone),
-      row(t('fEmail'), id.email)
+      id.usFields ? row(t('fFax'), id.usFields.fax) : '',
+      row(t('fEmail'), id.email),
+      `<div class="row"><div class="k">${safe(t('fTempMail'))}</div><div class="v temp-mail"><a href="https://www.testmail.eu.cc/" target="_blank" rel="noopener noreferrer">${safe(t('openTempMail'))}</a></div></div>`
     ].join(''));
     cardRows('cardData', [
       row(t('fBrand'), id.card.brand),
@@ -1812,7 +1829,8 @@
       row(t('fIndustry'), v.industry),
       row(t('fCompanySize'), id.work.companySize),
       row(t('fEmployment'), v.employment),
-      row(t('fSalary'), `${id.work.salary} ${id.work.currency}`)
+      row(t('fSalary'), `${id.work.salary} ${id.work.currency}`),
+      id.usFields ? row(t('fMonthlySalary'), v.monthlySalary) : ''
     ].join(''));
     cardRows('account', [
       row(t('fUsername'), id.account.username),
@@ -1990,7 +2008,15 @@
 
   function setCountry(code) {
     if (!PROFILES[code]) return;
+    if (state.country !== code) {
+      state.batch = [];
+      renderBatchTable();
+    }
     state.country = code;
+    document.querySelectorAll('[data-us-batch-field]').forEach((label) => {
+      label.hidden = code !== 'US';
+      label.querySelector('input').disabled = label.hidden;
+    });
     state.taxFreeOnly = false;
     state.filter = { admin: null, city: null };
     state.refresh = 0;
@@ -2074,8 +2100,11 @@
   // -----------------------------
   // Batch
   // -----------------------------
+  const US_BATCH_FIELDS = [
+    ['testSsn', 'fTestSsn'], ['fax', 'fFax'], ['monthlySalary', 'fMonthlySalary']
+  ];
   function batchFields() {
-    return Array.from(document.querySelectorAll('.batch-field:checked')).map((el) => el.value);
+    return Array.from(document.querySelectorAll('.batch-field:checked:not(:disabled)')).map((el) => el.value);
   }
   function flatten(id, fields) {
     const v = view(id);
@@ -2098,6 +2127,11 @@
     }
     if (fields.includes('username')) out.username = id.account.username;
     if (fields.includes('uuid')) out.uuid = id.account.uuid;
+    if (id.usFields) {
+      US_BATCH_FIELDS.forEach(([key]) => {
+        if (fields.includes(key)) out[key] = id.usFields[key];
+      });
+    }
     if (state.batchCase === 'snake') {
       const snaked = {};
       Object.entries(out).forEach(([k, val]) => { snaked[k.replace(/[A-Z]/g, (m) => '_' + m.toLowerCase())] = val; });
@@ -2182,6 +2216,7 @@
       `${t('fNameRoman')}: ${id.nameRoman}`,
       `${t('fGender')}: ${v.gender}`,
       `${t('fDob')}: ${id.dob} (${t('fAge')}: ${id.age})`,
+      ...(id.usFields ? [`${t('fTestSsn')}: ${id.usFields.testSsn}`] : []),
       `${t('fTitle')}: ${v.title}`,
       `${t('fHeight')}: ${v.height}`,
       `${t('fWeight')}: ${v.weight}`,
@@ -2192,6 +2227,7 @@
       `${t('fPostal')}: ${id.address.postal}`,
       `${t('fCountry')}: ${v.country}`,
       `${t('fPhone')}: ${id.phone}`,
+      ...(id.usFields ? [`${t('fFax')}: ${id.usFields.fax}`] : []),
       `${t('fEmail')}: ${id.email}`,
       `${t('fBrand')}: ${id.card.brand} (${v.cardProduct})`,
       `${t('fCardNumber')}: ${id.card.number}`,
@@ -2201,6 +2237,7 @@
       `${t('fJob')}: ${id.work.job}`,
       `${t('fCompany')}: ${id.work.company}`,
       `${t('fSalary')}: ${id.work.salary} ${id.work.currency}`,
+      ...(id.usFields ? [`${t('fMonthlySalary')}: ${v.monthlySalary}`] : []),
       `${t('fUsername')}: ${id.account.username}`,
       `${t('fPassword')}: ${id.account.password}`,
       `${t('fUuid')}: ${id.account.uuid}`,
@@ -2417,6 +2454,10 @@
     state.seed = initial.seed;
     state.filter = initial.filter;
     state.taxFreeOnly = initial.taxFreeOnly;
+    const lastBatchField = document.querySelector('.batch-field[value="uuid"]').parentElement;
+    lastBatchField.insertAdjacentHTML('afterend', US_BATCH_FIELDS.map(([key, label]) =>
+      `<label class="chip" data-us-batch-field ${state.country === 'US' ? '' : 'hidden'}><input type="checkbox" class="batch-field" value="${key}" ${state.country === 'US' ? '' : 'disabled'}> <span data-i18n="${label}"></span></label>`
+    ).join(''));
     applyI18n();
     const seedInput = $('seedInput');
     if (seedInput) seedInput.value = state.seed;

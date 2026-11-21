@@ -206,13 +206,27 @@ test('城市筛选被保留：重新生成仍落在所选城市', () => {
   G.state.filter = { admin: null, city: null };
 });
 
-test('生成结果不包含身份证 / 护照 / SSN / 银行账户等高风险字段', () => {
+test('生成结果不包含身份证 / 护照 / 银行账户等字段', () => {
   G.state.country = 'US';
   const id = G.generateIdentity('v9-0');
   const flat = JSON.stringify(id).toLowerCase();
-  ['ssn', 'passport', 'iban', 'routing', 'nationalid', 'taxid', 'socialsecurity']
+  ['passport', 'iban', 'routing', 'nationalid', 'taxid', 'socialsecurity']
     .forEach((k) => assert.ok(!flat.includes(k), `输出里出现了 ${k}`));
   assert.ok(id.age >= 18 && id.age <= 68);
+});
+
+test('美国测试 SSN、传真和月薪可复现并可选导出', () => {
+  G.state.country = 'US';
+  const fields = ['testSsn', 'fax', 'monthlySalary'];
+  const id = G.generateIdentity('us-fields');
+  assert.deepEqual(id.usFields, G.generateIdentity('us-fields').usFields);
+  assert.match(id.usFields.testSsn, /^900-\d{2}-\d{4}$/);
+  assert.match(id.usFields.fax, /^\+1 \(\d{3}\) 555-01\d{2}$/);
+  assert.equal(id.usFields.monthlySalary, Number((Number(id.work.salary.replace(/,/g, '')) / 12).toFixed(2)));
+  assert.deepEqual(G.flatten(id, fields), id.usFields);
+  assert.deepEqual(G.flatten(id, []), {});
+  G.state.country = 'JP';
+  assert.deepEqual(G.flatten(G.generateIdentity('us-fields'), fields), {});
 });
 
 test('年龄与出生日期始终一致', () => {
