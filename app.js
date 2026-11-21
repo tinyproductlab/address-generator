@@ -1577,6 +1577,14 @@
     return { admin, city, streets, postals: cityInfo.postals, district: districts ? rng.pick(districts) : '' };
   }
 
+  // Public GB/T 2260 subdivisions, matched to the city or district in the generated address.
+  const CN_ADMINISTRATIVE_CODES = {
+    '朝阳区': '110105', '海淀区': '110108', '东城区': '110101', '西城区': '110102',
+    '浦东新区': '310115', '徐汇区': '310104', '静安区': '310106', '黄浦区': '310101',
+    '深圳市': '440300', '广州市': '440100', '珠海市': '440400', '佛山市': '440600',
+    '杭州市': '330100', '宁波市': '330200', '南京市': '320100', '苏州市': '320500'
+  };
+
   function generateIdentity(seedKey) {
     const p = PROFILES[state.country];
     const rng = new SeededRandom(`${seedKey}|${state.country}|${state.filter.admin || ''}|${state.filter.city || ''}`);
@@ -1666,14 +1674,15 @@
       if (!interestKeys.includes(key)) interestKeys.push(key);
     }
 
+    const administrativeCode = p.code === 'CN' ? CN_ADMINISTRATIVE_CODES[parts.city] : undefined;
     const usRng = new SeededRandom(`${seedKey}|US|extra`);
     const usFields = p.code === 'US'
       ? {
         // The SSA never assigns 900-series SSNs. NANPA reserves 555-01xx for fictional use.
-        testSsn: `900-${usRng.digits(2)}-${usRng.digits(4)}`,
+        testSsn: `900-${usRng.digits(2).replace(/^00$/, '01')}-${usRng.digits(4).replace(/^0000$/, '0001')}`,
         fax: `${phone.split(' 555-')[0]} 555-01${usRng.digits(2)}`,
         monthlySalary: Number((salary / 12).toFixed(2)),
-        testPassportNumber: `TEST-US-${usRng.hex(8).toUpperCase()}`,
+        testPassportNumber: `US-${usRng.hex(8).toUpperCase()}`,
         passportIssuedOn: dateString(today),
         passportExpiresOn: dateString(new Date(
           today.getFullYear() + 10, today.getMonth(),
@@ -1691,6 +1700,7 @@
         local: localLines.join('\n'), international: intlLines.join(' '),
         street: parts.street, house: parts.house, district: parts.district, city: parts.city,
         region: parts.admin, regionCode: parts.adminCode, postal: parts.postal,
+        ...(administrativeCode && { administrativeCode }),
         countryCode: p.code, countryNative: p.nativeName
       },
       phone, email,
@@ -1812,6 +1822,7 @@
       id.address.district ? row(t('fDistrict'), id.address.district) : '',
       row(t('fCity'), id.address.city),
       id.address.region ? row(t('fRegion'), id.address.region + (id.address.regionCode ? ` (${id.address.regionCode})` : '')) : '',
+      id.address.administrativeCode ? row(t('fAdministrativeCode'), id.address.administrativeCode) : '',
       id.address.postal ? row(t('fPostal'), id.address.postal) : '',
       row(t('fCountry'), v.country),
       row(t('fTimezone'), id.account.timezone),
@@ -2125,7 +2136,10 @@
     if (fields.includes('name')) { out.name = id.nameLocal; out.nameRoman = id.nameRoman; }
     if (fields.includes('gender')) out.gender = v.gender;
     if (fields.includes('dob')) out.dob = id.dob;
-    if (fields.includes('address')) out.address = id.address.international;
+    if (fields.includes('address')) {
+      out.address = id.address.international;
+      if (id.address.administrativeCode) out.administrativeCode = id.address.administrativeCode;
+    }
     if (fields.includes('city')) out.city = id.address.city;
     if (fields.includes('postal')) out.postalCode = id.address.postal;
     if (fields.includes('phone')) out.phone = id.phone;
@@ -2237,6 +2251,7 @@
       `${t('fAddrIntl')}: ${id.address.international}`,
       `${t('fCity')}: ${id.address.city}`,
       `${t('fRegion')}: ${id.address.region}`,
+      ...(id.address.administrativeCode ? [`${t('fAdministrativeCode')}: ${id.address.administrativeCode}`] : []),
       `${t('fPostal')}: ${id.address.postal}`,
       `${t('fCountry')}: ${v.country}`,
       `${t('fPhone')}: ${id.phone}`,

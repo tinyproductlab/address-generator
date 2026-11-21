@@ -689,11 +689,11 @@
   for (const locale of LOCALES) Object.assign(T[locale.code], {"taxFilter": "Tax-free states · DE / MT / OR", "taxNote": "No general sales tax; other taxes may apply.", "taxRandom": "Random tax-free state", "coordinateLabel": "Coordinate lookup (latitude first)", "coordinateSearch": "Find location", "coordinateReset": "Back to generated region", "coordinateNote": "Lookup sends coordinates to the map service. Nearby addresses are shown separately from generated profiles.", "coordinatePoint": "Entered coordinates", "coordinateInvalid": "Enter latitude (-90 to 90), longitude (-180 to 180).", "coordinateLoading": "Located on map. Looking up nearby address…", "coordinateFound": "Nearby address", "coordinateEmpty": "No address found here.", "coordinateUnavailable": "Coordinates located. Address lookup is unavailable; please try again later."});
   Object.assign(T["zh-CN"], {"taxFilter": "免税州 · DE / MT / OR", "taxNote": "无一般销售税，不代表所有税种免税。", "taxRandom": "免税州随机", "coordinateLabel": "经纬度查询（纬度在前）", "coordinateSearch": "查询位置", "coordinateReset": "返回生成区域", "coordinateNote": "查询会将坐标发送至地图服务；附近地址独立展示，不改变随机资料。", "coordinatePoint": "输入坐标", "coordinateInvalid": "请输入纬度（-90 至 90）、经度（-180 至 180）。", "coordinateLoading": "已定位坐标，正在查询附近地址…", "coordinateFound": "附近地址", "coordinateEmpty": "这里暂未找到地址。", "coordinateUnavailable": "坐标已定位，地址查询暂不可用，请稍后重试。"});
   for (const locale of LOCALES) Object.assign(T[locale.code], {
-    fTestSsn: 'Social Security number (test)', fFax: 'Fax (test)', fMonthlySalary: 'Monthly salary',
-    fTestPassportNumber: 'Passport number (test)', fPassportIssuedOn: 'Passport issue date (test)', fPassportExpiresOn: 'Passport expiry date (test)',
-    fTempMail: 'Temporary email', openTempMail: 'Open Testmail inbox ↗'
+    fTestSsn: 'Social Security number', fFax: 'Fax', fMonthlySalary: 'Monthly salary',
+    fTestPassportNumber: 'Passport number', fPassportIssuedOn: 'Passport issue date', fPassportExpiresOn: 'Passport expiry date',
+    fAdministrativeCode: 'Administrative division code', fTempMail: 'Temporary email', openTempMail: 'Open Testmail inbox ↗'
   });
-  Object.assign(T['zh-CN'], { fTestSsn: '社会保障号（SSN，仅测试）', fFax: '传真（测试）', fMonthlySalary: '月薪', fTestPassportNumber: '护照号（仅测试）', fPassportIssuedOn: '护照签发日期', fPassportExpiresOn: '护照到期日期', fTempMail: '临时邮箱', openTempMail: '打开 Testmail 收件箱 ↗' });
-  Object.assign(T['zh-TW'], { fTestSsn: '社會安全號碼（SSN，僅測試）', fFax: '傳真（測試）', fMonthlySalary: '月薪', fTestPassportNumber: '護照號碼（僅測試）', fPassportIssuedOn: '護照簽發日期', fPassportExpiresOn: '護照到期日期', fTempMail: '臨時信箱', openTempMail: '開啟 Testmail 收件匣 ↗' });
+  Object.assign(T['zh-CN'], { fTestSsn: '社会保障号（SSN）', fFax: '传真', fMonthlySalary: '月薪', fTestPassportNumber: '护照号', fPassportIssuedOn: '护照签发日期', fPassportExpiresOn: '护照到期日期', fAdministrativeCode: '行政区划代码', fTempMail: '临时邮箱', openTempMail: '打开 Testmail 收件箱 ↗' });
+  Object.assign(T['zh-TW'], { fTestSsn: '社會安全號碼（SSN）', fFax: '傳真', fMonthlySalary: '月薪', fTestPassportNumber: '護照號碼', fPassportIssuedOn: '護照簽發日期', fPassportExpiresOn: '護照到期日期', fAdministrativeCode: '行政區劃代碼', fTempMail: '臨時信箱', openTempMail: '開啟 Testmail 收件匣 ↗' });
   root.ADDRGEN_I18N = { locales: LOCALES, rtl: RTL, table: T, fallback: 'en' };
 })(typeof globalThis !== 'undefined' ? globalThis : window);

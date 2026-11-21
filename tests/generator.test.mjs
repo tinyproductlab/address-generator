@@ -220,10 +220,10 @@ test('美国测试证件字段、传真和月薪可复现并可选导出', () =>
   const fields = ['testSsn', 'fax', 'monthlySalary', 'testPassportNumber', 'passportIssuedOn', 'passportExpiresOn'];
   const id = G.generateIdentity('us-fields');
   assert.deepEqual(id.usFields, G.generateIdentity('us-fields').usFields);
-  assert.match(id.usFields.testSsn, /^900-\d{2}-\d{4}$/);
+  assert.match(id.usFields.testSsn, /^900-(?!00)\d{2}-(?!0000)\d{4}$/);
   assert.match(id.usFields.fax, /^\+1 \(\d{3}\) 555-01\d{2}$/);
   assert.equal(id.usFields.monthlySalary, Number((Number(id.work.salary.replace(/,/g, '')) / 12).toFixed(2)));
-  assert.match(id.usFields.testPassportNumber, /^TEST-US-[0-9A-F]{8}$/);
+  assert.match(id.usFields.testPassportNumber, /^US-[0-9A-F]{8}$/);
   const [issuedYear, issuedMonth, issuedDay] = id.usFields.passportIssuedOn.split('-').map(Number);
   const [expiryYear, expiryMonth, expiryDay] = id.usFields.passportExpiresOn.split('-').map(Number);
   assert.equal(expiryYear - issuedYear, 10);
@@ -233,6 +233,21 @@ test('美国测试证件字段、传真和月薪可复现并可选导出', () =>
   assert.deepEqual(G.flatten(id, []), {});
   G.state.country = 'JP';
   assert.deepEqual(G.flatten(G.generateIdentity('us-fields'), fields), {});
+});
+
+test('中国行政区划代码随所选城市或区县变化，并随地址导出', () => {
+  G.state.country = 'CN';
+  for (const [admin, city, code] of [
+    ['北京市', '朝阳区', '110105'],
+    ['上海市', '浦东新区', '310115'],
+    ['广东省', '深圳市', '440300']
+  ]) {
+    G.state.filter = { admin, city };
+    const id = G.generateIdentity('administrative-code');
+    assert.equal(id.address.administrativeCode, code);
+    assert.equal(G.flatten(id, ['address']).administrativeCode, code);
+  }
+  G.state.filter = { admin: null, city: null };
 });
 
 test('年龄与出生日期始终一致', () => {

@@ -95,7 +95,7 @@
 - 邮箱只生成格式示例，不进行 MX、SMTP 或存在性验证，也不会发信。
 - 银行卡字段仅用于外观和表单结构展示，不接入真实支付网络。
 - 地图只展示城市、行政区或国家中心位置，不对合成门牌做精确定位。
-- 不生成身份证号、真实护照号、税号、银行账户或其他真实证件字段。美国资料的测试 SSN 使用 SSA 未分配的 900 段，测试护照号以 `TEST-US-` 开头，有效期为 10 年。
+- 不生成身份证号、真实护照号、税号、银行账户或其他真实证件字段。美国资料的测试 SSN 使用 SSA 未分配的 900 段，测试护照号以 `US-` 开头，有效期为 10 年。中国资料提供与生成地址对应的公开行政区划代码。
 
 详细说明：[`隐私政策`](https://addressgen.tinylabpro.com/privacy) · [`使用条款`](https://addressgen.tinylabpro.com/terms) · [`数据来源`](https://addressgen.tinylabpro.com/sources) · [`关于与反馈`](https://addressgen.tinylabpro.com/about)
 
